@@ -24,7 +24,8 @@
                     <?php
                     // echo $listUser;
                     $stt = 1;
-                    foreach ($listUser as $arUser) {
+                    // echo $data["listUser"];
+                    foreach ($data['listuser'] as $arUser) {
                     ?>
                         <tr>
                             <td><?php echo $stt ?></td>

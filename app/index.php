@@ -1,8 +1,12 @@
 <?php
 // session_start();
 if (empty($_SESSION['taikhoanadmin'])) {
-    // header("Location: login");
-    // exit();
+    header("Location: login");
+    exit();
+}
+if (!isset($_GET["url"])) {
+    header("Location: dashboard");
+    exit();
 }
 ?>
 
@@ -19,8 +23,13 @@ if (empty($_SESSION['taikhoanadmin'])) {
         <?php include('./app/config/menu.php') ?>
         <div id="layoutSidenav_content">
             <main>
-                <?php require_once "Route.php"; ?>
-                <?php  ?>
+                <?php
+                //  require_once "./app/Route.php"; 
+                require_once "./app/core/Controller.php";
+
+                ?>
+
+                <?php require_once "./app/Views/" . $data["page"] . ".php" ?>
             </main>
         </div>
 

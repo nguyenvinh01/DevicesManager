@@ -1,13 +1,3 @@
-<?php
-
-// require_once('connect.php');
-
-?>
-<?php
-if (empty($_SESSION['taikhoanadmin'])) {
-    // header("Location: login");
-}
-?>
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
     <a class="navbar-brand ps-3" href="index.php">HỆ THỐNG</a>
@@ -29,7 +19,7 @@ if (empty($_SESSION['taikhoanadmin'])) {
             ?>
             <!-- <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Xin chào, <?php echo $ten; ?><i class="fas fa-user fa-fw"></i></a> -->
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <!-- <li><a class="dropdown-item" href="thongtin.php">Thông tin</a></li> -->
+                <li><a class="dropdown-item" href="thongtin.php">Thông tin</a></li>
                 <li><a class="dropdown-item" href="logout.php">Đăng xuất</a></li>
             </ul>
         </li>

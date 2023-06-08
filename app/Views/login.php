@@ -1,7 +1,6 @@
 <?php
-// include('./app/config/connect.php');
 if (isset($_SESSION['taikhoanadmin'])) {
-    header("Location: index.php");
+    header("Location: dashboard");
 }
 ?>
 <!DOCTYPE html>
@@ -36,7 +35,7 @@ if (isset($_GET['fail'])) {
                                     <h3 class="text-center font-weight-light my-4">HỆ THỐNG TÀI SẢN THIẾT BỊ</h3>
                                 </div>
                                 <div class="card-body">
-                                    <form action="login/checklogin" method="POST">
+                                    <form action="login/validLogin" method="POST">
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="inputEmail" type="text" placeholder="" name="taikhoan" />
                                             <label for="inputEmail">Tài khoản</label>
@@ -48,7 +47,7 @@ if (isset($_GET['fail'])) {
 
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                             <button class="btn btn-primary" type="submit" name="login">Đăng nhập</button>
-                                            <a href="   ">Đăng ký tài khoản</button>
+                                            <a href="register">Đăng ký tài khoản</button>
                                         </div>
                                     </form>
                                 </div>

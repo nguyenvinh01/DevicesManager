@@ -3,7 +3,7 @@
 require_once "Model.php";
 class UserListModel extends Model
 {
-    function getUserList()
+    public function getUserList()
     {
         $query = "SELECT *
             FROM nguoidung 

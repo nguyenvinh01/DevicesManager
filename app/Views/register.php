@@ -1,3 +1,8 @@
+<?php
+if (isset($_SESSION['taikhoanadmin'])) {
+    header("Location: dashboard");
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,7 +22,7 @@
                                     <h3 class="text-center font-weight-light my-4">Đăng Ký</h3>
                                 </div>
                                 <div class="card-body">
-                                    <form action="checklogin.php" method="POST">
+                                    <form action="register/registerUser" method="POST">
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="inputEmail" type="text" placeholder="" name="hoten" required />
                                             <label for="inputEmail">Họ tên</label>

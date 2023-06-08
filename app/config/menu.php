@@ -5,35 +5,35 @@
                 <?php
                 // if($_SESSION['quyen'] == 1){ 
                 ?>
-                <a class="nav-link" href="index.php">
+                <a class="nav-link" href="dashboard">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Thống kê dữ liệu
                 </a>
-                <a class="nav-link" href="user_list">
+                <a class="nav-link" href="userlist">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Quản lý tài khoản
                 </a>
-                <a class="nav-link" href="loaithietbi.php">
+                <a class="nav-link" href="devicetype">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Quản lý loại thiết bị
                 </a>
-                <a class="nav-link" href="thietbi.php">
+                <a class="nav-link" href="device">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Quản lý thiết bị
                 </a>
-                <a class="nav-link" href="muontra.php">
+                <a class="nav-link" href="borrow">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Quản lý mượn trả
                 </a>
-                <a class="nav-link" href="thongbao.php">
+                <a class="nav-link" href="notification">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Quản lý thông báo
                 </a>
-                <a class="nav-link" href="suachua.php">
+                <a class="nav-link" href="repair">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Quản lý sửa chữa
                 </a>
-                <a class="nav-link" href="suco.php">
+                <a class="nav-link" href="incident">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Quản lý sự cố
                 </a>
