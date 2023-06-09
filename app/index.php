@@ -15,6 +15,17 @@ if (!isset($_GET["url"])) {
 
 <head>
     <?php include("./app/config/head.php") ?>
+    <!-- <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>HỆ THỐNG</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+    <link href="./public/css/styles.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="./public/bootstrap.min.js"></script>
+    <script src="./ckeditor/ckeditor.js"></script> -->
 </head>
 
 <body class="sb-nav-fixed">
@@ -23,12 +34,6 @@ if (!isset($_GET["url"])) {
         <?php include('./app/config/menu.php') ?>
         <div id="layoutSidenav_content">
             <main>
-                <?php
-                //  require_once "./app/Route.php"; 
-                require_once "./app/core/Controller.php";
-
-                ?>
-
                 <?php require_once "./app/Views/" . $data["page"] . ".php" ?>
             </main>
         </div>

@@ -32,10 +32,6 @@ class Route
             $this->params = $arr ? array_values($arr) : [];
 
             call_user_func_array([$controllerInstance, $this->action], $this->params);
-            // } else {
-            //     // header("Location: index.php?url=index.php");
-
-            //     require_once "./app/index.php";
         } else {
             require_once "./app/index.php";
         }

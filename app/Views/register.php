@@ -49,7 +49,7 @@ if (isset($_SESSION['taikhoanadmin'])) {
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                             <button class="btn btn-primary" type="submit" name="register">Đăng Ký</button>
-                                            <a href="login.php">Đăng nhập tài khoản</button>
+                                            <a href="login">Đăng nhập tài khoản</button>
                                         </div>
                                     </form>
                                 </div>

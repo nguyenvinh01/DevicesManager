@@ -13,15 +13,37 @@ class UserListController extends Controller
 
     public function Show()
     {
-        // $userList = $this->model("UserList");
         $listUser = $this->userList->getUserList();
         $this->view('index', ["listuser" => $listUser, "page" => "userlist"]);
-        // require_once "./app/Views/UserList.php";
-        // $page = "dashboard";
+    }
 
-        // require_once('./app/index.php');
+    public function addUser()
+    {
+        $hoten = $_POST['hoten'];
+        $email  = $_POST['email'];
+        $matkhau  = $_POST['matkhau'];
+        $sdt = $_POST['sdt'];
+        $taikhoan = $_POST['taikhoan'];
+        $diachi = $_POST['diachi'];
+        $this->userList->addUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi);
+    }
 
-        // require_once('./index.php');
-        // require_once "./app/index.php";
+    public function editUser()
+    {
+        $hoten = $_POST['hoten'];
+        $email  = $_POST['email'];
+        $matkhau  = $_POST['matkhau'];
+        $sdt = $_POST['sdt'];
+        $taikhoan = $_POST['taikhoan'];
+        $diachi = $_POST['diachi'];
+        $id  = $_POST['id'];
+
+        $this->userList->editUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi, $id);
+    }
+
+    public function deleteUser()
+    {
+        $id  = $_POST['id'];
+        $this->userList->deleteUser($id);
     }
 }

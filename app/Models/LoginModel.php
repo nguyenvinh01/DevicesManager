@@ -5,11 +5,7 @@ class LoginModel extends Model
 {
     function CheckLogin($taikhoan, $matkhau)
     {
-        // if (isset($_POST['login'])) {
-        // $taikhoan = $_POST['taikhoan'];
-        // $upass  = $_POST['matkhau'];
         $query = "SELECT * FROM nguoidung WHERE taikhoan='$taikhoan'";
-        // $result = mysqli_query($connect, $query);
         $result = $this->conn->query($query);
         $num_rows = mysqli_num_rows($result);
         if ($num_rows == 0) {
@@ -30,5 +26,14 @@ class LoginModel extends Model
                 $_SESSION['quyen'] = $row['quyen_id'];
             }
         }
+    }
+    function getUser($id)
+    {
+        // $id = $_SESSION['id'];
+        $querry = "SELECT * FROM nguoidung WHERE `id`='$id'";
+        $result = $this->conn->query($querry);
+        $row = mysqli_fetch_array($result);
+        // $ten = $row['hoten'];
+        return $row['hoten'];
     }
 }

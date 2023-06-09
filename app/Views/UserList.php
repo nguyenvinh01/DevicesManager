@@ -2,6 +2,17 @@
     <h1 class="mt-4">Danh sách người dùng</h1>
     <div class="card mb-4">
         <div class="card-header">
+            <?php if (isset($_GET['msg'])) {
+                if ($_GET['msg'] == 1) { ?>
+                    <div class="alert alert-success">
+                        <strong>Thành công</strong>
+                    </div>
+                <?php } else { ?>
+                    <div class="alert alert-danger">
+                        <strong>Không thể xóa !</strong>
+                    </div>
+                <?php }  ?>
+            <?php }  ?>
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                 Thêm mới
             </button>
@@ -26,6 +37,8 @@
                     $stt = 1;
                     // echo $data["listUser"];
                     foreach ($data['listuser'] as $arUser) {
+                        $idModelDel = "exampleModalDel" . $arUser["id"];
+                        $idModelEdit = "exampleModalEdit" . $arUser["id"];
                     ?>
                         <tr>
                             <td><?php echo $stt ?></td>
@@ -54,7 +67,7 @@
                                             </div>
                                             <div class="modal-body">
                                                 Người dùng : <?php echo $arUser["hoten"] ?>
-                                                <form action="function.php" method="post">
+                                                <form action="userlist/deleteUser" method="post">
                                                     <input type="hidden" class="form-control" id="id" name="id" value="<?php echo $arUser["id"] ?>">
                                                     <div class="modal-footer" style="margin-top: 20px">
                                                         <button style="width:100px" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -80,7 +93,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="function.php" method="POST" enctype="multipart/form-data">
+                                        <form action="userlist/editUser" method="POST" enctype="multipart/form-data">
                                             <input type="hidden" class="form-control" id="id" name="id" value="<?php echo $arUser["id"] ?>">
                                             <div class="col">
                                                 <div class="row">
@@ -136,7 +149,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="function.php" method="POST" enctype="multipart/form-data">
+                                    <form action="userlist/addUser" method="POST" enctype="multipart/form-data">
                                         <div class="col">
                                             <div class="row">
                                                 <div class="col-6">

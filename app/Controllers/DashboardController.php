@@ -18,7 +18,8 @@ class DashboardController extends Controller
         // $page = "dashboard";
         // require_once('./app/index.php');
         // $listUser = $this->userList->getUserList();
-        $this->view('index', ["page" => "dashboard"]);
-        // $this->view("index", ["page" => "dashboard"]);
+        // $id = $_SESSION['id'];
+        $dataDashboard = $this->data->getInfoDashboard();
+        $this->view('index', ["page" => "dashboard", "dataDashboard" => $dataDashboard]);
     }
 }
