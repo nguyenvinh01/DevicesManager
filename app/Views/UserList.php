@@ -1,3 +1,9 @@
+<?php
+
+if ($_SESSION['quyen'] != 1) {
+    header("Location: dashboard");
+}
+?>
 <div class="container-fluid px-4">
     <h1 class="mt-4">Danh sách người dùng</h1>
     <div class="card mb-4">
@@ -67,7 +73,7 @@
                                             </div>
                                             <div class="modal-body">
                                                 Người dùng : <?php echo $arUser["hoten"] ?>
-                                                <form action="userlist/deleteUser" method="post">
+                                                <form method="post" id="delUser">
                                                     <input type="hidden" class="form-control" id="id" name="id" value="<?php echo $arUser["id"] ?>">
                                                     <div class="modal-footer" style="margin-top: 20px">
                                                         <button style="width:100px" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -93,7 +99,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="userlist/editUser" method="POST" enctype="multipart/form-data">
+                                        <form method="POST" enctype="multipart/form-data" id="editUser">
                                             <input type="hidden" class="form-control" id="id" name="id" value="<?php echo $arUser["id"] ?>">
                                             <div class="col">
                                                 <div class="row">
@@ -149,36 +155,36 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="userlist/addUser" method="POST" enctype="multipart/form-data">
+                                    <form method="POST" enctype="multipart/form-data" id="addUser">
                                         <div class="col">
                                             <div class="row">
                                                 <div class="col-6">
                                                     <label for="category-film" class="col-form-label">Họ tên:</label>
-                                                    <input type="text" class="form-control" id="category-film" name="hoten" required>
+                                                    <input type="text" class="form-control" id="addUserName" name="hoten" required>
                                                 </div>
                                                 <div class="col-6">
                                                     <label for="category-film" class="col-form-label">Email:</label>
-                                                    <input type="email" class="form-control" id="category-film" name="email" required>
+                                                    <input type="email" class="form-control" id="addUserEmail" name="email" required>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-6">
                                                     <label for="category-film" class="col-form-label">Tài khoản:</label>
-                                                    <input type="text" class="form-control" id="category-film" name="taikhoan" required>
+                                                    <input type="text" class="form-control" id="addUserAcc" name="taikhoan" required>
                                                 </div>
                                                 <div class="col-6">
                                                     <label for="category-film" class="col-form-label">Mật khẩu:</label>
-                                                    <input type="text" class="form-control" id="category-film" name="matkhau" required>
+                                                    <input type="text" class="form-control" id="addUserPass" name="matkhau" pattern=".{6,}" title="Mật khẩu phải có ít nhất 6 ký tự" required>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-6">
                                                     <label for="category-film" class="col-form-label">Số điện thoại:</label>
-                                                    <input type="text" class="form-control" id="category-film" name="sdt" required>
+                                                    <input type="text" class="form-control" id="addUserSdt" name="sdt" required>
                                                 </div>
                                                 <div class="col-6">
                                                     <label for="category-film" class="col-form-label">Địa chỉ:</label>
-                                                    <input type="text" class="form-control" id="category-film" name="diachi" required>
+                                                    <input type="text" class="form-control" id="addUserAddress" name="diachi" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -192,14 +198,110 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Modal Update-->
+                    <!-- Modal Add-->
                 </tbody>
             </table>
         </div>
     </div>
+
 </div>
+
 <script>
-    CKEDITOR.replace("editor");
+    $(document).ready(function() {
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: 'toast-top-right',
+            timeOut: 3000,
+            showMethod: 'fadeIn',
+            hideMethod: 'fadeOut',
+        };
+        $('#editUser').submit(function(e) {
+            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            // Gửi yêu cầu Ajax
+            console.log($('#editUser').serialize());
+            $.ajax({
+                url: "http://localhost/quanlithietbi/userlist/editUser", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                data: $('#editUser').serialize(), // Dữ liệu gửi đi từ form
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == "success") {
+                        // Hiển thị thông báo thành công
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById('exampleModalEdit');
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        });
+
+        $('#addUser').submit(function(e) {
+            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            // Gửi yêu cầu Ajax
+            $.ajax({
+                url: "http://localhost/quanlithietbi/userlist/addUser", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == "success") {
+                        // Hiển thị thông báo thành công
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById('exampleModalAdd');
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        toastr.error(response.message);
+
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        });
+
+        $('#delUser').submit(function(e) {
+            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            // Gửi yêu cầu Ajax
+            console.log($('#delUser'));
+            var id = $('#delUser').serialize().split('=')[1];
+            console.log(id, 1111);
+            $.ajax({
+                url: "http://localhost/quanlithietbi/userlist/deleteUser", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                data: $('#delUser').serialize(), // Dữ liệu gửi đi từ form
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == "success") {
+                        // Hiển thị thông báo thành công
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById(`exampleModalDel${id}`);
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        toastr.error(response.message);
+
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        });
+    })
 </script>
 <script>
     for (var i = 1; i < 200; i++) {

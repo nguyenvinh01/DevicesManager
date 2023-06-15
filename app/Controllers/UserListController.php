@@ -8,7 +8,6 @@ class UserListController extends Controller
     public function __construct()
     {
         $this->userList = new UserListModel();
-        // $userList = $this->model("UserList");
     }
 
     public function Show()
@@ -25,9 +24,10 @@ class UserListController extends Controller
         $sdt = $_POST['sdt'];
         $taikhoan = $_POST['taikhoan'];
         $diachi = $_POST['diachi'];
-        $this->userList->addUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi);
+        $response =  $this->userList->addUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi);
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
-
     public function editUser()
     {
         $hoten = $_POST['hoten'];
@@ -38,12 +38,17 @@ class UserListController extends Controller
         $diachi = $_POST['diachi'];
         $id  = $_POST['id'];
 
-        $this->userList->editUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi, $id);
+        $response =  $this->userList->editUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi, $id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
 
     public function deleteUser()
     {
         $id  = $_POST['id'];
-        $this->userList->deleteUser($id);
+
+        $response = $this->userList->deleteUser($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
 }
