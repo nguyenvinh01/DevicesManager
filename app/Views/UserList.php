@@ -73,7 +73,7 @@ if ($_SESSION['quyen'] != 1) {
                                             </div>
                                             <div class="modal-body">
                                                 Người dùng : <?php echo $arUser["hoten"] ?>
-                                                <form method="post" id="delUser">
+                                                <form method="post" class="delUser">
                                                     <input type="hidden" class="form-control" id="id" name="id" value="<?php echo $arUser["id"] ?>">
                                                     <div class="modal-footer" style="margin-top: 20px">
                                                         <button style="width:100px" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -99,7 +99,7 @@ if ($_SESSION['quyen'] != 1) {
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form method="POST" enctype="multipart/form-data" id="editUser">
+                                        <form method="POST" enctype="multipart/form-data" class="editUser">
                                             <input type="hidden" class="form-control" id="id" name="id" value="<?php echo $arUser["id"] ?>">
                                             <div class="col">
                                                 <div class="row">
@@ -216,18 +216,17 @@ if ($_SESSION['quyen'] != 1) {
             showMethod: 'fadeIn',
             hideMethod: 'fadeOut',
         };
-        $('#editUser').submit(function(e) {
+        $('.editUser').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
-            console.log($('#editUser').serialize());
-            var modalId = $(this).data('modal-id');
-            var id = $(this).find('input[name="id"]').val();
+            var formData = $(this).serialize();
+            var id = $(this).serialize().split(/[=,&]/)[1];
+
+            console.log(formData, 11, id);
             $.ajax({
                 url: "http://localhost/quanlithietbi/userlist/editUser", // Đường dẫn đến controller xử lý
                 method: 'POST',
-                data: {
-                    id: id
-                }, // Dữ liệu gửi đi từ form
+                data: formData, // Dữ liệu gửi đi từ form
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
@@ -287,7 +286,8 @@ if ($_SESSION['quyen'] != 1) {
                 url: "http://localhost/quanlithietbi/userlist/deleteUser", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: {
-                    id: id
+                    id: id,
+
                 }, // Dữ liệu gửi đi từ form
                 dataType: 'json',
                 success: function(response) {
