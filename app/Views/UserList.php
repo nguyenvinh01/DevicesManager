@@ -220,16 +220,20 @@ if ($_SESSION['quyen'] != 1) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
             console.log($('#editUser').serialize());
+            var modalId = $(this).data('modal-id');
+            var id = $(this).find('input[name="id"]').val();
             $.ajax({
                 url: "http://localhost/quanlithietbi/userlist/editUser", // Đường dẫn đến controller xử lý
                 method: 'POST',
-                data: $('#editUser').serialize(), // Dữ liệu gửi đi từ form
+                data: {
+                    id: id
+                }, // Dữ liệu gửi đi từ form
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
                         // Hiển thị thông báo thành công
                         toastr.success(response.message);
-                        var modalElement = document.getElementById('exampleModalEdit');
+                        var modalElement = document.getElementById(`exampleModalEdit${id}`);
                         var modal = bootstrap.Modal.getInstance(modalElement);
                         modal.hide();
                     } else {
@@ -271,16 +275,20 @@ if ($_SESSION['quyen'] != 1) {
             });
         });
 
-        $('#delUser').submit(function(e) {
+        $('.delUser').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
-            console.log($('#delUser'));
-            var id = $('#delUser').serialize().split('=')[1];
+            console.log($('.delUser').serialize());
+            // var id = $('.delUser').serialize().split('=')[1];
+            var modalId = $(this).data('modal-id');
+            var id = $(this).find('input[name="id"]').val();
             console.log(id, 1111);
             $.ajax({
                 url: "http://localhost/quanlithietbi/userlist/deleteUser", // Đường dẫn đến controller xử lý
                 method: 'POST',
-                data: $('#delUser').serialize(), // Dữ liệu gửi đi từ form
+                data: {
+                    id: id
+                }, // Dữ liệu gửi đi từ form
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
