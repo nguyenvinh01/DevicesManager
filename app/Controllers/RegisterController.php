@@ -16,15 +16,17 @@ class RegisterController extends Controller
     }
     public function registerUser()
     {
-        if (isset($_POST['register'])) {
-            $hoten = $_POST['hoten'];
-            $email  = $_POST['email'];
-            $sodienthoai  = $_POST['sodienthoai'];
-            $diachi = $_POST['diachi'];
-            $taikhoan  = $_POST['taikhoan'];
-            $matkhau  = $_POST['matkhau'];
+        // if (isset($_POST['register'])) {
+        $hoten = $_POST['hoten'];
+        $email  = $_POST['email'];
+        $sodienthoai  = $_POST['sodienthoai'];
+        $diachi = $_POST['diachi'];
+        $taikhoan  = $_POST['taikhoan'];
+        $matkhau  = $_POST['matkhau'];
 
-            $this->register->Register($hoten, $email, $sodienthoai, $diachi, $taikhoan, $matkhau);
-        }
+        $response = $this->register->Register($hoten, $email, $sodienthoai, $diachi, $taikhoan, $matkhau);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        // }
     }
 }

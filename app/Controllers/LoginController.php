@@ -9,7 +9,6 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->login = new LoginModel();
-        // $this->login = $this->model("Login");
     }
 
     function Show()
@@ -18,10 +17,14 @@ class LoginController extends Controller
     }
     public function validLogin()
     {
-        if (isset($_POST['login'])) {
-            $taikhoan = $_POST['taikhoan'];
-            $matkhau  = $_POST['matkhau'];
-            $this->login->CheckLogin($taikhoan, $matkhau);
-        }
+        // if (isset($_POST['login'])) {
+        $taikhoan = $_POST['taikhoan'];
+        $matkhau  = $_POST['matkhau'];
+
+        $response = $this->login->CheckLogin($taikhoan, $matkhau);
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        // }
     }
 }

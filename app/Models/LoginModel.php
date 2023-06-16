@@ -1,6 +1,8 @@
 <?php
 
 require_once "./app/Models/Model.php";
+require_once './app/config/constant.php';
+
 class LoginModel extends Model
 {
     function CheckLogin($taikhoan, $matkhau)
@@ -9,31 +11,34 @@ class LoginModel extends Model
         $result = $this->conn->query($query);
         $num_rows = mysqli_num_rows($result);
         if ($num_rows == 0) {
-            header("Location: login");
-            // header("Location: login.php?fail=1");
+            // header("Location: login");
+            return [
+                'status' => 'error',
+                'message' => 'Tài khoản không tồn tại',
+            ];
         } else {
 
             $row = mysqli_fetch_array($result);
             if ($matkhau != $row['matkhau']) {
                 // header("Location: login.php?fail=1");
-                header("Location: login");
+                // header("Location: " . BASE_URL . "/login");
+                return [
+                    'status' => 'error',
+                    'message' => 'Mật khẩu không đúng',
+                ];
             } else {
-                header("Location: ../dashboard");
                 // header("Location: ./index.php");
+                // header("Location: ../dashboard");
                 $_SESSION['taikhoanadmin'] = $taikhoan;
                 $_SESSION['id'] = $row['id'];
                 $_SESSION['tenhienthi'] = $row['hoten'];
                 $_SESSION['quyen'] = $row['quyen_id'];
+
+                return [
+                    'status' => 'success',
+                    'message' => 'Đăng nhập thành công',
+                ];
             }
         }
-    }
-    function getUser($id)
-    {
-        // $id = $_SESSION['id'];
-        $querry = "SELECT * FROM nguoidung WHERE `id`='$id'";
-        $result = $this->conn->query($querry);
-        $row = mysqli_fetch_array($result);
-        // $ten = $row['hoten'];
-        return $row['hoten'];
     }
 }

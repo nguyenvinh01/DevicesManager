@@ -46,6 +46,7 @@ require_once './app/config/constant.php';
 
     <div id="toast-container"></div>
     <?php include('./app/config/footer.php') ?>
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
@@ -58,6 +59,30 @@ require_once './app/config/constant.php';
     <script src="<?php echo BASE_URL; ?>/assets/demo/chart-area-demo.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/demo/chart-bar-demo.js"></script>
     <script src="<?php echo BASE_URL; ?>/public/js/datatables-simple-demo.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            var isLoggedIn = sessionStorage.getItem('isLoggedIn');
+
+            if (isLoggedIn) {
+                // Xóa trạng thái đăng nhập từ sessionStorage
+                sessionStorage.removeItem('isLoggedIn');
+
+                // Hiển thị thông báo thành công bằng Toastr
+                toastr.success('Đăng nhập thành công');
+            }
+        });
+    </script>
+    <!-- <script>
+        CKEDITOR.replace("editor");
+    </script>
+    <script>
+        for (var i = 1; i < 200; i++) {
+            var name = "editor" + i
+            CKEDITOR.replace(name);
+
+        }
+    </script> -->
 </body>
 
 </html>

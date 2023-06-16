@@ -8,9 +8,17 @@ class RegisterModel extends Model
         $query = "INSERT INTO nguoidung ( hoten, email, sodienthoai, diachi, taikhoan, matkhau, quyen_id) VALUES ( '{$hoten}', '{$email}', '{$sodienthoai}', '{$diachi}', '{$taikhoan}', '{$matkhau}', 2) ";
         $result = $this->conn->query($query);
         if ($result) {
-            header("Location: login.php?msg=1");
+            return [
+                'status' => 'success',
+                'message' => 'Đăng ký thành công',
+            ];
+            // header("Location: login.php?msg=1");
         } else {
-            header("Location: register.php?msg=2");
+            return [
+                'status' => 'error',
+                'message' => 'Đăng ký không thành công',
+            ];
+            // header("Location: register.php?msg=2");
         }
     }
 }
