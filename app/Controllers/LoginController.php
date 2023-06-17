@@ -17,7 +17,6 @@ class LoginController extends Controller
     }
     public function validLogin()
     {
-        // if (isset($_POST['login'])) {
         $taikhoan = $_POST['taikhoan'];
         $matkhau  = $_POST['matkhau'];
 
@@ -25,6 +24,5 @@ class LoginController extends Controller
 
         header('Content-Type: application/json');
         echo json_encode($response);
-        // }
     }
 }

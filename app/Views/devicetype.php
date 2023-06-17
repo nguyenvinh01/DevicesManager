@@ -56,7 +56,7 @@
 
                                             <div class="modal-body">
                                                 Loại thiết bị : <?php echo $arUser["ten"] ?>
-                                                <form action="deviceType/deleteDeviceType" method="post">
+                                                <form method="post" class="delType">
                                                     <input type="hidden" class="form-control" id="id" name="id" value="<?php echo $arUser["id"] ?>">
                                                     <div class="modal-footer" style="margin-top: 20px">
                                                         <button style="width:100px" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -86,7 +86,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="deviceType/editDeviceType" method="POST" enctype="multipart/form-data">
+                                        <form method="POST" enctype="multipart/form-data" class="editType">
                                             <input type="hidden" class="form-control" id="id" name="id" value="<?php echo $arUser["id"] ?>">
                                             <div class="col">
                                                 <div class="row">
@@ -118,7 +118,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="deviceType/addDeviceType" method="POST" enctype="multipart/form-data">
+                                    <form method="POST" enctype="multipart/form-data" id="addType">
                                         <div class="col">
                                             <div class="row">
                                                 <div class="col-12">
@@ -129,7 +129,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                            <button type="submit" class="btn btn-primary" name="adddm">Lưu </button>
+                                            <button type="submit" class="btn btn-primary" name="adddm">Tạo </button>
                                         </div>
                                     </form>
                                 </div>
@@ -145,6 +145,112 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(() => {
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: 'toast-top-right',
+            timeOut: 3000,
+            showMethod: 'fadeIn',
+            hideMethod: 'fadeOut',
+        };
+        $('#addType').submit(function(e) {
+            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            // Gửi yêu cầu Ajax
+            $.ajax({
+                url: "http://localhost/quanlithietbi/deviceType/addDeviceType", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                data: $('#addType').serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == "success") {
+                        // Hiển thị thông báo thành công
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById('exampleModalAdd');
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        toastr.error(response.message);
+
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        });
+
+        $('.editType').submit(function(e) {
+            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            // Gửi yêu cầu Ajax
+            var formData = $(this).serialize();
+            var id = $(this).serialize().split(/[=,&]/)[1];
+
+            console.log(formData, 11, id);
+            $.ajax({
+                url: "http://localhost/quanlithietbi/deviceType/editDeviceType", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                data: formData, // Dữ liệu gửi đi từ form
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == "success") {
+                        // Hiển thị thông báo thành công
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById(`exampleModalEdit${id}`);
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        });
+
+        $('.delType').submit(function(e) {
+            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            // Gửi yêu cầu Ajax
+            console.log($('.delUser').serialize());
+            var formData = $(this).serialize();
+            var id = formData.split('=')[1];
+
+            // var modalId = $(this).data('modal-id');
+            // var id = $(this).find('input[name="id"]').val();
+            console.log(1111, formData);
+            $.ajax({
+                url: "http://localhost/quanlithietbi/deviceType/deleteDeviceType", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                data: formData, // Dữ liệu gửi đi từ form
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == "success") {
+                        // Hiển thị thông báo thành công
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById(`exampleModalDel${id}`);
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        toastr.error(response.message);
+
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        });
+    })
+</script>
+
 <script>
     CKEDITOR.replace("editor");
 </script>

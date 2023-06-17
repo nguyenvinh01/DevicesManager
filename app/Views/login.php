@@ -25,48 +25,42 @@ if (isset($_SESSION['taikhoanadmin'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body class="bg-primary">
-    <div>
-        <div id="layoutAuthentication">
-            <div id="layoutAuthentication_content">
-                <main>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-5">
-                                <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                    <div class="card-header">
-                                        <h3 class="text-center font-weight-light my-4">HỆ THỐNG TÀI SẢN THIẾT BỊ</h3>
-                                    </div>
-                                    <div class="card-body">
-
-                                        <form method="POST" id="login">
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputEmail" type="text" placeholder="" name="taikhoan" />
-                                                <label for="inputEmail">Tài khoản</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputPassword" type="password" placeholder="" name="matkhau" />
-                                                <label for="inputPassword">Mật khẩu</label>
-                                            </div>
-
-                                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <button class="btn btn-primary" type="submit" name="login">Đăng nhập</button>
-                                                <a href="<?php echo BASE_URL; ?>/register">Đăng ký tài khoản</a>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                </div>
-                            </div>
+<body class="bg-primary sb-nav-fixed">
+    <main>
+        <div class="container">
+            <div id="toast-container" style="right:17px !important;"></div>
+            <div class="row justify-content-center">
+                <div class="col-lg-5">
+                    <div class="card shadow-lg border-0 rounded-lg mt-5">
+                        <div class="card-header">
+                            <h3 class="text-center font-weight-light my-4">HỆ THỐNG TÀI SẢN THIẾT BỊ</h3>
                         </div>
+                        <div class="card-body">
+
+                            <form method="POST" id="login">
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="inputEmail" type="text" placeholder="" name="taikhoan" />
+                                    <label for="inputEmail">Tài khoản</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="inputPassword" type="password" placeholder="" name="matkhau" />
+                                    <label for="inputPassword">Mật khẩu</label>
+                                </div>
+
+                                <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                    <button class="btn btn-primary" type="submit" name="login">Đăng nhập</button>
+                                    <a href="<?php echo BASE_URL; ?>/register">Đăng ký tài khoản</a>
+                                </div>
+                            </form>
+                        </div>
+
                     </div>
-                </main>
-
+                </div>
             </div>
-
         </div>
-    </div>
-    <div id="toast-container"></div>
+    </main>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
@@ -86,7 +80,7 @@ if (isset($_SESSION['taikhoanadmin'])) {
             toastr.options = {
                 closeButton: true,
                 progressBar: true,
-                positionClass: 'toast-right',
+                positionClass: 'toast-top-right',
                 timeOut: 3000,
                 showMethod: 'fadeIn',
                 hideMethod: 'fadeOut',

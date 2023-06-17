@@ -56,6 +56,8 @@ require_once './app/config/constant.php';
 
     <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.serializeJSON/3.2.1/jquery.serializejson.min.js" integrity="sha512-SdWDXwOhhVS/wWMRlwz3wZu3O5e4lm2/vKK3oD0E5slvGFg/swCYyZmts7+6si8WeJYIUsTrT3KZWWCknSopjg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.serializeJSON/3.2.1/jquery.serializejson.js" integrity="sha512-sQKI/4Pk8sWk7RP6xI2uDkXpIHyuaJgFX8/IGKzVj+6Wt06IcQU5s7nF6A3f0iOZpSXhlOPPNDDYKcaBlSYLNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="<?php echo BASE_URL; ?>/assets/demo/chart-area-demo.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/demo/chart-bar-demo.js"></script>
     <script src="<?php echo BASE_URL; ?>/public/js/datatables-simple-demo.js"></script>

@@ -8,17 +8,6 @@ if ($_SESSION['quyen'] != 1) {
     <h1 class="mt-4">Danh sách người dùng</h1>
     <div class="card mb-4">
         <div class="card-header">
-            <?php if (isset($_GET['msg'])) {
-                if ($_GET['msg'] == 1) { ?>
-                    <div class="alert alert-success">
-                        <strong>Thành công</strong>
-                    </div>
-                <?php } else { ?>
-                    <div class="alert alert-danger">
-                        <strong>Không thể xóa !</strong>
-                    </div>
-                <?php }  ?>
-            <?php }  ?>
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                 Thêm mới
             </button>

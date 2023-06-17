@@ -19,9 +19,17 @@ class DeviceTypeModel extends Model
         VALUES ( '{$ten}') ";
         $result = $this->conn->query($query);
         if ($result) {
-            header("Location: ../devicetype?msg=1");
+            // header("Location: ../devicetype?msg=1");
+            return [
+                "status" => "success",
+                "message" => "Tạo thành công"
+            ];
         } else {
-            header("Location: ../devicetype?msg=2");
+            // header("Location: ../devicetype?msg=2");
+            return [
+                "status" => "error",
+                "message" => "Tạo thất bại có lỗi xảy ra"
+            ];
         }
     }
     function editDeviceType($ten, $id)
@@ -31,9 +39,15 @@ class DeviceTypeModel extends Model
         WHERE `id`='{$id}'";
         $result = $this->conn->query($query);
         if ($result) {
-            header("Location: ../devicetype?msg=1");
+            return [
+                "status" => "success",
+                "message" => "Sửa thành công"
+            ];
         } else {
-            header("Location: ../devicetype?msg=2");
+            return [
+                "status" => "error",
+                "message" => "Sửa thất bại có lỗi xảy ra"
+            ];
         }
     }
     function deleteDeviceType($id)
@@ -42,11 +56,19 @@ class DeviceTypeModel extends Model
         $result = $this->conn->query($check);
         $row = mysqli_num_rows($result);
         if ($row > 0) {
-            header("Location: ../devicetype?msg=2");
+            // header("Location: ../devicetype?msg=2");
+            return [
+                "status" => "error",
+                "message" => "Xóa thất bại có lỗi xảy ra"
+            ];
         } else {
             $query = "DELETE FROM loaithietbi WHERE `id`='{$id}'";
             $this->conn->query($query);
-            header("Location: ../devicetype?msg=1");
+            // header("Location: ../devicetype?msg=1");
+            return [
+                "status" => "success",
+                "message" => "Xóa thành công"
+            ];
         }
     }
 }
