@@ -213,7 +213,7 @@ if ($_SESSION['quyen'] != 1) {
 
             console.log(formData, 11, id);
             $.ajax({
-                url: "http://localhost/quanlithietbi/userlist/editUser", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/userlist/editUser", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: formData, // Dữ liệu gửi đi từ form
                 dataType: 'json',
@@ -240,7 +240,7 @@ if ($_SESSION['quyen'] != 1) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
             $.ajax({
-                url: "http://localhost/quanlithietbi/userlist/addUser", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/userlist/addUser", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: $('#addUser').serialize(),
                 dataType: 'json',
@@ -275,7 +275,7 @@ if ($_SESSION['quyen'] != 1) {
             // var id = $(this).find('input[name="id"]').val();
             console.log(1111, formData);
             $.ajax({
-                url: "http://localhost/quanlithietbi/userlist/deleteUser", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/userlist/deleteUser", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: formData, // Dữ liệu gửi đi từ form
                 dataType: 'json',

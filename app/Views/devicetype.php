@@ -159,7 +159,7 @@
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
             $.ajax({
-                url: "http://localhost/quanlithietbi/deviceType/addDeviceType", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/deviceType/addDeviceType", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: $('#addType').serialize(),
                 dataType: 'json',
@@ -191,7 +191,7 @@
 
             console.log(formData, 11, id);
             $.ajax({
-                url: "http://localhost/quanlithietbi/deviceType/editDeviceType", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/deviceType/editDeviceType", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: formData, // Dữ liệu gửi đi từ form
                 dataType: 'json',
@@ -225,7 +225,7 @@
             // var id = $(this).find('input[name="id"]').val();
             console.log(1111, formData);
             $.ajax({
-                url: "http://localhost/quanlithietbi/deviceType/deleteDeviceType", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/deviceType/deleteDeviceType", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: formData, // Dữ liệu gửi đi từ form
                 dataType: 'json',

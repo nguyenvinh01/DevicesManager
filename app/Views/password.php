@@ -44,7 +44,7 @@
             e.preventDefault();
 
             $.ajax({
-                url: "http://localhost/quanlithietbi/profile/changepass",
+                url: "<?php echo BASE_URL; ?>/profile/changepass",
                 method: 'POST',
                 data: $('#changePasswordForm').serialize(),
                 dataType: 'json',

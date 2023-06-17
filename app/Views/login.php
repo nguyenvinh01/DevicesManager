@@ -91,13 +91,13 @@ if (isset($_SESSION['taikhoanadmin'])) {
                 // Gửi yêu cầu Ajax
                 // console.log($('#login').serialize());
                 $.ajax({
-                    url: "http://localhost/quanlithietbi/login/validLogin", // Đường dẫn đến controller xử lý
+                    url: "<?php echo BASE_URL; ?>/login/validLogin", // Đường dẫn đến controller xử lý
                     method: 'POST',
                     data: $('#login').serialize(),
                     dataType: 'json',
                     success: function(response) {
                         if (response.status == "success") {
-                            window.location.href = "http://localhost/quanlithietbi/dashboard";
+                            window.location.href = "<?php echo BASE_URL; ?>/dashboard";
                             sessionStorage.setItem('isLoggedIn', 'true');
                             toastr.success(response.message);
                         } else {

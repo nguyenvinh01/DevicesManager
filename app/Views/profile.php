@@ -80,7 +80,7 @@
             e.preventDefault();
 
             $.ajax({
-                url: "http://localhost/quanlithietbi/profile/updateUser",
+                url: "<?php echo BASE_URL; ?>/profile/updateUser",
                 method: 'POST',
                 data: $('#updateUser').serialize(),
                 dataType: 'json',

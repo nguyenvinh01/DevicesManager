@@ -106,14 +106,14 @@ require_once './app/config/constant.php';
                 // Gửi yêu cầu Ajax
                 console.log($('#register').serialize());
                 $.ajax({
-                    url: "http://localhost/quanlithietbi/register/registerUser", // Đường dẫn đến controller xử lý
+                    url: "<?php echo BASE_URL; ?>/register/registerUser", // Đường dẫn đến controller xử lý
                     method: 'POST',
                     data: $('#register').serialize(),
                     dataType: 'json',
                     success: function(response) {
                         if (response.status == "success") {
                             sessionStorage.setItem('register', 'true');
-                            window.location.href = "http://localhost/quanlithietbi/login";
+                            window.location.href = "<?php echo BASE_URL; ?>/login";
                             toastr.success(response.message);
                         } else {
                             toastr.error(response.message);
