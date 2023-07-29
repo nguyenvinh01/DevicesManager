@@ -1,6 +1,12 @@
 <?php
+require_once './app/config/constant.php';
 
 require_once "Model.php";
+require_once "public\PHPExcel.php";
+require_once "public\PHPExcel\IOFactory.php";
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 class UserListModel extends Model
 {
     public function getUserList()
@@ -17,25 +23,63 @@ class UserListModel extends Model
         return $data;
     }
 
-    // public function addUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi)
-    // {
-    //     $query = "INSERT INTO nguoidung ( hoten, email, matkhau, sodienthoai, taikhoan, diachi, quyen_id) 
-    //     VALUES ( '{$hoten}', '{$email}', '{$matkhau}', '{$sdt}', '{$taikhoan}', '{$diachi}', 2) ";
-    //     $result = $this->conn->query($query);
-    //     if ($result) {
-    //         // header("Location: ../userlist?msg=1");
-    //         return [
-    //             'status' => 'success',
-    //             'message' => 'Thông tin người dùng đã được cập nhật.'
-    //         ];
-    //     } else {
-    //         // header("Location: ../userlist?msg=2");
-    //         return [
-    //             'status' => 'error',
-    //             'message' => 'Thông tin người dùng đã được cập nhật loi.'
-    //         ];
-    //     }
-    // }
+    public function getData()
+    {
+        $query = "SELECT *
+            FROM nguoidung 
+            WHERE quyen_id = 2
+            ORDER BY id DESC";
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return $data;
+    }
+
+    public function getModalEdit($id)
+    {
+        $query = "SELECT * FROM nguoidung WHERE id = $id;";
+        $rs = $this->conn->query($query);
+
+        return $rs->fetch_assoc();
+    }
+
+    public function getModalDel($id)
+    {
+        $query = "SELECT id, hoten FROM nguoidung WHERE id = $id;";
+        $rs = $this->conn->query($query);
+
+        return $rs->fetch_assoc();
+    }
+
+
+    public function search($option, $keyword)
+    {
+
+        // $query = "SELECT *
+        // FROM nguoidung 
+        // WHERE quyen_id = 2 AND $option LIKE '%$keyword%'
+        // ORDER BY id DESC";
+
+        $query = "SELECT *
+            FROM nguoidung 
+            WHERE quyen_id = 2";
+
+        if ($option != "" && $keyword != "") {
+            $query .= " AND $option LIKE '%$keyword%'";
+        }
+        // else {
+
+        // }
+        $query .= " ORDER BY id DESC;";
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return $data;
+    }
     public function addUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi)
     {
         // Kiểm tra trùng email
@@ -148,5 +192,105 @@ class UserListModel extends Model
                 'message' => 'Thông tin người dùng đã được xóa.'
             ];
         }
+    }
+
+    function getUniqueFileName($fileName)
+    {
+        $baseName = pathinfo($fileName, PATHINFO_FILENAME);
+        $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+
+        $timestamp = date('Ymd_His'); // Thêm timestamp vào tên tệp
+
+        $counter = 1;
+        $uniqueFileName = $baseName . '_' . $timestamp . '.' . $extension;
+
+        return  $uniqueFileName;
+    }
+
+    public function exportExcel()
+    {
+        $query = "SELECT *
+        FROM nguoidung 
+        WHERE quyen_id = 2";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_all(MYSQLI_ASSOC);
+
+
+        // Tạo một đối tượng PHPExcel và cấu hình tệp Excel
+        $objPHPExcel = new PHPExcel();
+        $objPHPExcel->getProperties()->setTitle("Exported Users");
+
+        //Thêm dữ liệu từ cơ sở dữ liệu vào tệp Excel
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'ID');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'Họ tên');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'Email');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Địa chỉ');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Số điện thoại');
+
+        $row = 2;
+        foreach ($data as $user) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $row, $user['id']);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $row, $user['hoten']);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $row, $user['email']);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $row, $user['diachi']);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $row, $user['sodienthoai']);
+            $row++;
+        }
+
+        // // Lưu tệp Excel vào thư mục "uploads"
+        $filename = 'Danh sách người dùng.xlsx';
+        // $filename = 'C:/Downloads/Danh sách người dùng.xlsx';
+        $uniqueFileName = $this->getUniqueFileName($filename);
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save($uniqueFileName);
+
+        // Trả về URL của tệp Excel trong phản hồi Ajax
+        // return [
+        //     'status' => 'success',
+        //     'fileUrl' => $uniqueFileName
+        // ];
+        return $uniqueFileName;
+        // return $objPHPExcel;
+    }
+    public function importExcel($excelFile)
+    {
+
+        try {
+            $objPHPExcel = PHPExcel_IOFactory::load($excelFile);
+            $sheet = $objPHPExcel->getActiveSheet();
+            $highestRow = $sheet->getHighestRow();
+
+            $sql = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi, quyen_id) VALUES ";
+            // $sql = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi, quyen_id) VALUES ('hoten', 'email', '123', 'id', 'ádds', 'diachi', '2')";
+
+            for ($row = 2; $row <= $highestRow; $row++) {
+                $id = $sheet->getCell('A' . $row)->getValue();
+                $hoten = $sheet->getCell('B' . $row)->getValue();
+                $email = $sheet->getCell('C' . $row)->getValue();
+                $diachi = $sheet->getCell('D' . $row)->getValue();
+
+                // Thực hiện truy vấn để lưu dữ liệu vào cơ sở dữ liệu
+                $sql .= "('$hoten', '$email', '123', '$id', 'ádds', '$diachi', '2'), ";
+            }
+
+            $sql = rtrim($sql, ', ');
+
+            // Thực hiện truy vấn INSERT
+            $result = $this->conn->query($sql);
+
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'message' => 'Import thành công',
+                ];
+            }
+        } catch (Exception $e) {
+            $response = [
+                'status' => 'error',
+                'message' => 'Import that bai1 ',
+            ];
+        }
+        return $response;
     }
 }
