@@ -7,30 +7,35 @@ if ($_SESSION['quyen'] != 1) {
 <div class="container-fluid px-4">
     <h1 class="mt-4">Danh sách người dùng</h1>
     <div class="card mb-4">
-        <div class="card-header">
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
-                Thêm mới
-            </button>
-            <form id="search-form">
-                <select id="filterSelect" class="form-select" aria-label="Default select example">
-                    <option value="">Tất cả</option>
-                    <option value="hoten">Họ tên</option>
-                    <option value="email">Email</option>
-                    <option value="sodienthoai">Số điện thoại</option>
-                    <option value="diachi">Địa chỉ</option>
-                    <option value="taikhoan">Tài khoản</option>
-                </select>
-                <div class="mb-3">
-                    <input id="datatable-input" type="text" class="form-control" placeholder="Search..." aria-label="Search..." aria-describedby="button-addon2">
-                    <button class="btn btn-success" type="submit" id="button-search">Button</button>
+        <div class="card-header d-flex flex-column">
+            <div class="flex-column col-6">
+                <div class="input-group mb-3">
+                    <div class="col-4">
+                        <select id="filterSelect" class="form-select col" aria-label="Default select example">
+                            <option value="">Tất cả</option>
+                            <option value="hoten">Họ tên</option>
+                            <option value="email">Email</option>
+                            <option value="sodienthoai">Số điện thoại</option>
+                            <option value="diachi">Địa chỉ</option>
+                            <option value="taikhoan">Tài khoản</option>
+                        </select>
+
+                    </div>
+                    <input id="datatable-input" type="text" class="form-control col-16" placeholder="Search name, email..." aria-label="Search..." aria-describedby="button-addon2">
+                    <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
                 </div>
-            </form>
-            <button class="btn btn-success" id="btn-export">
-                Export
-            </button>
-            <button class="btn btn-success" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
-                import
-            </button>
+            </div>
+            <div>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                    Thêm mới
+                </button>
+                <button class="btn btn-success" id="btn-export">
+                    Export
+                </button>
+                <button class="btn btn-success" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
+                    import
+                </button>
+            </div>
         </div>
         <div class="card-body">
             <table id="datatablesSimple">
@@ -42,7 +47,7 @@ if ($_SESSION['quyen'] != 1) {
                         <th>Số điện thoại</th>
                         <th>Địa chỉ</th>
                         <th>Tài khoản</th>
-                        <th>Mật khẩu</th>
+                        <!-- <th>Mật khẩu</th> -->
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -435,7 +440,7 @@ if ($_SESSION['quyen'] != 1) {
                             e.sodienthoai,
                             e.taikhoan,
                             e.diachi,
-                            e.matkhau,
+                            // e.matkhau,
                             function() {
                                 return (
                                     `
@@ -462,8 +467,6 @@ if ($_SESSION['quyen'] != 1) {
                 url: "<?php echo BASE_URL; ?>/userlist/getData",
                 method: "GET",
                 success: function(response) {
-                    // console.log(response);
-                    // console.log(response, 1122);
                     let userTable = '';
                     response.forEach((e, index) => {
                         table.row.add([
@@ -473,7 +476,7 @@ if ($_SESSION['quyen'] != 1) {
                             e.sodienthoai,
                             e.taikhoan,
                             e.diachi,
-                            e.matkhau,
+                            // e.matkhau,
                             function() {
                                 return (
                                     `
@@ -505,7 +508,6 @@ if ($_SESSION['quyen'] != 1) {
                 },
                 dataType: 'json',
                 success: function(response) {
-                    // console.log(response, 123);
                     $('#hotenUpdate').val(response.hoten);
                     $('#emailUpdate').val(response.email);
                     $('#diachiUpdate').val(response.diachi);
@@ -527,7 +529,6 @@ if ($_SESSION['quyen'] != 1) {
                 },
                 dataType: 'json',
                 success: function(response) {
-                    // console.log(response, 123);
                     $('#idDel').val(response.id)
                     $('#hotenDel').text(response.hoten)
 

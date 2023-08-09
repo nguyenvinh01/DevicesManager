@@ -57,11 +57,6 @@ class UserListModel extends Model
     public function search($option, $keyword)
     {
 
-        // $query = "SELECT *
-        // FROM nguoidung 
-        // WHERE quyen_id = 2 AND $option LIKE '%$keyword%'
-        // ORDER BY id DESC";
-
         $query = "SELECT *
             FROM nguoidung 
             WHERE quyen_id = 2";
@@ -186,7 +181,6 @@ class UserListModel extends Model
         } else {
             $query = "DELETE FROM nguoidung WHERE `id`='{$id}'";
             $this->conn->query($query);
-            // header("Location: ../userlist?msg=1");
             return [
                 'status' => 'success',
                 'message' => 'Thông tin người dùng đã được xóa.'

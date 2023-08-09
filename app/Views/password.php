@@ -50,12 +50,7 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
-                        console.log('qqqq');
-
-                        toastr.success(response.message);
-                        // var modalElement = document.getElementById('exampleModal');
-                        // var modal = bootstrap.Modal.getInstance(modalElement);
-                        // modal.hide();
+                        window.location.href = response.redirect;
                     } else {
                         toastr.error(response.message);
                     }

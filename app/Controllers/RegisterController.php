@@ -11,12 +11,10 @@ class RegisterController extends Controller
 
     public function Show()
     {
-        // require_once('./app/Views/register.php');
         $this->view("Views/register", []);
     }
     public function registerUser()
     {
-        // if (isset($_POST['register'])) {
         $hoten = $_POST['hoten'];
         $email  = $_POST['email'];
         $sodienthoai  = $_POST['sodienthoai'];
@@ -27,6 +25,5 @@ class RegisterController extends Controller
         $response = $this->register->Register($hoten, $email, $sodienthoai, $diachi, $taikhoan, $matkhau);
         header('Content-Type: application/json');
         echo json_encode($response);
-        // }
     }
 }

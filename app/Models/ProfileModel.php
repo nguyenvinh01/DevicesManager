@@ -29,14 +29,20 @@ class ProfileModel extends Model
         $query = "SELECT matkhau FROM nguoidung WHERE `id` = $id;";
         $rs = $this->conn->query($query);
         $data = $rs->fetch_assoc();
-        if ($data['matkhau'] == $currentPass) {
-            $sql = "UPDATE nguoidung set matkhau =$newPass WHERE `id` = $id;";
+        $checkPassword = password_verify($currentPass, $data['matkhau']);
+        $hashPassword = $this->hashPassword($newPass);
+
+        if ($checkPassword) {
+            $sql = "UPDATE nguoidung set matkhau = '$hashPassword' WHERE `id` = $id;";
             $this->conn->query($sql);
             unset($_SESSION['taikhoanadmin']);
             session_destroy();
-            header("Location: " . BASE_URL . "\login");
+            return [
+                'status' => 'success',
+                'redirect' => BASE_URL . '/login'
+            ];
         } else {
-            // header("Location: " . BASE_URL . "\dashboard");
+            //     // header("Location: " . BASE_URL . "\dashboard");
             return [
                 'status' => 'error',
                 'message' => 'Mật khẩu ban đầu không đúng.'

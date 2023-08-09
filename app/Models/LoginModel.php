@@ -11,7 +11,6 @@ class LoginModel extends Model
         $result = $this->conn->query($query);
         $num_rows = mysqli_num_rows($result);
         if ($num_rows == 0) {
-            // header("Location: login");
             return [
                 'status' => 'error',
                 'message' => 'Tài khoản không tồn tại',
@@ -19,21 +18,17 @@ class LoginModel extends Model
         } else {
 
             $row = mysqli_fetch_array($result);
-            if ($matkhau != $row['matkhau']) {
-                // header("Location: login.php?fail=1");
-                // header("Location: " . BASE_URL . "/login");
+            $checkPassword = password_verify($matkhau, $row['matkhau']);
+            if (!$checkPassword) {
                 return [
                     'status' => 'error',
                     'message' => 'Mật khẩu không đúng',
                 ];
             } else {
-                // header("Location: ./index.php");
-                // header("Location: ../dashboard");
                 $_SESSION['taikhoanadmin'] = $taikhoan;
                 $_SESSION['id'] = $row['id'];
                 $_SESSION['tenhienthi'] = $row['hoten'];
                 $_SESSION['quyen'] = $row['quyen_id'];
-
                 return [
                     'status' => 'success',
                     'message' => 'Đăng nhập thành công',
