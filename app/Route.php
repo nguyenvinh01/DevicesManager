@@ -5,7 +5,7 @@ class Route
     protected $controller;
     protected $action = "Show";
     protected $params = [];
-
+    protected $role;
     public function __construct()
     {
         $arr = $this->UrlProcess();
@@ -14,10 +14,25 @@ class Route
         if ($arr) {
             // Lấy controller từ đường dẫn URL
             $this->controller = ucfirst($arr[0]) . "Controller";
+
+            $authActions = ['register', 'login', 'logout'];
+            if (in_array($arr[0], $authActions)) {
+                $this->role = "Auth/";
+            } else {
+                if ($_SESSION['quyen'] == 1) {
+                    $this->role = "Admin/";
+                } else if ($_SESSION['quyen'] == 2) {
+                    $this->role = "User/";
+                } else if ($_SESSION['quyen'] == 3) {
+                    $this->role = "Staff/";
+                }
+            }
+            if (isset($_SESSION['taikhoanadmin'])) {
+            }
+            $controllerFile = "./app/Controllers/" . $this->role . $this->controller . ".php";
             unset($arr[0]);
 
             // Kiểm tra file controller có tồn tại hay không
-            $controllerFile = "./app/Controllers/" . $this->controller . ".php";
             if (file_exists($controllerFile)) {
                 require_once $controllerFile;
 

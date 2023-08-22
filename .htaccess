@@ -1,10 +1,12 @@
 RewriteEngine On
 
-RewriteBase /devicesmanager/
+RewriteBase /quanlithietbi/
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-l
 
 RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
+RewriteRule ^logout$ ./app/Controllers/Auth/LogoutController.php
+
 

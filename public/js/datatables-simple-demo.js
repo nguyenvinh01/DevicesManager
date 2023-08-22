@@ -3,7 +3,12 @@ window.addEventListener('DOMContentLoaded', event => {
     // https://github.com/fiduswriter/Simple-DataTables/wiki
 
     const datatablesSimple = document.getElementById('datatablesSimple');
-    if (datatablesSimple) {
+    if (!datatablesSimple) {
         new simpleDatatables.DataTable(datatablesSimple);
     }
+    // var table = $("#datatablesSimple").DataTable({
+    //     buttons: ['csv', 'excel', 'pdf']
+
+    // })
+    // table.buttons().container()
 });
