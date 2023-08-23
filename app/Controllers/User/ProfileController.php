@@ -1,6 +1,6 @@
 <?php
 
-require_once('./app/Models/ProfileModel.php');
+require_once('./app/Models/User/ProfileModel.php');
 require_once('./app/core/Controller.php');
 
 class ProfileController extends Controller
@@ -15,12 +15,12 @@ class ProfileController extends Controller
     {
         $id = $_SESSION['id'];
         $dataProfile = $this->profile->getProfile($id);
-        $this->view('index', ["page" => "profile", "dataProfile" => $dataProfile]);
+        $this->view('index', ["page" => "user/profile", "dataProfile" => $dataProfile]);
         // $this->view('index', ["page" => "password"]);
     }
     public function password()
     {
-        $this->view('index', ["page" => "password"]);
+        $this->view('index', ["page" => "user/password"]);
     }
     public function changePass()
     {

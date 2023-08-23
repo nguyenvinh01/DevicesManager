@@ -114,12 +114,8 @@ if (isset($_SESSION['taikhoanadmin'])) {
             var isRegister = sessionStorage.getItem('register');
 
             if (isRegister) {
-                // Xóa trạng thái đăng nhập từ sessionStorage
-                // sessionStorage.removeItem('register');
-
-                // Hiển thị thông báo thành công bằng Toastr
-                console.log(1232212);
                 toastr.success('Đăng ký thành công');
+                sessionStorage.clear();
             }
         })
     </script>

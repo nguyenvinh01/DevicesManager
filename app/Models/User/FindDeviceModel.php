@@ -28,10 +28,10 @@ class FindDeviceModel extends Model
         return $data;
     }
 
-    function borrowDevice($idtb, $ngaymuon, $ngaytra)
+    function borrowDevice($idtb, $ngaymuon, $ngaytra, $toanha, $phong)
     {
-        $query = "INSERT INTO muon (thietbi_id, ngaymuon, ngaytra, nguoidung_id, trangthai) 
-            VALUES ( '{$idtb}', '{$ngaymuon}', '{$ngaytra}', '{$_SESSION["id"]}', 'Chờ phê duyệt') ";
+        $query = "INSERT INTO muon (thietbi_id, ngaymuon, ngaytra, nguoidung_id, diadiem, trangthai) 
+            VALUES ( '{$idtb}', '{$ngaymuon}', '{$ngaytra}', '{$_SESSION["id"]}', '{$toanha}-{$phong}' , 'Chờ phê duyệt');";
         $result = $this->conn->query($query);
         if ($result) {
             $update = "UPDATE `thietbi` 
@@ -53,7 +53,17 @@ class FindDeviceModel extends Model
     }
     function getLocation()
     {
-        $query = "SELECT * FROM diadiem";
+        $query = "SELECT DISTINCT toanha FROM diadiem";
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return $data;
+    }
+    function getRoom($toanha)
+    {
+        $query = "SELECT phong FROM diadiem WHERE diadiem.toanha = '{$toanha}'";
         $rs = $this->conn->query($query);
         $data = array();
         while ($row = $rs->fetch_assoc()) {

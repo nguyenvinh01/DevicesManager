@@ -9,33 +9,35 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class UserListModel extends Model
 {
-    public function getUserList()
+    public function getUserList($option, $keyword, $page, $role)
     {
+        $offset = $page * 10;
         $query = "SELECT *
             FROM nguoidung 
-            WHERE quyen_id = 2
-            ORDER BY id DESC";
+            WHERE quyen_id <> 1";
+        if ($role != 0) {
+            $query .= " AND quyen_id = $role";
+        }
+
+        if ($option != '' && $keyword != '') {
+            $query .= " AND $option LIKE '%$keyword%'";
+        }
+        $queryCount = $query;
+        $query .= " LIMIT 10 OFFSET $offset;";
+
         $rs = $this->conn->query($query);
+        $rsCount = $this->conn->query($queryCount);
         $data = array();
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        // return $data;
+        return [
+            'data' => $data,
+            'count' => count($rsCount->fetch_all())
+        ];
     }
 
-    public function getData()
-    {
-        $query = "SELECT *
-            FROM nguoidung 
-            WHERE quyen_id = 2
-            ORDER BY id DESC";
-        $rs = $this->conn->query($query);
-        $data = array();
-        while ($row = $rs->fetch_assoc()) {
-            $data[] = $row;
-        }
-        return $data;
-    }
 
     public function getModalEdit($id)
     {
@@ -53,28 +55,6 @@ class UserListModel extends Model
         return $rs->fetch_assoc();
     }
 
-
-    public function search($option, $keyword)
-    {
-
-        $query = "SELECT *
-            FROM nguoidung 
-            WHERE quyen_id = 2";
-
-        if ($option != "" && $keyword != "") {
-            $query .= " AND $option LIKE '%$keyword%'";
-        }
-        // else {
-
-        // }
-        $query .= " ORDER BY id DESC;";
-        $rs = $this->conn->query($query);
-        $data = array();
-        while ($row = $rs->fetch_assoc()) {
-            $data[] = $row;
-        }
-        return $data;
-    }
     public function addUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi)
     {
         // Kiểm tra trùng email

@@ -12415,3 +12415,8 @@ body {
   margin-left: 0;
   margin-right: 0;
 }
+
+.toast {
+  z-index: 99999;
+  /* Adjust this value as needed */
+}

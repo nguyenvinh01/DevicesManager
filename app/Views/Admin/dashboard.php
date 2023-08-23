@@ -81,6 +81,17 @@
         data: data,
         options: options
     });
+    $(document).ready(function() {
+
+        var isLoggedIn = sessionStorage.getItem('isLoggedIn');
+        console.log('login');
+        if (isLoggedIn) {
+            // Xóa trạng thái đăng nhập từ sessionStorage
+            sessionStorage.removeItem('isLoggedIn');
+            // Hiển thị thông báo thành công bằng Toastr
+            toastr.success('Đăng nhập thành công');
+        }
+    });
 </script>
 <!-- <script>
     CKEDITOR.replace("editor");

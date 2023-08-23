@@ -42,7 +42,7 @@ require_once './app/config/constant.php';
                         Quản lý sự cố
                     </a>
                 <?php
-                } else {
+                } else if ($_SESSION['quyen'] == 2) {
                 ?>
                     <a class="nav-link" href="<?php echo BASE_URL; ?>/finddevice">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
@@ -59,6 +59,17 @@ require_once './app/config/constant.php';
                     <a class="nav-link" href="<?php echo BASE_URL; ?>/repair">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Gửi yêu cầu sửa chữa
+                    </a>
+                <?php
+                } else {
+                ?>
+                    <a class="nav-link" href="<?php echo BASE_URL; ?>/finddevice">
+                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                        Quản lý sửa chữa
+                    </a>
+                    <a class="nav-link" href="<?php echo BASE_URL; ?>/borrowhistory">
+                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                        Lịch sử mượn trả
                     </a>
                 <?php
                 }

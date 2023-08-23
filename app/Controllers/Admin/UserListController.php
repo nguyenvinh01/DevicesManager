@@ -14,8 +14,7 @@ class UserListController extends Controller
 
     public function Show()
     {
-        $listUser = $this->userList->getUserList();
-        $this->view('index', ["listuser" => $listUser, "page" => "admin/userlist"]);
+        $this->view('index', ["page" => "admin/userlist"]);
     }
 
     public function getModalEdit()
@@ -36,24 +35,17 @@ class UserListController extends Controller
         echo json_encode($response);
     }
 
-
-    public function search()
+    public function getUserList()
     {
         $option = $_GET["option"];
         $keyword = $_GET["keyword"];
-        $response = $this->userList->search($option, $keyword);
+        $page = $_GET["page"];
+        $role = $_GET["role"];
+        $response = $this->userList->getUserList($option, $keyword, $page, $role);
         header('Content-Type: application/json');
         echo json_encode($response);
     }
 
-    public function getData()
-    {
-        $response = $this->userList->getData();
-        // $this->view(["listuser" => $listUser]);
-        // $this->view('index', ["listuser" => $listUser, "page" => "userlist"]);
-        header('Content-Type: application/json');
-        echo json_encode($response);
-    }
     public function addUser()
     {
         $hoten = $_POST['hoten'];
@@ -122,9 +114,5 @@ class UserListController extends Controller
             header('Content-Type: application/json');
             echo json_encode($response);
         }
-
-        // Trả về kết quả dưới dạng JSON
-        // header('Content-Type: application/json');
-        // echo json_encode($response);
     }
 }

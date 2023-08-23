@@ -11,19 +11,14 @@ if ($_SESSION['quyen'] != 1) {
         <div class="card-header">
             <div class="flex-column col-6">
                 <div class="input-group mb-3">
-                    <div class="col-4">
+                    <input id="datatable-input" type="text" class="form-control col-16" placeholder="Search name, email..." aria-label="Search..." aria-describedby="button-addon2">
+                    <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
+                    <div class="col-4 mx-3">
                         <select id="filterSelect" class="form-select col" aria-label="Default select example">
                             <option value="">Tất cả</option>
-                            <option value="hoten">Họ tên</option>
-                            <option value="email">Email</option>
-                            <option value="sodienthoai">Số điện thoại</option>
-                            <option value="diachi">Địa chỉ</option>
-                            <option value="taikhoan">Tài khoản</option>
                         </select>
 
                     </div>
-                    <input id="datatable-input" type="text" class="form-control col-16" placeholder="Search name, email..." aria-label="Search..." aria-describedby="button-addon2">
-                    <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
                 </div>
             </div>
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">

@@ -8,33 +8,43 @@ if ($_SESSION['quyen'] != 1) {
     <h1 class="mt-4">Danh sách người dùng</h1>
     <div class="card mb-4">
         <div class="card-header d-flex flex-column">
-            <div class="flex-column col-6">
+            <div class="flex-column col-8">
                 <div class="input-group mb-3">
-                    <div class="col-4">
+                    <div class="col-2">
                         <select id="filterSelect" class="form-select col" aria-label="Default select example">
                             <option value="">Tất cả</option>
                             <option value="hoten">Họ tên</option>
                             <option value="email">Email</option>
                             <option value="sodienthoai">Số điện thoại</option>
-                            <option value="diachi">Địa chỉ</option>
                             <option value="taikhoan">Tài khoản</option>
+                            <option value="diachi">Địa chỉ</option>
                         </select>
 
                     </div>
+
                     <input id="datatable-input" type="text" class="form-control col-16" placeholder="Search name, email..." aria-label="Search..." aria-describedby="button-addon2">
                     <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
+                    <div class="col-3 mx-3">
+                        <select id="select-role" class="form-select col" aria-label="Default select example">
+                            <option value="" selected disabled hidden>Loại tài khoản</option>
+                            <option value="0">Tất cả</option>
+                            <!-- <option value="1">Admin</option> -->
+                            <option value="2">Người dùng</option>
+                            <option value="3">Nhân viên</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                     Thêm mới
                 </button>
-                <button class="btn btn-success" id="btn-export">
+                <!-- <button class="btn btn-success" id="btn-export">
                     Export
                 </button>
                 <button class="btn btn-success" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
                     import
-                </button>
+                </button> -->
             </div>
         </div>
         <div class="card-body">
@@ -45,8 +55,8 @@ if ($_SESSION['quyen'] != 1) {
                         <th>Họ tên</th>
                         <th>Email</th>
                         <th>Số điện thoại</th>
-                        <th>Địa chỉ</th>
                         <th>Tài khoản</th>
+                        <th>Địa chỉ</th>
                         <!-- <th>Mật khẩu</th> -->
                         <th>Thao tác</th>
                     </tr>
@@ -54,6 +64,10 @@ if ($_SESSION['quyen'] != 1) {
                 <tbody id="user-table">
                 </tbody>
             </table>
+            <ul class="pagination justify-content-end mt-3" id="pagination">
+
+            </ul>
+
 
             <!--Dele-->
             <div class="modal fade" id="exampleModalDel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -215,10 +229,6 @@ if ($_SESSION['quyen'] != 1) {
 
 <script>
     $(document).ready(function() {
-        // let table = new DataTable('#datatablesSimple', {
-        //     searching: false
-        // });
-        getData();
         toastr.options = {
             closeButton: true,
             progressBar: true,
@@ -227,21 +237,24 @@ if ($_SESSION['quyen'] != 1) {
             showMethod: 'fadeIn',
             hideMethod: 'fadeOut',
         };
-        $('#editUser').submit(function(e) {
-            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-            // Gửi yêu cầu Ajax
-            var formData = $(this).serialize();
-            // var id = $(this).serialize().split(/[=,&]/)[1];
+        let prevOptionSearch = '';
+        let prevKeywordSearch = '';
+        let prevPage = 0;
+        let prevRoleSearch = 0;
+        getUserList()
 
-            // console.log(formData, 11, id);
+        $('#editUser').submit(function(e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/userlist/editUser", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/userlist/editUser",
                 method: 'POST',
-                data: formData, // Dữ liệu gửi đi từ form
+                data: formData,
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
-                        // Hiển thị thông báo thành công
+
                         toastr.success(response.message);
                         var modalElement = document.getElementById(`exampleModalEdit`);
                         var modal = bootstrap.Modal.getInstance(modalElement);
@@ -252,7 +265,6 @@ if ($_SESSION['quyen'] != 1) {
                     }
                 },
                 error: function(xhr, status, error) {
-                    // Xử lý lỗi khi gửi yêu cầu Ajax
                     console.error(error);
                 }
             });
@@ -273,7 +285,6 @@ if ($_SESSION['quyen'] != 1) {
                 success: function(response) {
                     console.log(response, 112);
                     if (response.status == 'success') {
-                        // Xử lý kết quả thành công
                         toastr.success(response.message);
                         var modalElement = document.getElementById(`exampleModalImport`);
                         var modal = bootstrap.Modal.getInstance(modalElement);
@@ -290,120 +301,80 @@ if ($_SESSION['quyen'] != 1) {
                 }
             });
         });
-        // $('#btn-export').click((e) => {
-        //     // e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-        //     $.ajax({
-        //         url: "<?php echo BASE_URL; ?>/userlist/exportExcel",
-        //         method: "POST",
-        //         success: function(response) {
-        //             if (response.status == 'success') {
-        //                 saveAs(data, filename);
-        //                 toastr.success(response.message);
-
-        //                 console.log(response.fileUrl);
-        //             } else {
-        //                 console.log("error");
-        //             }
-        //         },
-        //         error: function() {
-        //             // alert('Export failed.');
-        //         }
-        //     })
-        // })
         $('#btn-export').click(function(e) {
-            // console.log(123);
-            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            e.preventDefault();
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/userlist/exportExcel",
                 method: "POST",
                 success: function(response) {
                     console.log(response, 'response');
                     // if (response === 'success') {
-                    // Tạo một yêu cầu AJAX mới để tải tệp Excel từ URL đã trả về
                     $.ajax({
-                        url: response, // URL của tệp Excel
+                        url: response,
                         method: 'GET',
                         xhrFields: {
-                            responseType: 'blob' // Dữ liệu trả về dạng blob
+                            responseType: 'blob'
                         },
                         success: function(data) {
                             console.log(data, 'data');
-                            // Sử dụng thư viện FileSaver.js để tạo tệp và lưu vào máy tính người dùng
                             saveAs(data, response);
                         },
                         error: function(xhr, status, error) {
                             console.log(error, 'loi');
-                            // Xử lý lỗi
                         }
                     });
                     // } else {
                     //     console.log(response.message);
-                    //     // Xử lý lỗi khi exportExcel() không thành công
                     // }
                 },
-                error: function() {
-                    // alert('Export failed.');
-                    console.log(12333);
-                }
+                error: function() {}
             });
         });
         $('#addUser').submit(function(e) {
-            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-
-            // Gửi yêu cầu Ajax
+            e.preventDefault();
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/userlist/addUser", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/userlist/addUser",
                 method: 'POST',
                 data: $('#addUser').serialize(),
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
-                        // Hiển thị thông báo thành công
                         toastr.success(response.message);
                         var modalElement = document.getElementById('exampleModalAdd');
                         var modal = bootstrap.Modal.getInstance(modalElement);
                         modal.hide();
                     } else {
-                        // Hiển thị thông báo lỗi
                         toastr.error(response.message);
-
                     }
                 },
                 error: function(xhr, status, error) {
-                    // Xử lý lỗi khi gửi yêu cầu Ajax
                     console.error(error);
                 }
             });
         });
 
         $('#delUser').submit(function(e) {
-            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-            // Gửi yêu cầu Ajax
+            e.preventDefault();
             console.log($('.delUser').serialize());
             var formData = $(this).serialize();
             var id = formData.split('=')[1];
 
             console.log(1111, formData);
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/userlist/deleteUser", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/userlist/deleteUser",
                 method: 'POST',
-                data: formData, // Dữ liệu gửi đi từ form
-                dataType: 'json',
+                data: formData,
                 success: function(response) {
                     if (response.status == "success") {
-                        // Hiển thị thông báo thành công
                         toastr.success(response.message);
                         var modalElement = document.getElementById(`exampleModalDel`);
                         var modal = bootstrap.Modal.getInstance(modalElement);
                         modal.hide();
                     } else {
-                        // Hiển thị thông báo lỗi
                         toastr.error(response.message);
-
                     }
                 },
                 error: function(error) {
-                    // Xử lý lỗi khi gửi yêu cầu Ajax
                     console.error(error);
                 }
             });
@@ -414,90 +385,47 @@ if ($_SESSION['quyen'] != 1) {
             console.log('search');
             var option = $('#filterSelect').val();
             var keyword = $('#datatable-input').val();
+            var role = $('#select-role').val();
+            console.log(role, 'role', option);
             const data = {
                 option: option,
                 keyword: keyword
             }
-            var url = "<?php echo BASE_URL; ?>/userlist/search?option=" + option + "&keyword=" + encodeURIComponent(keyword);
-            console.log(option, keyword, data, url, 123);
-            $.ajax({
-                url: "<?php echo BASE_URL; ?>/userlist/search?option=" + option + "&keyword=" + encodeURIComponent(keyword),
-                method: "GET",
-                // data: {
-                //     option: option,
-                //     keyword: keyword
-                // },
-                dataType: 'json',
-                success: function(response) {
-                    console.log(response);
-                    console.log(response, 1122);
-                    table.clear();
-                    response.forEach((e, index) => {
-                        table.row.add([
-                            index + 1,
-                            e.hoten,
-                            e.email,
-                            e.sodienthoai,
-                            e.taikhoan,
-                            e.diachi,
-                            // e.matkhau,
-                            function() {
-                                return (
-                                    `
-                                    <td style="width : 130px !important">
-                                        <button type="button" class="btn btn-primary modal-Edit"  data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#exampleModalEdit">
-                                            Sửa
-                                        </button>
-                                        <button type="button" class="btn btn-danger modal-Del" data-bs-toggle="modal" data-bs-target="#exampleModalDel"  data-id="${e.id}">
-                                            Xóa
-                                        </button>
-                                    </td>
-                                    `
-                                )
-                            },
-                        ])
-                    })
-                    table.draw();
-                }
-            })
+            if (option != prevOptionSearch || keyword != prevKeywordSearch) {
+                prevKeywordSearch = keyword;
+                prevOptionSearch = option;
+            }
+            getUserList(option, keyword, prevPage, role)
         })
 
-        function getData() {
-            $.ajax({
-                url: "<?php echo BASE_URL; ?>/userlist/getData",
-                method: "GET",
-                success: function(response) {
-                    let userTable = '';
-                    response.forEach((e, index) => {
-                        table.row.add([
-                            index + 1,
-                            e.hoten,
-                            e.email,
-                            e.sodienthoai,
-                            e.taikhoan,
-                            e.diachi,
-                            // e.matkhau,
-                            function() {
-                                return (
-                                    `
-                                    <td style="width : 130px !important">
-                                        <button type="button" class="btn btn-primary modal-Edit"  data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#exampleModalEdit">
-                                            Sửa
-                                        </button>
-                                        <button type="button" class="btn btn-danger modal-Del" data-bs-toggle="modal" data-bs-target="#exampleModalDel"  data-id="${e.id}">
-                                            Xóa
-                                        </button>
-                                    </td>
-                                `
-                                )
-                            },
-                        ])
-                    })
-                    table.draw();
+        $('#select-role').change(function() {
+            var role = $(this).val();
+            console.log(role, 123);
+            getUserList(prevOptionSearch, prevKeywordSearch, prevPage, role)
+        });
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            var clickedPage = $(this).data('page');
+            console.log('page');
+            if (clickedPage === 'previous') {
+                if (prevPage > 0) {
+                    console.log("Clicked Page: " + prevPage);
+                    getUserList(prevOptionSearch, prevKeywordSearch, prevPage - 1, prevRoleSearch)
+                    prevPage = prevPage - 1;
                 }
-            })
-        }
+            } else if (clickedPage === 'next') {
+                if (prevPage >= 0) {
+                    console.log("Clicked Page: " + prevPage);
+                    getUserList(prevOptionSearch, prevKeywordSearch, prevPage + 1, prevRoleSearch)
+                    prevPage = prevPage + 1;
+                }
+            } else {
 
+                getUserList(prevOptionSearch, prevKeywordSearch, clickedPage, prevRoleSearch)
+                prevPage = clickedPage;
+                console.log("Clicked Page: " + prevPage);
+            }
+        });
         $(document).on('click', '.modal-Edit', function() {
             var id = $(this).data('id');
             $.ajax({
@@ -531,11 +459,72 @@ if ($_SESSION['quyen'] != 1) {
                 success: function(response) {
                     $('#idDel').val(response.id)
                     $('#hotenDel').text(response.hoten)
-
                 }
             })
-
         });
+
+        function getUserList(option = '', keyword = '', page = 0, role = '') {
+            $.ajax({
+                url: `<?php echo BASE_URL; ?>/userlist/getUserList?option=${option}&keyword=${keyword}&page=${page}&role=${role}`,
+                method: "GET",
+                success: function(response) {
+                    console.log(response, 'res');
+                    let userTable = '';
+                    table.clear();
+                    response.data.forEach((e, index) => {
+                        table.row.add([
+                            index + 1,
+                            e.hoten,
+                            e.email,
+                            e.sodienthoai,
+                            e.taikhoan,
+                            e.diachi,
+                            // e.matkhau,
+                            function() {
+                                return (
+                                    `
+                                    <td style="width : 130px !important">
+                                        <button type="button" class="btn btn-primary modal-Edit"  data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#exampleModalEdit">
+                                            Sửa
+                                        </button>
+                                        <button type="button" class="btn btn-danger modal-Del" data-bs-toggle="modal" data-bs-target="#exampleModalDel"  data-id="${e.id}">
+                                            Xóa
+                                        </button>
+                                    </td>
+                                `
+                                )
+                            },
+                        ])
+                    })
+                    table.draw();
+                    let pagination = ""
+                    if (prevPage == 0) {
+                        pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                    } else {
+                        pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                    }
+                    let itemPerPage = 10;
+                    for (let i = 0; i < (response.count / itemPerPage); i++) {
+                        if (i == prevPage) {
+                            pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+
+                        } else {
+                            pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+
+                        }
+                    }
+                    if (prevPage == Math.floor((response.count / itemPerPage))) {
+                        console.log(response.count / itemPerPage, 'dis');
+                        pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                    } else {
+                        console.log(response.count / itemPerPage);
+
+                        pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                    }
+                    $('#pagination').html(pagination)
+                }
+            })
+        }
     })
 </script>
 

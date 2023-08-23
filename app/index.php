@@ -45,8 +45,8 @@ require_once './app/config/constant.php';
             </main>
         </div>
     </div>
+    <div id="toast-container" style="z-index: 99999; top: 10px; right: 0px; "></div>
 
-    <div id="toast-container"></div>
     <?php include('./app/config/footer.php') ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -71,12 +71,14 @@ require_once './app/config/constant.php';
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
     <script>
         let table = new DataTable('#datatablesSimple', {
-            searching: false
+            searching: false,
+            bPaginate: false,
+            info: false
         });
         $(document).ready(function() {
 
             var isLoggedIn = sessionStorage.getItem('isLoggedIn');
-
+            console.log('login');
             if (isLoggedIn) {
                 // Xóa trạng thái đăng nhập từ sessionStorage
                 sessionStorage.removeItem('isLoggedIn');

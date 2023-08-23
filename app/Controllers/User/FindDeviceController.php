@@ -24,11 +24,19 @@ class FindDeviceController extends Controller
         $idtb = $_POST['id'];
         $ngaymuon = $_POST['ngaymuon'];
         $ngaytra = $_POST['ngaytra'];
-
-        $response = $this->findDevice->borrowDevice($idtb, $ngaymuon, $ngaytra);
+        $toanha = $_POST['toanha'];
+        $phong = $_POST['phong'];
+        $response = $this->findDevice->borrowDevice($idtb, $ngaymuon, $ngaytra, $toanha, $phong);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }
+    }
+    function getRoom()
+    {
+        $id = $_GET['id'];
+        $response = $this->findDevice->getRoom($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
     // function getLocation() {
     //     $response = $this->findDevice->getLocation();

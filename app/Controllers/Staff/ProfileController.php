@@ -1,6 +1,6 @@
 <?php
 
-require_once('./app/Models/ProfileModel.php');
+require_once('./app/Models/Staff/ProfileModel.php');
 require_once('./app/core/Controller.php');
 
 class ProfileController extends Controller
@@ -15,7 +15,7 @@ class ProfileController extends Controller
     {
         $id = $_SESSION['id'];
         $dataProfile = $this->profile->getProfile($id);
-        $this->view('index', ["page" => "profile", "dataProfile" => $dataProfile]);
+        $this->view('index', ["page" => "staff/profile", "dataProfile" => $dataProfile]);
         // $this->view('index', ["page" => "password"]);
     }
     public function password()

@@ -58,7 +58,34 @@ require_once './app/config/constant.php';
                                             <label for="inputEmail">Tài khoản</label>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputPassword" type="password" placeholder="" name="matkhau" required />
+                                            <!-- <input class="form-control" id="inputPassword" type="password" placeholder="" name="matkhau" required /> -->
+                                            <input type="password" class="form-control needs-validation" id="validationPassword" minlength="8" name="matkhau" placeholder="Mật khẩu" value="" required>
+                                            <div class="progress" style="height: 5px;">
+                                                <div id="progressbar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 10%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                            <small id="passwordHelpBlock" class="form-text text-muted">
+                                                Mật khẩu của bạn phải có độ dài từ 8-20 ký tự, phải chứa các ký tự đặc biệt như "!@#$%&*_?", số, chữ thường và chữ hoa.
+                                            </small>
+
+                                            <div id="feedbackin" class="valid-feedback">
+                                                Strong Password!
+                                            </div>
+                                            <!-- <div id="feedbackin" class="valid-feedback">
+
+                                            </div> -->
+                                            <div id="feedbackirn" class="invalid-feedback">
+                                                <tag id="strengthMessage"></tag>
+                                                <tag id="lengthMessage"></tag>
+                                                <tag id="specialCharMessage"></tag>
+                                                <tag id="upperCaseMessage"></tag>
+                                                <tag id="lowerCaseMessage"></tag>
+                                                <tag id="numberMessage"></tag>
+                                                <!-- <p>Atlead 8 characters</p>
+
+                                                <p>Number, special character</p>
+                                                <p>Caplital Letter and Small letters</p> -->
+                                            </div>
                                             <label for="inputPassword">Mật khẩu</label>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
@@ -117,17 +144,140 @@ require_once './app/config/constant.php';
                             toastr.success(response.message);
                         } else {
                             toastr.error(response.message);
-
                         }
                     },
                     error: function(xhr, status, error) {
-                        // Xử lý lỗi khi gửi yêu cầu Ajax
                         console.error(error);
                     }
                 });
             });
 
         })
+        window.addEventListener('load', function() {
+            var form = document.getElementsByClassName('needs-validation');
+            form.validationPassword.addEventListener('keypress', function(event) {
+
+                var checkx = true;
+                var chr = String.fromCharCode(event.which);
+
+                var matchedCase = new Array();
+                matchedCase.push("[!@#$%&*_?]");
+                matchedCase.push("[A-Z]");
+                matchedCase.push("[0-9]");
+                matchedCase.push("[a-z]");
+
+                for (var i = 0; i < matchedCase.length; i++) {
+                    if (new RegExp(matchedCase[i]).test(chr)) {
+                        checkx = false;
+                    }
+                }
+
+                if (form.validationPassword.value.length >= 20)
+                    checkx = true;
+
+                if (checkx) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+            });
+
+            var matchedCase = new Array();
+            matchedCase.push("[$@$$!%*#?&]");
+            matchedCase.push("[A-Z]");
+            matchedCase.push("[0-9]");
+            matchedCase.push("[a-z]");
+
+
+            form.validationPassword.addEventListener('keyup', function() {
+
+                var messageCase = new Array();
+                messageCase.push(" Special Charector");
+                messageCase.push(" Upper Case");
+                messageCase.push(" Numbers");
+                messageCase.push(" Lower Case");
+
+                var ctr = 0;
+                var rti = "";
+                for (var i = 0; i < matchedCase.length; i++) {
+                    if (new RegExp(matchedCase[i]).test(form.validationPassword.value)) {
+                        if (i == 0) messageCase.splice(messageCase.indexOf(" Special Charector"), 1);
+                        if (i == 1) messageCase.splice(messageCase.indexOf(" Upper Case"), 1);
+                        if (i == 2) messageCase.splice(messageCase.indexOf(" Numbers"), 1);
+                        if (i == 3) messageCase.splice(messageCase.indexOf(" Lower Case"), 1);
+                        ctr++;
+                    }
+                }
+                // $('#specialCharMessage').text(messageCase[0]);
+                // $('#upperCaseMessage').text(messageCase[1]);
+                // $('#numberMessage').text(messageCase[2]);
+                // $('#lowerCaseMessage').text(messageCase[3]);
+                var progressbar = 0;
+                var strength = "";
+                var bClass = "";
+                switch (ctr) {
+                    case 0:
+                    case 1:
+                        strength = "Way too Weak";
+                        progressbar = 15;
+                        bClass = "bg-danger";
+                        break;
+                    case 2:
+                        strength = "Very Weak";
+                        progressbar = 25;
+                        bClass = "bg-danger";
+                        break;
+                    case 3:
+                        strength = "Weak";
+                        progressbar = 34;
+                        bClass = "bg-warning";
+                        break;
+                    case 4:
+                        strength = "Medium";
+                        progressbar = 65;
+                        bClass = "bg-warning";
+                        break;
+                }
+
+                if (strength == "Medium" && form.validationPassword.value.length >= 8) {
+                    strength = "Strong";
+                    bClass = "bg-success";
+                    form.validationPassword.setCustomValidity("");
+                } else {
+                    form.validationPassword.setCustomValidity(strength);
+                }
+
+                var sometext = "";
+
+                if (form.validationPassword.value.length < 8) {
+                    var lengthI = 8 - form.validationPassword.value.length;
+                    sometext += ` ${lengthI} more Characters, `;
+                    // $('#lengthMessage').text(`Thêm ${lengthI} ký tự`)
+                }
+
+                sometext += messageCase;
+                if (sometext) {
+                    sometext = " You Need" + sometext;
+                }
+                console.log(messageCase, 'strength, some text', sometext);
+                // $("#strengthMessage").text(strength); 
+                $("#feedbackin, #feedbackirn").text(strength + sometext);
+                $("#progressbar").removeClass("bg-danger bg-warning bg-success").addClass(bClass);
+                var plength = form.validationPassword.value.length;
+                if (plength > 0) progressbar += ((plength - 0) * 1.75);
+                //console.log("plength: " + plength);
+                var percentage = progressbar + "%";
+                form.validationPassword.parentNode.classList.add('was-validated');
+                //console.log("pacentage: " + percentage);
+                $("#progressbar").width(percentage);
+
+                if (form.validationPassword.checkValidity() === true) {
+                    form.verifyPassword.disabled = false;
+                } else {
+                    form.verifyPassword.disabled = true;
+                }
+            });
+        }, false);
     </script>
 </body>
 

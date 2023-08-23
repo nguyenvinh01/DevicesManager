@@ -27,6 +27,7 @@ if ($_SESSION['quyen'] == 2) {
                         <th>Ảnh</th>
                         <th>Ngày mượn</th>
                         <th>Ngày trả</th>
+                        <th>Địa điểm</th>
                         <th>Tình trạng</th>
                         <th>Thao tác</th>
                     </tr>
@@ -34,7 +35,6 @@ if ($_SESSION['quyen'] == 2) {
                 <tbody>
                     <?php
                     $stt = 1;
-                    // while ($arUser = mysqli_fetch_array($data["dataBorrowDeviceList"], MYSQLI_ASSOC)) {
                     foreach ($data["dataBorrowDeviceList"] as $arUser) {
                         $idModelEdit = "exampleModalEdit" . $arUser["id"];
                     ?>
@@ -45,6 +45,7 @@ if ($_SESSION['quyen'] == 2) {
                             <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/<?php echo $arUser['hinhanh'] ?>"></td>
                             <td><?php echo date("d-m-Y", strtotime($arUser["ngaymuon"])) ?></td>
                             <td><?php echo date("d-m-Y", strtotime($arUser["ngaytra"])) ?></td>
+                            <td><?php echo $arUser["diadiem"] ?> </td>
                             <td><?php echo $arUser["trangthai"] ?> </td>
                             <td>
                                 <?php if ($arUser["trangthai"] != "Đã trả" && $arUser["trangthai"] != "Bị từ chối") { ?>

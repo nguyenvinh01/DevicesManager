@@ -4,11 +4,11 @@ if ($_SESSION['quyen'] == 1) {
 }
 
 ?>
-<?php echo $data['locationList'];
+<?php
+
 foreach ($data['locationList'] as $location) {
-    echo $location['toanha'];
+    // echo $location['id'];
 }
-echo 'rfrferferf';
 ?>
 <div class="container-fluid px-4">
     <h1 class="mt-4">Tra cứu thiết bị</h1>
@@ -117,6 +117,19 @@ echo 'rfrferferf';
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Địa điểm:</label>
+                                        <select id="option-building" class="form-select col" aria-label="Default select example" name="toanha">
+                                            <?php foreach ($data['locationList'] as $location) { ?>
+                                                <option value="<?php echo $location['toanha']; ?>"><?php echo $location['toanha']; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                        <label for="category-film" class="col-form-label">Phòng:</label>
+                                        <select id="option-room" class="form-select col" aria-label="Default select example" name="phong">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
                                         <label for="category-film" class="col-form-label">Ngày mượn:</label>
                                         <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('+2 days')); ?>" id="ngay_muon" name="ngaymuon" required>
                                     </div>
@@ -188,7 +201,32 @@ echo 'rfrferferf';
                 }
             });
         });
+        $('#option-building').on('change', function(e) {
 
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/finddevice/getRoom",
+                method: "GET",
+                data: {
+                    id: e.target.value
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    $('#option-room').empty();
+                    $.each(response, (i, item) => {
+                        $('#option-room').append($('<option>', {
+                            value: item.phong,
+                            text: item.phong
+                        }))
+                        console.log(item);
+                    })
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error('error');
+                }
+            })
+        })
 
     })
 </script>
@@ -196,11 +234,9 @@ echo 'rfrferferf';
     function validateDate() {
         var date1 = new Date(document.getElementById("ngay_muon").value);
         var date2 = new Date(document.getElementById("ngay_tra").value);
-        // Kiểm tra ngày thứ hai phải lớn hơn ngày thứ nhất
         if (date2 <= date1) {
             toastr.error("Ngày trả phải lớn hơn ngày mượn.");
             document.getElementById("ngay_tra").value = "";
-            // Xử lý khi ngày không hợp lệ
         }
     }
     CKEDITOR.replace("editor");
