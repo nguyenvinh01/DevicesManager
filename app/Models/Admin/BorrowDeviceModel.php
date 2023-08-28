@@ -15,7 +15,28 @@ class BorrowDeviceModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
+    }
+    function getDataModal($id)
+    {
+        $query = "SELECT *
+        FROM muon
+        WHERE id = $id
+        ORDER BY id DESC";
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
     }
     function updateBorrowStatus($tinhtrang, $idtb, $id)
     {

@@ -19,7 +19,6 @@ if ($_SESSION['quyen'] != 1) {
                             <option value="taikhoan">Tài khoản</option>
                             <option value="diachi">Địa chỉ</option>
                         </select>
-
                     </div>
 
                     <input id="datatable-input" type="text" class="form-control col-16" placeholder="Search name, email..." aria-label="Search..." aria-describedby="button-addon2">
@@ -43,7 +42,7 @@ if ($_SESSION['quyen'] != 1) {
                     Export
                 </button>
                 <button class="btn btn-success" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
-                    import
+                    Import
                 </button> -->
             </div>
         </div>
@@ -53,8 +52,8 @@ if ($_SESSION['quyen'] != 1) {
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
                         <th>Họ tên</th>
-                        <th>Email</th>
-                        <th>Số điện thoại</th>
+                        <!-- <th>Email</th>
+                        <th>Số điện thoại</th> -->
                         <th>Tài khoản</th>
                         <th>Địa chỉ</th>
                         <!-- <th>Mật khẩu</th> -->
@@ -107,7 +106,7 @@ if ($_SESSION['quyen'] != 1) {
                         <div class="modal-body">
                             <form method="POST" enctype="multipart/form-data" id="editUser">
                                 <input type="hidden" class="form-control" id="idUpdate" name="id" value="">
-                                <div class="col">
+                                <div class="col mb-3">
                                     <div class="row">
                                         <div class="col-6">
                                             <label for="category-film" class="col-form-label">Họ tên:</label>
@@ -123,16 +122,16 @@ if ($_SESSION['quyen'] != 1) {
                                             <label for="category-film" class="col-form-label">Tài khoản:</label>
                                             <input type="text" class="form-control" id="taikhoanUpdate" name="taikhoan" value="" required>
                                         </div>
-                                        <div class="col-6">
+                                        <!-- <div class="col-6">
                                             <label for="category-film" class="col-form-label">Mật khẩu:</label>
                                             <input type="text" class="form-control" id="matkhauUpdate" value="" name="matkhau" required>
-                                        </div>
-                                    </div>
-                                    <div class="row">
+                                        </div> -->
                                         <div class="col-6">
                                             <label for="category-film" class="col-form-label">Số điện thoại:</label>
                                             <input type="text" class="form-control" id="sdtUpdate" value="" name="sdt" required>
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-6">
                                             <label for="category-film" class="col-form-label">Địa chỉ:</label>
                                             <input type="text" class="form-control" id="diachiUpdate" name="diachi" value="" required>
@@ -229,6 +228,7 @@ if ($_SESSION['quyen'] != 1) {
 
 <script>
     $(document).ready(function() {
+        console.log('userlist', table);
         toastr.options = {
             closeButton: true,
             progressBar: true,
@@ -445,7 +445,6 @@ if ($_SESSION['quyen'] != 1) {
                     $('#idUpdate').val(response.id);
                 }
             })
-
         });
         $(document).on('click', '.modal-Del', function() {
             var id = $(this).data('id');
@@ -475,11 +474,10 @@ if ($_SESSION['quyen'] != 1) {
                         table.row.add([
                             index + 1,
                             e.hoten,
-                            e.email,
-                            e.sodienthoai,
+                            // e.email,
+                            // e.sodienthoai,
                             e.taikhoan,
                             e.diachi,
-                            // e.matkhau,
                             function() {
                                 return (
                                     `

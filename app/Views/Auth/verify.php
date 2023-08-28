@@ -1,10 +1,8 @@
 <?php
 require_once './app/config/constant.php';
-
-if (isset($_SESSION['taikhoanadmin'])) {
-    header("Location: dashboard");
-}
-
+// if (!isset($_GET['token'])) {
+//     header("Location: ../login");
+// }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +14,9 @@ if (isset($_SESSION['taikhoanadmin'])) {
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>HỆ THỐNG</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="<?php echo BASE_URL; ?>/public/css/styles.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
@@ -27,37 +28,35 @@ if (isset($_SESSION['taikhoanadmin'])) {
 
 <body class="bg-primary sb-nav-fixed">
     <main>
-        <div class="container">
+        <!-- <div class="container">
             <div id="toast-container" style="right:17px !important;"></div>
             <div class="row justify-content-center">
                 <div class="col-lg-5">
                     <div class="card shadow-lg border-0 rounded-lg mt-5">
                         <div class="card-header">
-                            <h3 class="text-center font-weight-light my-4">HỆ THỐNG TÀI SẢN THIẾT BỊ</h3>
+                            <h3 class="text-center font-weight-light my-4">Xác minh tài khoản thành công</h3>
                         </div>
                         <div class="card-body">
-
-                            <form method="POST" id="login">
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" id="inputEmail" type="text" placeholder="" name="taikhoan" />
-                                    <label for="inputEmail">Tài khoản</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" id="inputPassword" type="password" placeholder="" name="matkhau" />
-                                    <label for="inputPassword">Mật khẩu</label>
-                                </div>
-
-                                <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                    <button class="btn btn-primary" type="submit" name="login">Đăng nhập</button>
-                                    <div class="d-flex align-items-center justify-content-between  flex-column">
-                                        <a href="<?php echo BASE_URL; ?>/register">Đăng ký tài khoản</a>
-                                        <a href="<?php echo BASE_URL; ?>/verify">Xác minh tài khoản</a>
-
-                                    </div>
-                                </div>
-                            </form>
                         </div>
 
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <div id="myModal" class="modal-open">
+            <div class="modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box">
+                            <i class="material-icons">&#xE876;</i>
+                        </div>
+                        <h4 class="modal-title w-100">Thành Công</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center">Bạn đã xác minh tài khoản thành công</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success btn-block w-100" data-dismiss="modal">OK</button>
                     </div>
                 </div>
             </div>
@@ -90,38 +89,35 @@ if (isset($_SESSION['taikhoanadmin'])) {
                 hideMethod: 'fadeOut',
             };
 
-            $('#login').submit(function(e) {
-                e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-                // Gửi yêu cầu Ajax
-                // console.log($('#login').serialize());
-                $.ajax({
-                    url: "<?php echo BASE_URL; ?>/login/validLogin", // Đường dẫn đến controller xử lý
-                    method: 'POST',
-                    data: $('#login').serialize(),
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status == "success") {
-                            window.location.href = "<?php echo BASE_URL; ?>/dashboard";
-                            sessionStorage.setItem('isLoggedIn', 'true');
-                            toastr.success(response.message);
-                        } else {
-                            toastr.error(response.message);
+            // $('#login').submit(function(e) {
+            //     e.preventDefault(); 
+            // Gửi yêu cầu Ajax
+            // console.log($('#login').serialize());
+            console.log(1232);
 
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // Xử lý lỗi khi gửi yêu cầu Ajax
-                        console.error(error);
-                    }
-                });
-            });
-            var isRegister = sessionStorage.getItem('register');
+            // $.ajax({
+            //     url: "<?php echo BASE_URL; ?>/register/verify?token=123", // Đường dẫn đến controller xử lý
+            //     method: 'GET',
+            //     // data: $('#login').serialize(),
+            //     // dataType: 'json',
+            //     success: function(response) {
+            //         console.log(response);
+            //         // if (response.status == "success") {
+            //         //     window.location.href = "<?php echo BASE_URL; ?>/dashboard";
+            //         //     sessionStorage.setItem('isLoggedIn', 'true');
+            //         //     toastr.success(response.message);
+            //         // } else {
+            //         //     toastr.error(response.message);
 
-            if (isRegister) {
-                toastr.success('Đăng ký thành công');
-                sessionStorage.clear();
-            }
-        })
+            //         // }
+            //     },
+            //     error: function(xhr, status, error) {
+            //         // Xử lý lỗi khi gửi yêu cầu Ajax
+            //         console.error(error);
+            //     }
+            // });
+        });
+        // })
     </script>
 </body>
 

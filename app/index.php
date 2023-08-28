@@ -22,6 +22,7 @@ require_once './app/config/constant.php';
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>HỆ THỐNG</title>
+
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="<?php echo BASE_URL; ?>/public/css/styles.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
@@ -73,7 +74,8 @@ require_once './app/config/constant.php';
         let table = new DataTable('#datatablesSimple', {
             searching: false,
             bPaginate: false,
-            info: false
+            info: false,
+
         });
         $(document).ready(function() {
 

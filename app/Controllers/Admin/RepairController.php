@@ -18,6 +18,25 @@ class RepairController extends Controller
 
         $this->view('index', ["page" => "admin/repair", "repairContent" => $repairContent, "dataDeviceType" => $dataDeviceType]);
     }
+    public function getRepairList()
+    {
+        $response = $this->repair->getRepairList($_SESSION['id']);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDeviceType()
+    {
+        $response = $this->repair->getDeviceType($_SESSION['id']);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDataModal()
+    {
+        $id = $_GET["id"];
+        $response = $this->repair->getDataModal($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     function sendRepair()
     {
         // if (isset($_POST['ycsc'])) {
@@ -29,13 +48,13 @@ class RepairController extends Controller
         echo json_encode($response);
         // }
     }
-    function confirmRepair()
+    function assignRepair()
     {
         // if (isset($_POST['xnsc'])) {
-        $thoigian = $_POST['thoigian'];
-        $chiphi = $_POST['chiphi'];
-        $id  = $_POST['id'];
-        $response = $this->repair->confirmRepair($thoigian, $chiphi, $id);
+        // $thoigian = $_POST['thoigian'];
+        $idStaff = $_POST['id-staff'];
+        $idUpdate  = $_POST['id'];
+        $response = $this->repair->assignRepair($idStaff, $idUpdate);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }

@@ -2,13 +2,12 @@ window.addEventListener('DOMContentLoaded', event => {
     // Simple-DataTables
     // https://github.com/fiduswriter/Simple-DataTables/wiki
 
-    const datatablesSimple = document.getElementById('datatablesSimple');
-    if (!datatablesSimple) {
-        new simpleDatatables.DataTable(datatablesSimple);
-    }
-    // var table = $("#datatablesSimple").DataTable({
-    //     buttons: ['csv', 'excel', 'pdf']
-
-    // })
-    // table.buttons().container()
-});
+    // const datatablesSimple = document.getElementById('datatablesSimple');
+    // // if (datatablesSimple) {
+    // const table = new simpleDatatables.DataTable(datatablesSimple, {
+    //     paging: false,  // Tắt phân trang
+    //     info: false,    // Tắt thông tin trang
+    //     searching: false   // Tắt tìm kiếm
+    // });
+}
+);

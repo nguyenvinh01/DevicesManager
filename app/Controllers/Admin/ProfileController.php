@@ -16,7 +16,13 @@ class ProfileController extends Controller
         $id = $_SESSION['id'];
         $dataProfile = $this->profile->getProfile($id);
         $this->view('index', ["page" => "admin/profile", "dataProfile" => $dataProfile]);
-        // $this->view('index', ["page" => "password"]);
+    }
+    public function getProfile()
+    {
+        $id = $_SESSION['id'];
+        $response = $this->profile->getProfile($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
     public function password()
     {

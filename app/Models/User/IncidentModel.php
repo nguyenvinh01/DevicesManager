@@ -38,7 +38,11 @@ class IncidentModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
     }
     function getDeviceType()
     {
@@ -48,7 +52,11 @@ class IncidentModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
     }
     function sendIncident($tieude, $noidung, $date)
     {
@@ -89,13 +97,11 @@ class IncidentModel extends Model
                     echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
                 }
             }
-            // header("Location: ../incident?msg=1");
             return [
                 "status" => "success",
                 "message" => "Gửi thành công"
             ];
         } else {
-            // header("Location: ../incident?msg=2");
             return [
                 "status" => "error",
                 "message" => "Có lỗi xảy ra khi gửi"

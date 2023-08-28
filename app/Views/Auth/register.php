@@ -1,6 +1,6 @@
 <?php
 if (isset($_SESSION['taikhoanadmin'])) {
-    header("Location: dashboard");
+    // header("Location: dashboard");
 }
 require_once './app/config/constant.php';
 
@@ -67,6 +67,11 @@ require_once './app/config/constant.php';
                                             <small id="passwordHelpBlock" class="form-text text-muted">
                                                 Mật khẩu của bạn phải có độ dài từ 8-20 ký tự, phải chứa các ký tự đặc biệt như "!@#$%&*_?", số, chữ thường và chữ hoa.
                                             </small>
+                                            <p>
+                                                <?php echo $data['token']; ?>
+                                                sdasdasd
+                                            </p>
+
 
                                             <div id="feedbackin" class="valid-feedback">
                                                 Strong Password!

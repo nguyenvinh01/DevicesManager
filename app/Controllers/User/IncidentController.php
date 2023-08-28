@@ -17,6 +17,12 @@ class IncidentController extends Controller
         $incidentContent = $this->incident->getIncidentList();
         $this->view('index', ["page" => "user/incident", "incidentContent" => $incidentContent]);
     }
+    public function getIncidentList()
+    {
+        $response = $this->incident->getIncidentList();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function sendIncident()
     {
         //Thông báo

@@ -1,10 +1,6 @@
 <?php
 require_once './app/config/constant.php';
 
-if (isset($_SESSION['taikhoanadmin'])) {
-    header("Location: dashboard");
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +29,7 @@ if (isset($_SESSION['taikhoanadmin'])) {
                 <div class="col-lg-5">
                     <div class="card shadow-lg border-0 rounded-lg mt-5">
                         <div class="card-header">
-                            <h3 class="text-center font-weight-light my-4">HỆ THỐNG TÀI SẢN THIẾT BỊ</h3>
+                            <h3 class="text-center font-weight-light my-4">Xác minh tài khoản</h3>
                         </div>
                         <div class="card-body">
 
@@ -41,19 +37,20 @@ if (isset($_SESSION['taikhoanadmin'])) {
                                 <div class="form-floating mb-3">
                                     <input class="form-control" id="inputEmail" type="text" placeholder="" name="taikhoan" />
                                     <label for="inputEmail">Tài khoản</label>
+                                    <a href="<?php echo BASE_URL; ?>/register">Gửi lại mã xác minh</a>
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input class="form-control" id="inputPassword" type="password" placeholder="" name="matkhau" />
-                                    <label for="inputPassword">Mật khẩu</label>
+                                    <label for="inputPassword">Mã xác nhận</label>
                                 </div>
 
-                                <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                    <button class="btn btn-primary" type="submit" name="login">Đăng nhập</button>
-                                    <div class="d-flex align-items-center justify-content-between  flex-column">
+                                <div class="d-flex align-items-center justify-content-center mt-4 mb-0">
+                                    <button class="btn btn-primary" type="submit" name="login">Kích hoạt tài khoản</button>
+                                    <!-- <div class="d-flex align-items-center justify-content-between  flex-column">
                                         <a href="<?php echo BASE_URL; ?>/register">Đăng ký tài khoản</a>
-                                        <a href="<?php echo BASE_URL; ?>/verify">Xác minh tài khoản</a>
+                                        <a href="<?php echo BASE_URL; ?>/register">Xác minh tài khoản</a>
 
-                                    </div>
+                                    </div> -->
                                 </div>
                             </form>
                         </div>
@@ -115,12 +112,6 @@ if (isset($_SESSION['taikhoanadmin'])) {
                     }
                 });
             });
-            var isRegister = sessionStorage.getItem('register');
-
-            if (isRegister) {
-                toastr.success('Đăng ký thành công');
-                sessionStorage.clear();
-            }
         })
     </script>
 </body>

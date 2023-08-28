@@ -15,7 +15,11 @@ class ProfileModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
     }
 
     function changePass($id, $currentPass, $newPass, $confirmPass)

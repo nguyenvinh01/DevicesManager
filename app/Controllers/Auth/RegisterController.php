@@ -11,7 +11,20 @@ class RegisterController extends Controller
 
     public function Show()
     {
-        $this->view("Views/Auth/register", []);
+        $this->view("Views/Auth/register");
+    }
+    public function Verify()
+    {
+        if (isset($_GET['token'])) {
+            $token = $_GET['token'];
+            $response = $this->register->VerifyToken($token);
+
+            $this->view("Views/Auth/verify");
+
+            header('Content-Type: application/json');
+            echo json_encode($response);
+        }
+        $this->view("Views/Auth/verify");
     }
     public function registerUser()
     {

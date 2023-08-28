@@ -16,4 +16,10 @@ class BorrowHistoryController extends Controller
         $borrowHistoryList = $this->borrowHistory->getBorrowHistoryList();
         $this->view("index", ["page" => "user/history", "borrowHistoryList" => $borrowHistoryList]);
     }
+    public function getBorrowHistoryList()
+    {
+        $response = $this->borrowHistory->getBorrowHistoryList();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
 }

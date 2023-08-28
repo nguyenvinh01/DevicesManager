@@ -1,7 +1,7 @@
 <?php
 
 require_once "./app/Models/Model.php";
-class RepairModel extends Model
+class AssignModel extends Model
 {
     function getRepairList($id)
     {
@@ -23,11 +23,7 @@ class RepairModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return [
-            'status' => 'success',
-            'data' => $data,
-            // 'count' => count($rsCount->fetch_all())
-        ];
+        return $data;
     }
     function getDeviceType()
     {
@@ -37,11 +33,7 @@ class RepairModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return [
-            'status' => 'success',
-            'data' => $data,
-            // 'count' => count($rsCount->fetch_all())
-        ];
+        return $data;
     }
     function sendRepair($idtb, $noidung)
     {

@@ -11,7 +11,18 @@ class DeviceTypeModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
+    }
+    public function getDataModal($id)
+    {
+        $query = "SELECT * FROM loaithietbi WHERE id = $id;";
+        $rs = $this->conn->query($query);
+
+        return $rs->fetch_assoc();
     }
     function addDeviceType($ten)
     {

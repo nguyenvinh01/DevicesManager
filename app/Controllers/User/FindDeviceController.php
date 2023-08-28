@@ -17,6 +17,18 @@ class FindDeviceController extends Controller
         $locationList = $this->findDevice->getLocation();
         $this->view("index", ["page" => "user/finddevice", "deviceList" => $deviceList, "locationList" => $locationList]);
     }
+    public function getDeviceList()
+    {
+        $response = $this->findDevice->getDeviceList();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getLocation()
+    {
+        $response = $this->findDevice->getLocation();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     function borrowDevice()
     {
         //Mượn thiết bị
@@ -38,9 +50,4 @@ class FindDeviceController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
-    // function getLocation() {
-    //     $response = $this->findDevice->getLocation();
-    //     header('Content-Type: application/json');
-    //     echo json_encode($response);
-    // }
 }

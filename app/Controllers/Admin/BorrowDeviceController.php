@@ -17,6 +17,19 @@ class BorrowDeviceController extends Controller
         $dataBorrowDeviceList = $this->device->getBorrowDeviceList();
         $this->view('index', ["page" => "admin/borrow", "dataBorrowDeviceList" => $dataBorrowDeviceList]);
     }
+    public function getBorrowDeviceList()
+    {
+        $response = $this->device->getBorrowDeviceList();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDataModal()
+    {
+        $id = $_GET["id"];
+        $response = $this->device->getDataModal($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function updateBorrowStatus()
     {
         // if (isset($_POST['capnhat'])) {

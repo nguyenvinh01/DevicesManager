@@ -5,6 +5,9 @@ require_once "./app/Models/Model.php";
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+require_once "./app/config/library.php";
+require_once "./app/config/constant.php";
+
 require_once "vendor/autoload.php";
 class RegisterModel extends Model
 {
@@ -35,15 +38,15 @@ class RegisterModel extends Model
             ];
         }
 
-        $verify_token = md5(rand());
         $hashPassword = $this->hashPassword($matkhau);
-
-        $query = "INSERT INTO nguoidung ( hoten, email, sodienthoai, diachi, taikhoan, matkhau, quyen_id) VALUES ( '{$hoten}', '{$email}', '{$sodienthoai}', '{$diachi}', '{$taikhoan}', '{$hashPassword}', 2) ";
+        $token = md5(rand());
+        $response = $this->SendVerify($token, $email);
+        $query = "INSERT INTO nguoidung ( hoten, email, sodienthoai, diachi, taikhoan, matkhau, verify_code, verified, quyen_id) VALUES ( '{$hoten}', '{$email}', '{$sodienthoai}', '{$diachi}', '{$taikhoan}', '{$hashPassword}', '{$token}', 0, 2) ";
         $result = $this->conn->query($query);
         if ($result) {
             return [
                 'status' => 'success',
-                'message' => 'Đăng ký thành công',
+                'message' => 'Đăng ký thành công' + $response,
             ];
         } else {
             return [
@@ -52,53 +55,65 @@ class RegisterModel extends Model
             ];
         }
     }
-    function SendVerify($verify, $email)
+    public function VerifyToken($token)
     {
-        $query = "INSERT INTO thongbao ( tieude, noidung) 
-            VALUES";
-        $result = $this->conn->query($query);
-        if ($result) {
-            $querytb = "SELECT * FROM nguoidung WHERE quyen_id = 2";
-            $resultb = $this->conn->query($querytb);
-            $num_rows = mysqli_num_rows($resultb);
-
-            if ($num_rows > 0) {
-                $noidung = '<strong>Mã xác nhận :</strong> ' . $verify . '<br> <strong>Ngày tạo :</strong>' . 'rerdf' . '<br> <strong>Nội dung :</strong><br><p>' . 'asdfas' . '</p>';
-                $mail = new PHPMailer(true);
-                try {
-                    $mail->CharSet = "UTF-8";
-                    $mail->SMTPDebug = 0;
-                    $mail->isSMTP();
-                    $mail->Host = SMTP_HOST;
-                    $mail->SMTPAuth = true;
-                    $mail->Username = SMTP_UNAME;
-                    $mail->Password = SMTP_PWORD;
-                    $mail->SMTPSecure = 'ssl';
-                    $mail->Port = SMTP_PORT;
-                    $mail->setFrom(SMTP_UNAME, "WEBSITE NHÀ TRƯỜNG");
-                    $mail->addAddress($email);
-                    // $mail->addReplyTo(SMTP_UNAME, 'WEBSITE NHÀ TRƯỜNG');
-                    $mail->isHTML(true);
-                    $mail->Subject = 'Mã xác nhận Email';
-                    $mail->Body = $noidung;
-                    $mail->AltBody = $noidung;
-                    $result = $mail->send();
-                    if (!$result) {
-                        $error = "Có lỗi xảy ra trong quá trình gửi mail";
-                    }
-                } catch (Exception $e) {
-                    echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
-                }
+        $query = "SELECT * FROM nguoidung WHERE `nguoidung`.`verify_code` = '$token'";
+        $account = $this->conn->query($query);
+        $rs = $account->fetch_assoc();
+        if (count($rs) > 0) {
+            if ($rs['verified'] == 0) {
+                $id = $rs['id'];
+                $updatedVerify = "UPDATE `nguoidung` SET `verified` = '1' WHERE `nguoidung`.`id` = $id";
+                $this->conn->query($updatedVerify);
+                return [
+                    'status' => 'success',
+                    'message' => 'Xác minh tài khoản thành công'
+                ];
+            } else {
+                return [
+                    'status' => 'false',
+                    'message' => 'Tài khoản đã được xác minh'
+                ];
             }
-            return [
-                "status" => "success",
-                "message" => "Gửi thông báo thành công"
-            ];
         } else {
             return [
-                "status" => "error",
-                "message" => "Có lỗi trong quá trình gửi"
+                'status' => 'false',
+                'message' => 'Xác minh không tồn tại'
             ];
         }
+    }
+    public function SendVerify($verify, $email)
+    {
+
+        $noidung = "<a href = " . BASE_URL . "/verify?token=$verify>Click</a>";
+        $mail = new PHPMailer(true);
+        try {
+            $mail->CharSet = "UTF-8";
+            $mail->SMTPDebug = 0;
+            $mail->isSMTP();
+            $mail->Host = SMTP_HOST;
+            $mail->SMTPAuth = true;
+            $mail->Username = SMTP_UNAME;
+            $mail->Password = SMTP_PWORD;
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = SMTP_PORT;
+            $mail->setFrom(SMTP_UNAME, "WEBSITE NHÀ TRƯỜNG");
+            $mail->addAddress($email);
+            $mail->isHTML(true);
+            $mail->Subject = 'Mã xác nhận Email';
+            $mail->Body = $noidung;
+            $mail->AltBody = $noidung;
+            $result = $mail->send();
+            if (!$result) {
+                $error = "Có lỗi xảy ra trong quá trình gửi mail";
+            }
+        } catch (Exception $e) {
+            echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+            // }
+        }
+        return [
+            "status" => "success",
+            "message" => "Gửi thông báo thành công"
+        ];
     }
 }

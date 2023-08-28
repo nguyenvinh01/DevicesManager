@@ -9,13 +9,6 @@ if ($_SESSION['quyen'] != 1) {
     <h1 class="mt-4">Danh sách thông báo</h1>
     <div class="card mb-4">
         <div class="card-header">
-            <?php if (isset($_GET['msg'])) {
-                if ($_GET['msg'] == 1) { ?>
-                    <div class="alert alert-success">
-                        <strong>Thành công</strong>
-                    </div>
-                <?php }  ?>
-            <?php }  ?>
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                 Thêm mới
             </button>
@@ -31,77 +24,118 @@ if ($_SESSION['quyen'] != 1) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    $stt = 1;
-                    foreach ($data["notificationContent"] as $arUser) {
-                        $idModelDes = "exampleModalDes" . $arUser["id"];
-                    ?>
-                        <tr>
-                            <td><?php echo $stt ?></td>
-                            <td><?php echo $arUser["tieude"] ?></td>
-                            <td>
-                                <a href="" data-bs-toggle="modal" data-bs-target="#<?php echo $idModelDes ?>">
-                                    Xem</a>
-                            </td>
-                            <td><?php echo date("d-m-Y", strtotime($arUser["ngaytao"])) ?></td>
 
-                            <!--Des-->
-                            <div class="modal fade" id="<?php echo $idModelDes ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-xl">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel"><?php echo $arUser["tieude"] ?></h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </tbody>
+            </table>
+            <div class="modal fade" id="ModalDes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-body-desc-title"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div id="modal-body-desc-content">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal fade" id="exampleModalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Thêm mới</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST" enctype="multipart/form-data" id="addNotification">
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="category-film" class="col-form-label">Tiêu đề :</label>
+                                            <input type="text" class="form-control" id="category-film" name="tieude" required>
                                         </div>
-                                        <div class="modal-body">
-                                            <?php echo $arUser["noidung"] ?>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="category-film" class="col-form-label">Nội dung:</label>
+                                            <textarea name="noidung" class="form-control" cols="30" tabindex="8" rows="10"></textarea>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </tr>
-                    <?php $stt++;
-                    } ?>
-                    <!-- Modal Add-->
-                    <div class="modal fade" id="exampleModalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Thêm mới</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                    <button type="submit" class="btn btn-primary" name="addtb">Lưu</button>
                                 </div>
-                                <div class="modal-body">
-                                    <form method="POST" enctype="multipart/form-data" id="addNotification">
-                                        <div class="col">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <label for="category-film" class="col-form-label">Tiêu đề :</label>
-                                                    <input type="text" class="form-control" id="category-film" name="tieude" required>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <label for="category-film" class="col-form-label">Nội dung:</label>
-                                                    <textarea name="noidung" class="form-control" cols="30" tabindex="8" rows="10"></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                            <button type="submit" class="btn btn-primary" name="addtb">Lưu</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
-                </tbody>
-            </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <script>
     $(document).ready(() => {
+        getNotification()
+
+        function getNotification() {
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/notification/getNotification",
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == "success") {
+                        console.log(response, 11);
+                        let userTable = '';
+                        table.clear();
+                        response.data.forEach((e, index) => {
+                            table.row.add([
+                                index + 1,
+                                e.tieude,
+                                // e.noidung,
+                                function() {
+                                    return (`
+                                    <td>
+                                    <a href="" data-bs-toggle="modal" data-bs-target="#ModalDes" class= "modal-desc" data-id = '${e.id}'>Xem</a>
+                                    </td>
+                                    `)
+                                },
+                                e.ngaytao,
+                                // convertDateFormat(e.ngaytao),
+                            ])
+                        });
+                        table.draw();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        $(document).on('click', '.modal-desc', function() {
+            var id = $(this).data('id');
+            console.log(123, id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/notification/getDataModal",
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response, 'res');
+                    $('#modal-body-desc-content').html(`<span>${response.data[0].noidung}</span>`)
+                    $('#modal-body-desc-title').html(`<span>${response.data[0].tieude}</span>`)
+                    // $('#id-del').val(response.id);
+                }
+            })
+        });
         $('#addNotification').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax

@@ -14,7 +14,11 @@ class FindDeviceModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
     }
 
     function getDeviceType()
@@ -25,7 +29,11 @@ class FindDeviceModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
     }
 
     function borrowDevice($idtb, $ngaymuon, $ngaytra, $toanha, $phong)
@@ -59,7 +67,11 @@ class FindDeviceModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
     }
     function getRoom($toanha)
     {
@@ -69,6 +81,10 @@ class FindDeviceModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
     }
 }

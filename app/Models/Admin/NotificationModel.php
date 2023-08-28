@@ -19,7 +19,27 @@ class NotificationModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
+    }
+    public function getDataModal($id)
+    {
+        $query = "SELECT *
+        FROM thongbao WHERE id = $id
+         ORDER BY id DESC";
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return [
+            'status' => 'success',
+            'data' => $data,
+            // 'count' => count($rsCount->fetch_all())
+        ];
     }
     function sendNotification($tieude, $noidung, $date)
     {

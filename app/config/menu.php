@@ -33,14 +33,18 @@ require_once './app/config/constant.php';
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Quản lý thông báo
                     </a>
+                    <a class="nav-link" href="<?php echo BASE_URL; ?>/assign">
+                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                        Quản lý phân quyền sử dụng
+                    </a>
                     <a class="nav-link" href="<?php echo BASE_URL; ?>/repair">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Quản lý sửa chữa
                     </a>
-                    <a class="nav-link" href="<?php echo BASE_URL; ?>/incident">
+                    <!-- <a class="nav-link" href="<?php echo BASE_URL; ?>/incident">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Quản lý sự cố
-                    </a>
+                    </a> -->
                 <?php
                 } else if ($_SESSION['quyen'] == 2) {
                 ?>
@@ -52,10 +56,10 @@ require_once './app/config/constant.php';
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Lịch sử mượn trả
                     </a>
-                    <a class="nav-link" href="<?php echo BASE_URL; ?>/incident">
+                    <!-- <a class="nav-link" href="<?php echo BASE_URL; ?>/incident">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Thông báo sự cố
-                    </a>
+                    </a> -->
                     <a class="nav-link" href="<?php echo BASE_URL; ?>/repair">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Gửi yêu cầu sửa chữa

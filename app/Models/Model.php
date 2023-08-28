@@ -16,4 +16,15 @@ class Model
         $hashedPassword = password_hash($pass, PASSWORD_BCRYPT,  $options);
         return $hashedPassword;
     }
+    function generateOTP($length = 6)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $otp = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $otp .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        return $otp;
+    }
 }

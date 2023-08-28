@@ -14,7 +14,20 @@ class DeviceListModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        $queryDevicetype = "SELECT * FROM loaithietbi Order by id desc";
+        $rsType = $this->conn->query($queryDevicetype);
+        $dataType = array();
+        while ($row = $rsType->fetch_assoc()) {
+            $dataType[] = $row;
+        }
+        // return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+            'devicetype' => $dataType
+
+            // 'count' => count($rsCount->fetch_all())
+        ];
     }
     function getDeviceType()
     {
@@ -24,13 +37,30 @@ class DeviceListModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+        ];
     }
-
-    function addDevice($ten, $tinhtrang, $soluong, $giatri, $ltb, $dtkt, $image)
+    public function getDataModal($id)
     {
-        $query = "INSERT INTO thietbi ( ten, hinhanh, soluong, giatri, tinhtrang, loaithietbi_id, dactinhkithuat) 
-        VALUES ( '{$ten}', '{$image}', '{$soluong}', '{$giatri}', '{$tinhtrang}', '{$ltb}', '{$dtkt}') ";
+        $query = "SELECT * FROM thietbi WHERE id = $id;";
+        $rs = $this->conn->query($query);
+        $queryDevicetype = "SELECT * FROM loaithietbi Order by id desc";
+        $rsType = $this->conn->query($queryDevicetype);
+        $dataType = array();
+        while ($row = $rsType->fetch_assoc()) {
+            $dataType[] = $row;
+        }
+        return [
+            'data' => $rs->fetch_assoc(),
+            'devicetype' => $dataType
+        ];
+    }
+    function addDevice($ten, $tinhtrang, $soluong, $ltb, $dtkt, $image)
+    {
+        $query = "INSERT INTO thietbi ( ten, hinhanh, soluong, tinhtrang, loaithietbi_id, dactinhkithuat) 
+        VALUES ( '{$ten}', '{$image}', '{$soluong}',  '{$tinhtrang}', '{$ltb}', '{$dtkt}') ";
         $result = $this->conn->query($query);
         if ($result) {
             // header("Location: ../devicelist?msg=1");
@@ -46,7 +76,7 @@ class DeviceListModel extends Model
             ];
         }
     }
-    function editDevice($id, $ten, $tinhtrang, $soluong, $giatri, $ltb, $dtkt, $image)
+    function editDevice($id, $ten, $tinhtrang, $soluong, $ltb, $dtkt, $image)
     {
         // $query = "UPDATE `thietbi` 
         // SET `ten`='{$ten}',`soluong`='{$soluong}',`dactinhkithuat`='{$dtkt}',`giatri`='{$giatri}', `tinhtrang`='{$tinhtrang}', `loaithietbi_id`='{$ltb}' , `hinhanh`='{$image}' 
@@ -54,11 +84,11 @@ class DeviceListModel extends Model
 
         if ($image != null) {
             $query = "UPDATE `thietbi` 
-            SET `ten`='{$ten}',`soluong`='{$soluong}',`dactinhkithuat`='{$dtkt}',`giatri`='{$giatri}', `tinhtrang`='{$tinhtrang}', `loaithietbi_id`='{$ltb}' , `hinhanh`='{$image}' 
+            SET `ten`='{$ten}',`soluong`='{$soluong}',`dactinhkithuat`='{$dtkt}', `tinhtrang`='{$tinhtrang}', `loaithietbi_id`='{$ltb}' , `hinhanh`='{$image}' 
             WHERE `id`='{$id}'";
         } else {
             $query = "UPDATE `thietbi` 
-            SET `ten`='{$ten}',`soluong`='{$soluong}',`dactinhkithuat`='{$dtkt}',`giatri`='{$giatri}', `tinhtrang`='{$tinhtrang}', `loaithietbi_id`='{$ltb}' 
+            SET `ten`='{$ten}',`soluong`='{$soluong}',`dactinhkithuat`='{$dtkt}', `tinhtrang`='{$tinhtrang}', `loaithietbi_id`='{$ltb}' 
             WHERE `id`='{$id}'";
         }
 
@@ -89,7 +119,8 @@ class DeviceListModel extends Model
             // header("Location: ../devicelist?msg=2");
             return [
                 "status" => "error",
-                "message" => "Xóa thất bại"
+                "message" => "Xóa thất bại",
+                "query" => $check
             ];
         } else {
             $query = "DELETE FROM thietbi WHERE `id`='{$id}'";
@@ -97,7 +128,9 @@ class DeviceListModel extends Model
             // header("Location: ../devicelist?msg=1");
             return [
                 "status" => "success",
-                "message" => "Xóa thành công"
+                "message" => "Xóa thành công",
+                "query" => $check
+
             ];
         }
     }

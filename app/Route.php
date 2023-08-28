@@ -15,7 +15,7 @@ class Route
             // Lấy controller từ đường dẫn URL
             $this->controller = ucfirst($arr[0]) . "Controller";
 
-            $authActions = ['register', 'login', 'logout'];
+            $authActions = ['register', 'login', 'logout', 'verify'];
             if (in_array($arr[0], $authActions)) {
                 $this->role = "Auth/";
             } else {

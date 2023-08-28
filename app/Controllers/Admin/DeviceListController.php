@@ -18,13 +18,27 @@ class DeviceListController extends Controller
         $dataDeviceType = $this->device->getDeviceType();
         $this->view('index', ["page" => "admin/devicelist", "dataDeviceList" => $dataDeviceList, "dataDeviceType" => $dataDeviceType]);
     }
+    public function getDeviceList()
+    {
+
+        $response = $this->device->getDeviceList();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDataModal()
+    {
+        $id = $_GET["id"];
+        $response = $this->device->getDataModal($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function addDevice()
     {
         // if (isset($_POST['addma'])) {
         $ten = $_POST['ten'];
         $tinhtrang = $_POST['tinhtrang'];
         $soluong = $_POST['soluong'];
-        $giatri = $_POST['giatri'];
+        // $giatri = $_POST['giatri'];
         $ltb  = $_POST['ltb'];
         $dtkt  = $_POST['dtkt'];
         //Upload ảnh
@@ -39,7 +53,7 @@ class DeviceListController extends Controller
         $target = "./uploads/image/" . basename($image);
         move_uploaded_file($_FILES['image']['tmp_name'], $target);
 
-        $response = $this->device->addDevice($ten, $tinhtrang, $soluong, $giatri, $ltb, $dtkt, $image);
+        $response = $this->device->addDevice($ten, $tinhtrang, $soluong, $ltb, $dtkt, $image);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }
@@ -50,7 +64,7 @@ class DeviceListController extends Controller
         $ten = $_POST['ten'];
         $tinhtrang = $_POST['tinhtrang'];
         $soluong = $_POST['soluong'];
-        $giatri = $_POST['giatri'];
+        // $giatri = $_POST['giatri'];
         $ltb  = $_POST['ltb'];
         $dtkt  = $_POST['dtkt'];
         $id  = $_POST['id'];
@@ -58,7 +72,7 @@ class DeviceListController extends Controller
         $file_name = $_FILES['image']['name'];
         if (empty($file_name)) {
 
-            $response = $this->device->editDevice($id, $ten, $tinhtrang, $soluong, $giatri, $ltb, $dtkt, null);
+            $response = $this->device->editDevice($id, $ten, $tinhtrang, $soluong, $ltb, $dtkt, null);
             header('Content-Type: application/json');
             echo json_encode($response);
         } else {
@@ -71,7 +85,7 @@ class DeviceListController extends Controller
             $image = $_FILES['image']['name'];
             $target = "./uploads/image/" . basename($image);
             move_uploaded_file($_FILES['image']['tmp_name'], $target);
-            $response =  $this->device->editDevice($id, $ten, $tinhtrang, $soluong, $giatri, $ltb, $dtkt, $image);
+            $response =  $this->device->editDevice($id, $ten, $tinhtrang, $soluong, $ltb, $dtkt, $image);
             header('Content-Type: application/json');
             echo json_encode($response);
         }
@@ -79,11 +93,9 @@ class DeviceListController extends Controller
     }
     public function deleteDevice()
     {
-        // if (isset($_POST['deletema'])) {
         $id  = $_POST['id'];
         $response = $this->device->deleteDevice($id);
         header('Content-Type: application/json');
         echo json_encode($response);
-        // }
     }
 }

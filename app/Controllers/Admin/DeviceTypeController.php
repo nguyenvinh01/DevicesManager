@@ -17,6 +17,19 @@ class DeviceTypeController extends Controller
         $dataDeviceType = $this->deviceType->getDeviceType();
         $this->view('index', ["page" => "admin/devicetype", "dataDeviceType" => $dataDeviceType]);
     }
+    public function getDataModal()
+    {
+        $id = $_GET["id"];
+        $response = $this->deviceType->getDataModal($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDeviceType()
+    {
+        $response = $this->deviceType->getDeviceType();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function addDeviceType()
     {
         // if (isset($_POST['adddm'])) {

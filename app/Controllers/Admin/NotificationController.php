@@ -17,6 +17,20 @@ class NotificationController extends Controller
         $notificationContent = $this->notification->getNotification();
         $this->view('index', ["page" => "admin/notification", "notificationContent" => $notificationContent]);
     }
+    public function getDataModal()
+    {
+        $id = $_GET["id"];
+        $response = $this->notification->getDataModal($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getNotification()
+    {
+        $response = $this->notification->getNotification();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+
     public function sendNotification()
     {
         //Thông báo
