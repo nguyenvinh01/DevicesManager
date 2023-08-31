@@ -24,6 +24,12 @@ class RepairController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+    public function getDataModal()
+    {
+        $response = $this->repair->getDataModal($_SESSION['id']);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     function sendRepair()
     {
         $idtb = $_POST['thietbi'];

@@ -18,7 +18,6 @@ class BorrowHistoryModel extends Model
         return [
             'status' => 'success',
             'data' => $data,
-            // 'count' => count($rsCount->fetch_all())
         ];
     }
 }

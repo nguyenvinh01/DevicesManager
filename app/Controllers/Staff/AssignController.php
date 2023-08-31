@@ -1,6 +1,6 @@
 <?php
 
-require_once('./app/Models/Admin/AssignModel.php');
+require_once('./app/Models/Staff/AssignModel.php');
 require_once('./app/core/Controller.php');
 
 class AssignController extends Controller
@@ -14,7 +14,7 @@ class AssignController extends Controller
     public function Show()
     {
 
-        $this->view('index', ["page" => "admin/assign"]);
+        $this->view('index', ["page" => "staff/assign"]);
     }
     public function getAssignList()
     {
@@ -39,7 +39,13 @@ class AssignController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
-
+    public function getDataModal()
+    {
+        $id = $_GET["id"];
+        $response = $this->assign->getDataModal($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function getDeviceByType()
     {
         $id = $_GET['id'];
@@ -61,23 +67,15 @@ class AssignController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
-
-    public function assignStaff()
+    function updateStatusRepair()
     {
-        $id = $_POST['id'];
-        $idStaff = $_POST['id-staff'];
-        $ngayktra = $_POST['ngaykiemtra'];
-        $response = $this->assign->assignStaff($id, $idStaff, $ngayktra);
+        // if (isset($_POST['xnsc'])) {
+        // $thoigian = $_POST['thoigian'];
+        $id  = $_POST['id'];
+        $status  = $_POST['status-repair'];
+        $response = $this->assign->updateStatusRepair($id, $status);
         header('Content-Type: application/json');
         echo json_encode($response);
-    }
-    function sendRepair()
-    {
-        $idtb = $_POST['thietbi'];
-        $noidung = $_POST['noidung'];
-
-        $response = $this->assign->sendRepair($idtb, $noidung);
-        header('Content-Type: application/json');
-        echo json_encode($response);
+        // }
     }
 }

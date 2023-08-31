@@ -16,10 +16,11 @@ class RepairModel extends Model
         $query = "SELECT a.*, b.hoten, c.ten as tentb
             FROM suachua as a, nguoidung as b, thietbi as c
             WHERE a.nguoidung_id = b.id
-            AND a.thietbi_id = c.id
+            AND a.thietbi_id = c.id 
+            AND a.phancong = $id
             ORDER BY a.id DESC";
         // } else {
-        //     $query = "SELECT a.*, c.ten as tentb
+        // $query = "SELECT a.*, c.ten as tentb
         //     FROM suachua as a, thietbi as c
         //     WHERE a.nguoidung_id = '{$id}'
         //     AND a.thietbi_id = c.id
@@ -45,11 +46,11 @@ class RepairModel extends Model
     }
     public function getDataModal($id)
     {
-        $queryStaff = "SELECT * FROM nguoidung WHERE quyen_id = 3";
-        $rsStaff = $this->conn->query($queryStaff);
-        $dataStaff = array();
-        while ($row = $rsStaff->fetch_assoc()) {
-            $dataStaff[] = $row;
+        $query = "SELECT * FROM suachua WHERE id = $id";
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
         }
         $queryStaffAssign = "SELECT * FROM suachua WHERE id = $id";
         $rsStaffAssign = $this->conn->query($queryStaffAssign);
@@ -58,7 +59,7 @@ class RepairModel extends Model
             $dataStaffAssign[] = $row;
         }
         return [
-            'staff' => $dataStaff,
+            'data' => $data,
             'staffAssign' => $dataStaffAssign
         ];
     }
@@ -139,14 +140,24 @@ class RepairModel extends Model
                 "message" => "Có lỗi xảy ra khi gửi email: " . $e->getMessage()
             ];
         }
-        // }
-
-        // } else {
-        //     return [
-        //         "status" => "error",
-        //         "message" => "Có lỗi xảy ra khi gửi"
-        //     ];
-        // }
+    }
+    function updateStatusRepair($id, $status)
+    {
+        $query = "UPDATE `suachua` 
+        SET `tinhtrang`= '$status'
+        WHERE `id`=$id";
+        $result = $this->conn->query($query);
+        if ($result) {
+            return [
+                "status" => "success",
+                "message" => "Cập nhật thành công"
+            ];
+        } else {
+            return [
+                "status" => "error",
+                "message" => "Có lỗi xảy ra khi cập nhật"
+            ];
+        }
     }
     function assignRepair($idStaff, $id)
     {

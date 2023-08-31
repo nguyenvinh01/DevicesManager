@@ -12511,16 +12511,12 @@ body {
   margin: 100px auto;
 }
 
-#datatablesSimple {
-  max-width: 100% !important;
+
+tr>th:first-child {
+  width: 1% !important;
+
 }
 
-#datatablesSimple th,
-#datatablesSimple tr,
-#datatablesSimple td {
-  /* word-wrap: break-word !important; */
-
-  width: 100px !important;
-  /* Ngăn chặn xuống dòng nội dung trong ô */
-
+.no-caret {
+  display: none !important;
 }

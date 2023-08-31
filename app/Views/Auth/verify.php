@@ -28,21 +28,7 @@ require_once './app/config/constant.php';
 
 <body class="bg-primary sb-nav-fixed">
     <main>
-        <!-- <div class="container">
-            <div id="toast-container" style="right:17px !important;"></div>
-            <div class="row justify-content-center">
-                <div class="col-lg-5">
-                    <div class="card shadow-lg border-0 rounded-lg mt-5">
-                        <div class="card-header">
-                            <h3 class="text-center font-weight-light my-4">Xác minh tài khoản thành công</h3>
-                        </div>
-                        <div class="card-body">
-                        </div>
 
-                    </div>
-                </div>
-            </div>
-        </div> -->
         <div id="myModal" class="modal-open">
             <div class="modal-dialog modal-confirm">
                 <div class="modal-content">
@@ -89,33 +75,60 @@ require_once './app/config/constant.php';
                 hideMethod: 'fadeOut',
             };
 
-            // $('#login').submit(function(e) {
-            //     e.preventDefault(); 
-            // Gửi yêu cầu Ajax
-            // console.log($('#login').serialize());
-            console.log(1232);
+            // Lấy URL hiện tại
+            var currentURL = window.location.href;
 
-            // $.ajax({
-            //     url: "<?php echo BASE_URL; ?>/register/verify?token=123", // Đường dẫn đến controller xử lý
-            //     method: 'GET',
-            //     // data: $('#login').serialize(),
-            //     // dataType: 'json',
-            //     success: function(response) {
-            //         console.log(response);
-            //         // if (response.status == "success") {
-            //         //     window.location.href = "<?php echo BASE_URL; ?>/dashboard";
-            //         //     sessionStorage.setItem('isLoggedIn', 'true');
-            //         //     toastr.success(response.message);
-            //         // } else {
-            //         //     toastr.error(response.message);
+            // Trích xuất token từ URL (assumption: token là phần query parameter 'token')
+            var tokenRegex = /token=([^&]+)/;
+            var match = currentURL.match(tokenRegex);
+            var receivedToken = match ? match[1] : null;
+            console.log(receivedToken);
+            if (receivedToken) {
+                // Kiểm tra xem token có đúng định dạng hay không (ở đây ta giả sử token là chuỗi 32 ký tự)
+                // var tokenPattern = /^[0-9a-f]{32}$/i;
+                // var tokenPattern = /^[0-9a-f]{64}$/i;
+                var tokenPattern = /^[0-9a-f]{64}$/i;
+                if (tokenPattern.test(receivedToken)) {
+                    // Gửi yêu cầu kiểm tra token qua AJAX
+                    toastr.success("valid token");
 
-            //         // }
-            //     },
-            //     error: function(xhr, status, error) {
-            //         // Xử lý lỗi khi gửi yêu cầu Ajax
-            //         console.error(error);
-            //     }
-            // });
+                    $.ajax({
+                        url: "<?php echo BASE_URL; ?>/verify/VerifyToken", // Đường dẫn đến file PHP kiểm tra token
+                        method: "GET",
+                        data: {
+                            token: receivedToken
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.status === "success") {
+                                console.log("Token is valid");
+                                toastr.success("valid token");
+
+                                // Thực hiện các hành động sau khi xác minh token thành công
+                            } else {
+                                console.log("Invalid token");
+                                toastr.success("Invalid token");
+
+                                // Thực hiện các hành động sau khi xác minh token thất bại
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr, status, error);
+                            // Xử lý lỗi khi gửi yêu cầu AJAX
+                        }
+                    });
+                } else {
+                    console.log("Invalid token format");
+                    toastr.error("Invalid token format");
+
+                    // Xử lý khi token không đúng định dạng
+                }
+            } else {
+                console.log("Token not found in URL");
+                toastr.error("Token not found in URL");
+
+                // Xử lý khi không tìm thấy token trong URL
+            }
         });
         // })
     </script>

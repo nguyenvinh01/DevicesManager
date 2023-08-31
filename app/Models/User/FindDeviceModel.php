@@ -14,13 +14,27 @@ class FindDeviceModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
+        $location = $this->getLocation();
+        return [
+            'status' => 'success',
+            'data' => $data,
+            'location' => $location
+            // 'count' => count($rsCount->fetch_all())
+        ];
+    }
+    function getDataModal($id)
+    {
+        $query = "SELECT tb.*, ltb.ten as loaitb FROM thietbi as tb, loaithietbi as ltb 
+        WHERE tb.id = $id
+        ORDER BY id DESC";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
         return [
             'status' => 'success',
             'data' => $data,
             // 'count' => count($rsCount->fetch_all())
         ];
     }
-
     function getDeviceType()
     {
         $query = "SELECT * FROM loaithietbi Order by id desc";
@@ -38,21 +52,23 @@ class FindDeviceModel extends Model
 
     function borrowDevice($idtb, $ngaymuon, $ngaytra, $toanha, $phong)
     {
+        $queryNameBuilding = "SELECT tentoanha FROM toanha WHERE id = $toanha";
+        $resultNameBuilding = $this->conn->query($queryNameBuilding);
+        $nameBuilding = $resultNameBuilding->fetch_assoc();
         $query = "INSERT INTO muon (thietbi_id, ngaymuon, ngaytra, nguoidung_id, diadiem, trangthai) 
-            VALUES ( '{$idtb}', '{$ngaymuon}', '{$ngaytra}', '{$_SESSION["id"]}', '{$toanha}-{$phong}' , 'Chờ phê duyệt');";
+            VALUES ( '{$idtb}', '{$ngaymuon}', '{$ngaytra}', '{$_SESSION["id"]}', '{$nameBuilding['tentoanha']}-{$phong}' , 'Chờ phê duyệt');";
         $result = $this->conn->query($query);
         if ($result) {
             $update = "UPDATE `thietbi` 
                 SET `soluong`= soluong - 1
                 WHERE `id`='{$idtb}'";
             $this->conn->query($update);
-            // header("Location: ../finddevice?msg=1");
             return [
                 "status" => "success",
-                "message" => "Mượn thành công. Vui lòng chờ quản lý xét duyệt"
+                "message" => "Mượn thành công. Vui lòng chờ quản lý xét duyệt",
+                'query' => $query
             ];
         } else {
-            // header("Location: ../finddevice?msg=2");
             return [
                 "status" => "success",
                 "message" => "Mượn thất bại. Có lỗi xảy ra"
@@ -61,7 +77,9 @@ class FindDeviceModel extends Model
     }
     function getLocation()
     {
-        $query = "SELECT DISTINCT toanha FROM diadiem";
+        $query = "SELECT DISTINCT (tn.tentoanha) as toanha, (tn.id) as id_toanha 
+        FROM diadiem as dd, toanha as tn
+        WHERE tn.id = dd.toanha";
         $rs = $this->conn->query($query);
         $data = array();
         while ($row = $rs->fetch_assoc()) {

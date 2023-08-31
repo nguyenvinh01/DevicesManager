@@ -11,10 +11,8 @@
                         <th>Ngày gửi</th>
                         <th>Thiết bị</th>
                         <th>Nội dung</th>
-                        <!-- <th>Chi phí</th> -->
-                        <!-- <th>Thời gian</th> -->
                         <th>Người gửi</th>
-                        <th>Người sửa chữa</th>
+                        <!-- <th>Người sửa chữa</th> -->
                         <th>Tình trạng</th>
                         <th>Thao tác</th>
                     </tr>
@@ -32,9 +30,9 @@
                         </div>
                         <div class="modal-body">
                             <form method="POST" enctype="multipart/form-data" id="editRepair">
-                                <input type="hidden" class="form-control" id="id-assign" name="id">
+                                <input type="hidden" class="form-control" id="id-repair" name="id">
                                 <div class="col">
-                                    <select class="form-select" id="list-staff" aria-label="Default select example" id="theloai" tabindex="8" name="id-staff" required>
+                                    <select class="form-select" id="list-staff" aria-label="Default select example" id="theloai" tabindex="8" name="status-repair" required>
                                         <option value="" selected>Chọn tình trạng</option>
                                     </select>
                                 </div>
@@ -61,45 +59,43 @@
             showMethod: 'fadeIn',
             hideMethod: 'fadeOut',
         };
-
-
         getRepairList();
 
         function getRepairList() {
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/repair/getRepairList",
+                url: `<?php echo BASE_URL; ?>/repair/getRepairList`,
                 method: 'GET',
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
-                        console.log(response, 11);
-                        let userTable = '';
+                        console.log(response.data, 123);
+                        // let userTable = '';
                         table.clear();
                         response.data.forEach((e, index) => {
+                            console.log(e, 123);
                             table.row.add([
                                 index + 1,
                                 e.ngaygui,
-                                // e.noidung,
-                                e.tentb,
-                                // function() {
-                                //     return (`
-                                //     <td>
-                                //     <a href="" data-bs-toggle="modal" data-bs-target="#ModalDes" class= "modal-desc" data-id = '${e.thietbi_id}'>Xem</a>
-                                //     </td>
-                                //     `)
-                                // },
+                                // e.tentb,
+                                function() {
+                                    return (`
+                                    <td>
+                                    <a href="" data-bs-toggle="modal" data-bs-target="#ModalDes" class= "modal-desc" data-id = '${e.thietbi_id}'>${e.tentb}</a>
+                                    </td>
+                                    `)
+                                },
                                 e.noidung,
                                 e.hoten,
-                                function() {
-                                    const staffName = response.staff.find(s => e.phancong === s.id);
-                                    if (staffName) {
-                                        return `<a href="" data-bs-toggle="modal" data-bs-target="#ModalDes" class= "modal-desc" data-id = '${e.thietbi_id}'>${staffName.hoten}</a> `;
-                                    } else return "Chưa phân công"
-                                },
+                                // function() {
+                                //     const staffName = response.staff.find(s => e.phancong === s.id);
+                                //     if (staffName) {
+                                //         return staffName.hoten;
+                                //     } else return ""
+                                // },
                                 e.tinhtrang,
                                 function() {
                                     return (
-                                        e.tinhtrang == 'Hoàn thành' ? "" : `
+                                        e.tinhtrang == "Hoàn thành" ? '' : `
                                     <td style="width : 130px !important">
                                     <button type="button" class="btn btn-primary modal-edit" data-id="${e.id}" data-bs-toggle="modal" data-bs-target="#ModalEdit">
                                         Phân công
@@ -127,7 +123,7 @@
 
             console.log(formData, 11, id);
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/repair/assignRepair", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/repair/updateStatusRepair", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: formData, // Dữ liệu gửi đi từ form
                 dataType: 'json',
@@ -135,19 +131,19 @@
                     console.log(response, 'res');
                     if (response.status == "success") {
                         // Hiển thị thông báo thành công
-                        toastr.success(response.message);
-                        var modalElement = document.getElementById(`exampleModalEdit${id}`);
-                        var modal = bootstrap.Modal.getInstance(modalElement);
-                        modal.hide();
+                        // toastr.success(response.message);
+                        // var modalElement = document.getElementById(`exampleModalEdit${id}`);
+                        // var modal = bootstrap.Modal.getInstance(modalElement);
+                        // modal.hide();
                     } else {
                         // Hiển thị thông báo lỗi
                         console.log(response);
-                        toastr.error(response.message);
+                        // toastr.error(response.message);
                     }
                 },
                 error: function(xhr, status, error) {
                     // Xử lý lỗi khi gửi yêu cầu Ajax
-                    toastr.error(xhr.responseText);
+                    // toastr.error(xhr.responseText);
 
                     console.error(xhr, status, error);
                 }
@@ -169,36 +165,22 @@
                     console.log(response, 'repair');
                     $('#list-staff').html('');
                     $('#list-staff').append(`<option value="" selected>Chọn tình trạng</option>`);
+                    if (response.data[0].tinhtrang == "Chờ xử lý") {
+                        staffList += `<option value="Đang kiểm tra">Đang kiểm tra</option>`
+                    } else if (response.data[0].tinhtrang == "Đang kiểm tra") {
+                        staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
+                        // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
 
-                    response.staff.map((s) => {
-                        if (s.id == response.staffAssign[0].phancong) {
-                            console.log('selected', staffList);
-                            staffList += `<option value="${s.id}" selected>${s.hoten}</option>`
-                        } else {
-                            console.log('not selected', staffList);
-                            staffList += `<option value="${s.id}">${s.hoten}</option>`
-
-                        }
-                    })
+                    } else if (response.data[0].tinhtrang == "Cần sửa chữa") {
+                        staffList += `<option value="Đang sửa chữa">Đang sửa chữa</option>`
+                        // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
+                    } else if (response.data[0].tinhtrang == "Đang sửa chữa") {
+                        staffList += `<option value="Hoàn thành">Hoàn thành</option>`
+                        // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
+                    }
                     console.log(1, staffList, 1);
                     $('#list-staff').append(staffList)
-                    $('#id-assign').val(id)
-                    // let typeList;
-                    // console.log(response.devicetype, '1');
-                    // response.devicetype.map((type) => {
-                    //     if (type.id == response.data.loaithietbi_id) {
-                    //         typeList += `<option value="${type.id}" selected>${type.ten}</option>`
-                    //     } else {
-                    //         typeList += `<option value="${type.id}">${type.ten}</option>`
-                    //     }
-                    // })
-                    // $('#theloai').append(typeList);
-                    // $('#id-edit').val(response.data.id);
-                    // $('#device-name-edit').val(response.data.ten)
-                    // $('#device-quantity-edit').val(response.data.soluong)
-                    // $('#device-desc-edit').val(response.data.dactinhkithuat)
-                    // $('#device-status-edit').val(response.data.tinhtrang)
-                    // $('#id-edit').val(response.id);
+                    $('#id-repair').val(id)
                 }
             })
         });

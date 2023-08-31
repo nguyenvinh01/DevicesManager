@@ -9,64 +9,55 @@ require_once "./app/config/library.php";
 require_once "./app/config/constant.php";
 
 require_once "vendor/autoload.php";
-class RegisterModel extends Model
+class VerifyModel extends Model
 {
-    function Register($hoten, $email, $sodienthoai, $diachi, $taikhoan, $matkhau, $phongban)
+    function ResendVerify($email)
     {
 
         $emailExistsQuery = "SELECT COUNT(*) as count FROM nguoidung WHERE email = '{$email}'";
         $emailExistsResult = $this->conn->query($emailExistsQuery);
         $emailExists = $emailExistsResult->fetch_assoc();
         $emailCount = $emailExists['count'];
-        if ($emailCount > 0) {
+        if ($emailCount = 0) {
             return [
                 'status' => 'error',
-                'message' => 'Email đã tồn tại trong hệ thống.'
+                'message' => 'Email chưa đăng ký trong hệ thống'
             ];
         }
 
         // Kiểm tra trùng tài khoản
-        $taikhoanExistsQuery = "SELECT COUNT(*) as count FROM nguoidung WHERE taikhoan = '{$taikhoan}'";
-        $taikhoanExistsResult = $this->conn->query($taikhoanExistsQuery);
-        $taikhoanExists = $taikhoanExistsResult->fetch_assoc();
-        $taikhoanCount = $taikhoanExists['count'];
+        // $taikhoanExistsQuery = "SELECT COUNT(*) as count FROM nguoidung WHERE taikhoan = '{$taikhoan}'";
+        // $taikhoanExistsResult = $this->conn->query($taikhoanExistsQuery);
+        // $taikhoanExists = $taikhoanExistsResult->fetch_assoc();
+        // $taikhoanCount = $taikhoanExists['count'];
 
-        if ($taikhoanCount > 0) {
-            return [
-                'status' => 'error',
-                'message' => 'Tài khoản đã tồn tại trong hệ thống.'
-            ];
-        }
+        // if ($taikhoanCount > 0) {
+        //     return [
+        //         'status' => 'error',
+        //         'message' => 'Tài khoản đã tồn tại trong hệ thống.'
+        //     ];
+        // }
 
-        $hashPassword = $this->hashPassword($matkhau);
-        $token = md5(rand());
+        // $hashPassword = $this->hashPassword($matkhau);
+        // $token = md5(rand());
+        $randomBytes = random_bytes(32); // Tạo 32 byte ngẫu nhiên
+        $token = hash('sha256', $randomBytes);
         $this->SendVerify($token, $email);
-        $query = "INSERT INTO nguoidung ( hoten, email, sodienthoai, diachi, taikhoan, matkhau, verify_code, verified, quyen_id, phongban) VALUES ( '{$hoten}', '{$email}', '{$sodienthoai}', '{$diachi}', '{$taikhoan}', '{$hashPassword}', '{$token}', 0, 2, '{$phongban}') ";
+        $query = "UPDATE nguoidung SET verify_code = '{$token}' WHERE email = '$email';";
         $result = $this->conn->query($query);
         if ($result) {
             return [
                 'status' => 'success',
-                'message' => 'Đăng ký thành công',
+                'message' => 'Gửi xác nhận thành công',
             ];
         } else {
             return [
                 'status' => 'error',
-                'message' => 'Đăng ký không thành công',
+                'message' => 'Gửi xác nhận không thành công',
             ];
         }
     }
-    public function getDepartment()
-    {
-        $query = "SELECT * FROM phongban";
-        $rs = $this->conn->query($query);
-        $data = array();
-        while ($row = $rs->fetch_assoc()) {
-            $data[] = $row;
-        }
-        return [
-            'data' => $data
-        ];
-    }
+
     public function VerifyToken($token)
     {
         $query = "SELECT * FROM nguoidung WHERE `nguoidung`.`verify_code` = '$token'";

@@ -19,16 +19,19 @@ class Route
             if (in_array($arr[0], $authActions)) {
                 $this->role = "Auth/";
             } else {
-                if ($_SESSION['quyen'] == 1) {
-                    $this->role = "Admin/";
-                } else if ($_SESSION['quyen'] == 2) {
-                    $this->role = "User/";
-                } else if ($_SESSION['quyen'] == 3) {
-                    $this->role = "Staff/";
+                if (isset($_SESSION['quyen'])) {
+                    if ($_SESSION['quyen'] == 1) {
+                        $this->role = "Admin/";
+                    } else if ($_SESSION['quyen'] == 2) {
+                        $this->role = "User/";
+                    } else if ($_SESSION['quyen'] == 3) {
+                        $this->role = "Staff/";
+                    }
+                } else {
+                    require_once "./app/index.php";
                 }
             }
-            if (isset($_SESSION['taikhoanadmin'])) {
-            }
+
             $controllerFile = "./app/Controllers/" . $this->role . $this->controller . ".php";
             unset($arr[0]);
 

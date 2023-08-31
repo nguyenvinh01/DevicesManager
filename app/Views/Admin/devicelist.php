@@ -349,6 +349,7 @@ if ($_SESSION['quyen'] != 1) {
                 }
             })
         });
+
         $(document).on('click', '.modal-del', function() {
             var id = $(this).data('id');
             $.ajax({
@@ -366,6 +367,7 @@ if ($_SESSION['quyen'] != 1) {
                 }
             })
         });
+
         $(document).on('click', '.modal-desc', function() {
             var id = $(this).data('id');
             $.ajax({

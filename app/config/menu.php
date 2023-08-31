@@ -67,13 +67,13 @@ require_once './app/config/constant.php';
                 <?php
                 } else {
                 ?>
-                    <a class="nav-link" href="<?php echo BASE_URL; ?>/finddevice">
+                    <a class="nav-link" href="<?php echo BASE_URL; ?>/repair">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Quản lý sửa chữa
                     </a>
-                    <a class="nav-link" href="<?php echo BASE_URL; ?>/borrowhistory">
+                    <a class="nav-link" href="<?php echo BASE_URL; ?>/assign">
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        Lịch sử mượn trả
+                        Kiểm tra định kỳ
                     </a>
                 <?php
                 }

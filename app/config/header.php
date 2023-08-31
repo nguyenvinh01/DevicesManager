@@ -10,6 +10,20 @@
     </form>
     <!-- Navbar-->
     <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle no-caret" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    99+
+                </span>
+                <i class="bi bi-info-circle"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+
+                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/profile">Thông tin</a></li>
+                <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/logout">Đăng xuất</a></li>
+            </ul>
+        </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Xin chào, <?php echo $_SESSION['tenhienthi'] ?><i class="fas fa-user fa-fw"></i></a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

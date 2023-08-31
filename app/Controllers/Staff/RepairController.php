@@ -1,6 +1,6 @@
 <?php
 
-require_once('./app/Models/Admin/RepairModel.php');
+require_once('./app/Models/Staff/RepairModel.php');
 require_once('./app/core/Controller.php');
 
 class RepairController extends Controller
@@ -13,7 +13,7 @@ class RepairController extends Controller
 
     public function Show()
     {
-        $this->view('index', ["page" => "admin/repair"]);
+        $this->view('index', ["page" => "staff/repair"]);
     }
     public function getRepairList()
     {
@@ -53,6 +53,17 @@ class RepairController extends Controller
         $idStaff = $_POST['id-staff'];
         $idUpdate  = $_POST['id'];
         $response = $this->repair->assignRepair($idStaff, $idUpdate);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        // }
+    }
+    function updateStatusRepair()
+    {
+        // if (isset($_POST['xnsc'])) {
+        // $thoigian = $_POST['thoigian'];
+        $id  = $_POST['id'];
+        $status  = $_POST['status-repair'];
+        $response = $this->repair->updateStatusRepair($id, $status);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }

@@ -1,12 +1,12 @@
 <div class="container-fluid px-4">
 
-    <h1 class="mt-4">Danh sách phân quyền sử dụng thiết bị</h1>
+    <h1 class="mt-4">Danh sách thiết bị kiểm tra</h1>
     <div class="card mb-4">
 
         <div class="card-header">
-            <button type="button" class="btn btn-success" id="add-button" data-bs-toggle="modal" data-bs-target="#ModalAdd">
+            <!-- <button type="button" class="btn btn-success" id="add-button" data-bs-toggle="modal" data-bs-target="#ModalAdd">
                 Thêm mới
-            </button>
+            </button> -->
         </div>
 
         <div class="card-body">
@@ -27,50 +27,7 @@
                 <tbody>
                 </tbody>
             </table>
-            <!-- Modal Update-->
-            <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Xác nhận đã xử lý</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form method="POST" enctype="multipart/form-data" id="assginStaff">
-                                <input type="hidden" class="form-control" id="id-manage-device" name="id">
-                                <div class="col">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label for="category-film" class="col-form-label">Nhân viên :</label>
-                                            <select class="form-select" aria-label="Default select example" id="staff-list" tabindex="8" name="id-staff" required>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label for="category-film" class="col-form-label">Ngày kiểm tra:</label>
-                                            <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('+2 days')); ?>" id="ngay_kiem_tra" name="ngaykiemtra" required>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <!-- <div class="row">
-                                        <div class="col-12">
-                                            <label for="category-film" class="col-form-label">Thời gian:</label>
-                                            <input type="text" class="form-control" id="category-film" name="thoigian" required>
-                                        </div>
-                                    </div> -->
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                    <button type="submit" class="btn btn-primary" name="xnsc">Xác nhận</button>
-                                </div>
-                            </form>
-                        </div>
 
-                    </div>
-                </div>
-            </div>
-            <!-- Modal Update-->
 
             <!--Des-->
             <!-- <div class="modal fade" id="ModalDesc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -86,75 +43,33 @@
                     </div>
                 </div>
             </div> -->
-            <!-- Modal Add-->
-            <div class="modal fade" id="ModalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
+
+            <!-- Modal Update-->
+            <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Thêm thiết bị quản lý</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Xác nhận đã xử lý</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form method="POST" enctype="multipart/form-data" id="addAssign">
+                            <form method="POST" enctype="multipart/form-data" id="editRepair">
+                                <input type="hidden" class="form-control" id="id-repair" name="id">
                                 <div class="col">
-                                    <div class="row">
-                                        <div class="col-12 row">
-                                            <div class="col-6">
-                                                <label for="category-film" class="col-form-label">Loại thiết bị :</label>
-                                                <select class="form-select" aria-label="Default select example" id="devicetype" tabindex="8" name="loaithietbi" required>
-                                                </select>
-                                            </div>
-                                            <div class="col-6">
-                                                <label for="category-film" class="col-form-label">Thiết bị :</label>
-                                                <select class="form-select" aria-label="Default select example" id="device-list" tabindex="8" name="thietbi" required>
-                                                </select>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row my-3">
-                                        <div class="col-12">
-                                            <label for="category-film" class="col-form-label">Phòng ban :</label>
-
-                                            <select class="form-select" aria-label="Default select example" id="department" tabindex="8" name="phongban" required>
-                                                <option value="" selected>Chọn phòng ban</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row my-3">
-                                        <div class="col-12">
-                                            <label for="category-film" class="col-form-label">Số lượng :</label>
-                                            <input type="number" class="form-control" id="quantityInput" min="1" name="soluong">
-                                            <span id="device-quantity"></span>
-                                            <!-- <div class="input-group-append">
-                                                <span class="input-group-text">/10</span>
-                                            </div> -->
-                                        </div>
-                                    </div>
-                                    <!-- <div class="row my-3">
-                                        <div class="col-12">
-                                            <label for="category-film" class="col-form-label">Tình trạng :</label>
-                                            <select class="form-select" aria-label="Default select example" id="department" tabindex="8" name="phongban" required>
-                                                <option value="" selected>Chọn tình trạng</option>
-                                            </select>
-                                        </div>
-                                    </div> -->
-                                    <!-- <div class="row">
-                                        <div class="col-12">
-                                            <label for="category-film" class="col-form-label">Nội dung:</label>
-                                            <textarea name="noidung" class="form-control" cols="30" tabindex="8" rows="10"></textarea>
-                                        </div>
-                                    </div> -->
+                                    <select class="form-select" id="list-staff" aria-label="Default select example" id="theloai" tabindex="8" name="status-repair" required>
+                                        <option value="" selected>Chọn tình trạng</option>
+                                    </select>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                    <button type="submit" class="btn btn-primary">Gửi</button>
+                                    <button type="submit" class="btn btn-primary" name="xnsc">Xác nhận</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
+            <!--End Modal Update-->
         </div>
     </div>
 </div>
@@ -293,15 +208,7 @@
                             $('#quantityInput').attr('max', response.data.soluong)
                         } else {
                             $('#device-quantity').text('');
-
                         }
-                        // $('#device-list').append('<option value="" selected>Chọn loại thiết bị</option>');
-                        // response.data.forEach((d) => {
-                        //     deviceList += `<option value="${d.id}">${d.ten}</option>`
-                        // })
-
-                        // $('#device-list').append(deviceList);
-
                     } else {}
                 },
                 error: function(xhr, status, error) {
@@ -310,41 +217,7 @@
                 }
             });
         })
-        $('#add-button').click(function(e) {
-            e.preventDefault();
-            let deviceType;
-            let department;
-            $.ajax({
-                url: "<?php echo BASE_URL; ?>/assign/getDataAddModal", // Đường dẫn đến controller xử lý
-                method: 'GET',
-                // data: formData, // Dữ liệu gửi đi từ form
-                dataType: 'json',
-                success: function(response) {
-                    console.log(response);
-                    if (response.status == "success") {
-                        $('#devicetype').html('');
-                        $('#devicetype').append('<option value="" selected>Chọn loại thiết bị</option>');
-                        response.dataDeviceType.forEach((dt) => {
-                            deviceType += `<option value="${dt.id}">${dt.ten}</option>`
-                        })
-                        $('#devicetype').append(deviceType);
 
-
-                        $('#department').html('');
-                        $('#department').append('<option value="" selected>Chọn phòng ban</option>');
-                        response.dataDepartment.forEach((dp) => {
-                            department += `<option value="${dp.id}">${dp.tenpb}</option>`
-                        })
-                        $('#department').append(department);
-
-                    } else {}
-                },
-                error: function(xhr, status, error) {
-                    // Xử lý lỗi khi gửi yêu cầu Ajax
-                    console.error(error);
-                }
-            });
-        })
         $('#assginStaff').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
@@ -376,38 +249,75 @@
                 }
             });
         });
-        $(document).on('click', '.modal-edit', function(e) {
-            e.preventDefault();
-            var id = $(this).data('id');
-            let staffList;
-            console.log('modaledit', id);
+        $('#editRepair').submit(function(e) {
+            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            // Gửi yêu cầu Ajax
+            var formData = $(this).serialize();
+            var id = $(this).serialize().split(/[=,&]/)[1];
+
+            console.log(formData, 11, id);
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/assign/getStaff", // Đường dẫn đến controller xử lý
-                method: 'GET',
-                // data: formData, // Dữ liệu gửi đi từ form
+                url: "<?php echo BASE_URL; ?>/assign/updateStatusRepair", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                data: formData, // Dữ liệu gửi đi từ form
                 dataType: 'json',
                 success: function(response) {
-                    console.log(response);
+                    console.log(response, 'res');
                     if (response.status == "success") {
-                        $('#staff-list').html('');
-                        $('#staff-list').append('<option value="" selected>Chọn nhân viên kiểm tra</option>');
-                        response.data.forEach((s) => {
-                            if (s.id == id) {
-                                staffList += `<option value="${s.id}" selected>${s.hoten}</option>`
-                            } else {
-                                staffList += `<option value="${s.id}">${s.hoten}</option>`
-                            }
-                        })
-                        $('#staff-list').append(staffList);
-                        $('#id-manage-device').val(id);
-                    } else {}
+                        // Hiển thị thông báo thành công
+                        // toastr.success(response.message);
+                        // var modalElement = document.getElementById(`exampleModalEdit${id}`);
+                        // var modal = bootstrap.Modal.getInstance(modalElement);
+                        // modal.hide();
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        console.log(response);
+                        // toastr.error(response.message);
+                    }
                 },
                 error: function(xhr, status, error) {
                     // Xử lý lỗi khi gửi yêu cầu Ajax
-                    console.error(error);
+                    // toastr.error(xhr.responseText);
+
+                    console.error(xhr, status, error);
                 }
             });
-        })
+        });
+        $(document).on('click', '.modal-edit', function() {
+            var id = $(this).data('id');
+            console.log('edit', id);
+            let staffList;
+
+            $.ajax({
+                url: `<?php echo BASE_URL; ?>/assign/getDataModal`,
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response, 'repair');
+                    $('#list-staff').html('');
+                    $('#list-staff').append(`<option value="" selected>Chọn tình trạng</option>`);
+                    if (response.data[0].tinhtrang == "Chờ xử lý") {
+                        staffList += `<option value="Đang kiểm tra">Đang kiểm tra</option>`
+                    } else if (response.data[0].tinhtrang == "Đang kiểm tra") {
+                        staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
+                        // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
+
+                    } else if (response.data[0].tinhtrang == "Cần sửa chữa") {
+                        staffList += `<option value="Đang sửa chữa">Đang sửa chữa</option>`
+                        // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
+                    } else if (response.data[0].tinhtrang == "Đang sửa chữa") {
+                        staffList += `<option value="Hoàn thành">Hoàn thành</option>`
+                        // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
+                    }
+                    console.log(1, staffList, 1);
+                    $('#list-staff').append(staffList)
+                    $('#id-repair').val(id)
+                }
+            })
+        });
     })
 </script>
 <script>

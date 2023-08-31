@@ -8,30 +8,59 @@
                         <th>STT</th>
                         <th>Tên thiết bị</th>
                         <th>Ảnh</th>
+                        <th>Địa điểm</th>
                         <th>Ngày mượn</th>
                         <th>Ngày trả</th>
                         <th>Tình trạng</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    foreach ($data["borrowHistoryList"] as $arUser) {
-                    ?>
-                        <tr>
-                            <td><?php echo $stt ?></td>
-                            <td><?php echo $arUser["ten"] ?></td>
-                            <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/<?php echo $arUser['hinhanh'] ?>"></td>
-                            <td><?php echo date("d-m-Y", strtotime($arUser["ngaymuon"])) ?></td>
-                            <td><?php echo date("d-m-Y", strtotime($arUser["ngaytra"])) ?></td>
-                            <td><?php echo $arUser["trangthai"] ?> </td>
-                        </tr>
-                    <?php $stt++;
-                    } ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        getBorrowHistoryList()
+
+        function getBorrowHistoryList() {
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/borrowhistory/getBorrowHistoryList", // Đường dẫn đến controller xử lý
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    // if (response.status == "success") {
+                    console.log(response.data[0], 444);
+                    let userTable = '';
+                    table.clear();
+
+                    response.data.forEach((e, index) => {
+                        console.log(e, 12321);
+                        table.row.add([
+                            index + 1,
+                            e.ten,
+                            function() {
+                                return (`
+                            <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}"></td>
+                                    `)
+                            },
+                            e.diadiem,
+                            e.ngaymuon,
+                            e.ngaytra,
+                            e.trangthai,
+                        ])
+                    });
+                    table.draw();
+                    // } else {}
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+    })
+</script>
 <script>
     CKEDITOR.replace("editor");
 </script>

@@ -23,6 +23,13 @@ class FindDeviceController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+    public function getDataModal()
+    {
+        $id = $_GET['id'];
+        $response = $this->findDevice->getDataModal($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function getLocation()
     {
         $response = $this->findDevice->getLocation();

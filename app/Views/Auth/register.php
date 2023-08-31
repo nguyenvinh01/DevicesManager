@@ -49,6 +49,11 @@ require_once './app/config/constant.php';
                                             <input class="form-control" id="inputEmail" type="text" placeholder="" name="sodienthoai" required />
                                             <label for="inputEmail">Số điện thoại</label>
                                         </div>
+                                        <div class="mb-3">
+                                            <select class="form-select" aria-label="Default select example" id="department" tabindex="8" name="phongban" required>
+                                                <option value="" selected>Chọn phòng ban</option>
+                                            </select>
+                                        </div>
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="inputEmail" type="text" placeholder="" name="diachi" required />
                                             <label for="inputEmail">Địa chỉ</label>
@@ -67,12 +72,6 @@ require_once './app/config/constant.php';
                                             <small id="passwordHelpBlock" class="form-text text-muted">
                                                 Mật khẩu của bạn phải có độ dài từ 8-20 ký tự, phải chứa các ký tự đặc biệt như "!@#$%&*_?", số, chữ thường và chữ hoa.
                                             </small>
-                                            <p>
-                                                <?php echo $data['token']; ?>
-                                                sdasdasd
-                                            </p>
-
-
                                             <div id="feedbackin" class="valid-feedback">
                                                 Strong Password!
                                             </div>
@@ -133,6 +132,7 @@ require_once './app/config/constant.php';
                 showMethod: 'fadeIn',
                 hideMethod: 'fadeOut',
             };
+            let phongban;
             $('#register').submit(function(e) {
                 e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
                 // Gửi yêu cầu Ajax
@@ -156,7 +156,24 @@ require_once './app/config/constant.php';
                     }
                 });
             });
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/register/getDepartment", // Đường dẫn đến controller xử lý
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response.data);
+                    response.data.forEach((pb) => {
+                        console.log(pb.tenpb);
 
+                        phongban += `<option value="${pb.id}">${pb.tenpb}</option>`
+                    })
+                    $('#department').append(phongban);
+
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
         })
         window.addEventListener('load', function() {
             var form = document.getElementsByClassName('needs-validation');

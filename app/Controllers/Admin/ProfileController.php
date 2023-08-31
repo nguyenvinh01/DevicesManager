@@ -13,9 +13,8 @@ class ProfileController extends Controller
 
     public function Show()
     {
-        $id = $_SESSION['id'];
-        $dataProfile = $this->profile->getProfile($id);
-        $this->view('index', ["page" => "admin/profile", "dataProfile" => $dataProfile]);
+
+        $this->view('index', ["page" => "admin/profile"]);
     }
     public function getProfile()
     {

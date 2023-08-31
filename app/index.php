@@ -29,7 +29,8 @@ require_once './app/config/constant.php';
     <script src="<?php echo BASE_URL; ?>/ckeditor/ckeditor.js"></script>
     <script src="<?php echo BASE_URL; ?>/public/js/scripts.js"></script>
     <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
-
+    <!-- Option 1: Include in HTML -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -75,30 +76,17 @@ require_once './app/config/constant.php';
             searching: false,
             bPaginate: false,
             info: false,
-
         });
         $(document).ready(function() {
 
             var isLoggedIn = sessionStorage.getItem('isLoggedIn');
             console.log('login');
             if (isLoggedIn) {
-                // Xóa trạng thái đăng nhập từ sessionStorage
                 sessionStorage.removeItem('isLoggedIn');
-                // Hiển thị thông báo thành công bằng Toastr
                 toastr.success('Đăng nhập thành công');
             }
         });
     </script>
-    <!-- <script>
-        CKEDITOR.replace("editor");
-    </script>
-    <script>
-        for (var i = 1; i < 200; i++) {
-            var name = "editor" + i
-            CKEDITOR.replace(name);
-
-        }
-    </script> -->
 </body>
 
 </html>

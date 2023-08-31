@@ -32,10 +32,17 @@ class RegisterController extends Controller
         $email  = $_POST['email'];
         $sodienthoai  = $_POST['sodienthoai'];
         $diachi = $_POST['diachi'];
+        $phongban = $_POST['phongban'];
         $taikhoan  = $_POST['taikhoan'];
         $matkhau  = $_POST['matkhau'];
 
-        $response = $this->register->Register($hoten, $email, $sodienthoai, $diachi, $taikhoan, $matkhau);
+        $response = $this->register->Register($hoten, $email, $sodienthoai, $diachi, $taikhoan, $matkhau, $phongban);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDepartment()
+    {
+        $response = $this->register->getDepartment();
         header('Content-Type: application/json');
         echo json_encode($response);
     }

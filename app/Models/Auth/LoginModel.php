@@ -18,6 +18,12 @@ class LoginModel extends Model
         } else {
 
             $row = mysqli_fetch_array($result);
+            if ($row['verified'] == 0) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Bạn chưa xác thực email',
+                ];
+            }
             $checkPassword = password_verify($matkhau, $row['matkhau']);
             if (!$checkPassword) {
                 return [

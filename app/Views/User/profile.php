@@ -75,7 +75,32 @@
             showMethod: 'fadeIn',
             hideMethod: 'fadeOut',
         };
+        getProfile();
 
+        function getProfile() {
+
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/profile/getProfile",
+                method: 'GET',
+                // data: $('#updateUser').serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == "success") {
+                        $('#inputUsername').val(response.data.taikhoan)
+                        $('#inputFullName').val(response.data.hoten)
+                        $('#inputLocation').val(response.data.diachi)
+                        $('#inputEmailAddress').val(response.data.email)
+                        $('#inputPhone').val(response.data.sodienthoai)
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
         $('#btn-submit').click(function(e) {
             e.preventDefault();
 

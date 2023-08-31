@@ -5,27 +5,27 @@ class RepairModel extends Model
 {
     function getRepairList($id)
     {
-        if ($_SESSION['quyen'] == 1) {
-            $query = "SELECT a.*, b.hoten, c.ten as tentb
-            FROM suachua as a, nguoidung as b, thietbi as c
-            WHERE a.nguoidung_id = b.id
-            AND a.thietbi_id = c.id
-            ORDER BY a.id DESC";
-        } else {
-            $query = "SELECT a.*, c.ten as tentb
+
+        $query = "SELECT a.*, c.ten as tentb
             FROM suachua as a, thietbi as c
             WHERE a.nguoidung_id = '{$id}'
             AND a.thietbi_id = c.id
             ORDER BY a.id DESC";
-        }
         $rs = $this->conn->query($query);
         $data = array();
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
+        $queryStaff = "SELECT * FROM nguoidung WHERE quyen_id = 3";
+        $rsStaff = $this->conn->query($queryStaff);
+        $dataStaff = array();
+        while ($row = $rsStaff->fetch_assoc()) {
+            $dataStaff[] = $row;
+        }
         return [
             'status' => 'success',
             'data' => $data,
+            'staff' => $dataStaff
             // 'count' => count($rsCount->fetch_all())
         ];
     }
@@ -40,7 +40,18 @@ class RepairModel extends Model
         return [
             'status' => 'success',
             'data' => $data,
-            // 'count' => count($rsCount->fetch_all())
+        ];
+    }
+    public function getDataModal($id)
+    {
+        $queryDevice = "SELECT m.*, t.ten  FROM muon as m, thietbi as t WHERE m.nguoidung_id = $id AND m.thietbi_id = t.id";
+        $rsDevice = $this->conn->query($queryDevice);
+        $dataDevice = array();
+        while ($row = $rsDevice->fetch_assoc()) {
+            $dataDevice[] = $row;
+        }
+        return [
+            'staff' => $dataDevice,
         ];
     }
     function sendRepair($idtb, $noidung)

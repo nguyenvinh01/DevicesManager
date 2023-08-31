@@ -26,7 +26,8 @@ class AssignModel extends Model
     LEFT JOIN
         diadiem AS DD ON ql.diadiem = DD.id
     LEFT JOIN
-        nguoidung AS nv ON ql.nhanvien_id = nv.id;";
+        nguoidung AS nv ON ql.nhanvien_id = nv.id
+    WHERE ql.nhanvien_id = $id;";
 
         $rs = $this->conn->query($query);
         $data = array();
@@ -38,44 +39,7 @@ class AssignModel extends Model
             'data' => $data,
         ];
     }
-    function assignDevice($phongban, $tentb, $soluong)
-    {
-        // Kiểm tra trùng email
-        $queryBuilding = "SELECT dd.toanha as toanha_id, dd.id as phong_id , pb.id as phongban_id FROM diadiem as dd, phongban as pb 
-        WHERE pb.id = $phongban 
-        AND pb.diadiem = dd.id;";
-        $rsBuilding = $this->conn->query($queryBuilding);
-        $dataBuilding = $rsBuilding->fetch_assoc();
-        $tenpb = $dataBuilding["phongban_id"];
-        $toanha = $dataBuilding["toanha_id"];
-        $phong = $dataBuilding["phong_id"];
-        $time = date('Y-m-d');
-        // Thực hiện câu lệnh INSERT
-        $insertQuery = "INSERT INTO quanly (tentb, soluong, nhanvien_id, phongban, toanha, tinhtrang, diadiem, ngaykiemtra, ngaycapnhat) 
-                    VALUES ('{$tentb}', '{$soluong}', null, '{$tenpb}', '{$toanha}', null,'{$phong}',null, '$time')";
-        $result = $this->conn->query($insertQuery);
 
-        if ($result) {
-            $queryMinusDevice = "UPDATE `thietbi`
-            SET `soluong` = soluong-$soluong 
-            WHERE `id`=$tentb";
-            $this->conn->query($queryMinusDevice);
-
-            return [
-                'status' => 'success',
-                'message' => 'Phân quyền sử dụng thành công.',
-                'query' => $insertQuery,
-                'bb' => $queryMinusDevice
-            ];
-        } else {
-            return [
-                'status' => 'error',
-                'message' => 'Có lỗi xảy ra trong quá trình thực hiện.',
-                'query' => $insertQuery
-
-            ];
-        }
-    }
     function getDeviceByType($idType)
     {
         $query = "SELECT * FROM thietbi WHERE loaithietbi_id = $idType;";
@@ -164,23 +128,40 @@ class AssignModel extends Model
             ];
         }
     }
-    function assignStaff($id, $idStaff, $ngayktra)
+    public function getDataModal($id)
+    {
+        $query = "SELECT * FROM quanly WHERE id = $id";
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        $queryStaffAssign = "SELECT * FROM suachua WHERE id = $id";
+        $rsStaffAssign = $this->conn->query($queryStaffAssign);
+        $dataStaffAssign = array();
+        while ($row = $rsStaffAssign->fetch_assoc()) {
+            $dataStaffAssign[] = $row;
+        }
+        return [
+            'data' => $data,
+            'staffAssign' => $dataStaffAssign
+        ];
+    }
+    function updateStatusRepair($id, $status)
     {
         $query = "UPDATE `quanly` 
-        SET `nhanvien_id`={$idStaff}, `ngaykiemtra`='{$ngayktra}', `tinhtrang`='Chờ xử lý'
-        WHERE `id`={$id}";
+        SET `tinhtrang`= '$status'
+        WHERE `id`=$id";
         $result = $this->conn->query($query);
         if ($result) {
-            // header("Location: ../repair?msg=1");
             return [
                 "status" => "success",
-                "message" => $query
+                "message" => "Cập nhật thành công"
             ];
         } else {
-            // header("Location: ../repair?msg=2");
             return [
                 "status" => "error",
-                "message" => $query
+                "message" => "Có lỗi xảy ra khi cập nhật"
             ];
         }
     }
