@@ -13,14 +13,17 @@ class RepairController extends Controller
 
     public function Show()
     {
-        $repairContent = $this->repair->getRepairList($_SESSION['id']);
-        $dataDeviceType = $this->repair->getDeviceType($_SESSION['id']);
-
-        $this->view('index', ["page" => "user/repair", "repairContent" => $repairContent, "dataDeviceType" => $dataDeviceType]);
+        $this->view('index', ["page" => "user/repair"]);
     }
     public function getRepairList()
     {
-        $response = $this->repair->getRepairList($_SESSION['id']);
+        $keyword = $_GET['keyword'];
+        $page = $_GET['page'];
+        $status = $_GET['status'];
+        $eDate = $_GET['eDate'];
+        $sDate = $_GET['sDate'];
+        $filter = $_GET['filter'];
+        $response = $this->repair->getRepairList($filter, $keyword, $page, $status, $eDate, $sDate);
         header('Content-Type: application/json');
         echo json_encode($response);
     }

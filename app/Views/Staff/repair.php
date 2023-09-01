@@ -2,6 +2,50 @@
     <h1 class="mt-4">Danh sách yêu cầu sửa chữa đã nhận</h1>
     <div class="card mb-4">
         <div class="card-header">
+            <div class="col-8 mb-3">
+                <div class="input-group mb-3">
+                    <div class="col-2">
+                        <select id="optionSelect" class="form-select col" aria-label="Default select example">
+                            <option value="">Tất cả</option>
+                            <option value="nguoigui">Người gửi</option>
+                            <option value="thietbi">Tên thiết bị</option>
+                        </select>
+                    </div>
+
+                    <input id="datatable-input" type="text" class="form-control col-16" placeholder="Search name, email..." aria-label="Search..." aria-describedby="button-addon2">
+                    <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
+                    <div class="col-3 mx-3">
+                        <select id="select-status" class="form-select col select" aria-label="Default select example">
+                            <option value="" selected disabled hidden>Trạng thái</option>
+                            <option value="">Tất cả</option>
+                            <option value="Chờ xử lý">Chờ xử lý</option>
+                            <option value="Đang kiểm tra">Đang kiểm tra</option>
+                            <option value="Đang kiểm tra">Đang kiểm tra</option>
+                            <option value="Cần sửa chữa">Cần sửa chữa</option>
+                            <option value="Đang sửa chữa">Đang sửa chữa</option>
+                            <option value="Hoàn thành">Hoàn thành</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="col-16 d-flex flex-row">
+                    <div class="form-group me-3">
+                        <label for="startDate">Ngày bắt đầu:</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate">
+                    </div>
+
+                    <div class="form-group mx-3">
+                        <label for="reset">Ngày kết thúc:</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endDate"></label>
+
+                        <input type="button" class="form-control btn-success" id="reset" name="reset" value="Reset">
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="card-body">
             <table id="datatablesSimple">
@@ -20,32 +64,34 @@
                 <tbody>
                 </tbody>
             </table>
-            <!-- Modal Update-->
-            <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Xác nhận đã xử lý</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form method="POST" enctype="multipart/form-data" id="editRepair">
-                                <input type="hidden" class="form-control" id="id-repair" name="id">
-                                <div class="col">
-                                    <select class="form-select" id="list-staff" aria-label="Default select example" id="theloai" tabindex="8" name="status-repair" required>
-                                        <option value="" selected>Chọn tình trạng</option>
-                                    </select>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                    <button type="submit" class="btn btn-primary" name="xnsc">Xác nhận</button>
-                                </div>
-                            </form>
+            <ul class="pagination justify-content-end mt-3" id="pagination">
+
+                <!-- Modal Update-->
+                <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Xác nhận đã xử lý</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" enctype="multipart/form-data" id="editRepair">
+                                    <input type="hidden" class="form-control" id="id-repair" name="id">
+                                    <div class="col">
+                                        <select class="form-select" id="list-staff" aria-label="Default select example" id="theloai" tabindex="8" name="status-repair" required>
+                                            <option value="" selected>Chọn tình trạng</option>
+                                        </select>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="submit" class="btn btn-primary" name="xnsc">Xác nhận</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!--End Modal Update-->
+                <!--End Modal Update-->
         </div>
     </div>
 </div>
@@ -59,16 +105,30 @@
             showMethod: 'fadeIn',
             hideMethod: 'fadeOut',
         };
+        let prevKeywordSearch = '';
+        let prevPage = 0;
+        let prevStatus = '';
+        let startDate = '';
+        let endDate = '';
+        let prevFilter = '';
         getRepairList();
 
-        function getRepairList() {
+        function getRepairList(keyword = '', page = 0, sDate = '', eDate = '', status = '', filter = '') {
             $.ajax({
                 url: `<?php echo BASE_URL; ?>/repair/getRepairList`,
                 method: 'GET',
+                data: {
+                    keyword: keyword,
+                    page: page,
+                    status: status,
+                    eDate: eDate,
+                    sDate: sDate,
+                    filter: filter
+                },
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
-                        console.log(response.data, 123);
+                        console.log(response, 123);
                         // let userTable = '';
                         table.clear();
                         response.data.forEach((e, index) => {
@@ -106,6 +166,31 @@
                             ])
                         });
                         table.draw();
+                        let pagination = ""
+                        let itemPerPage = 5;
+                        if (prevPage == 0) {
+                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                        } else {
+                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                        }
+                        for (let i = 0; i < (response.count / itemPerPage); i++) {
+                            if (i == prevPage) {
+                                pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+
+                            } else {
+                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+
+                            }
+                        }
+                        if (prevPage == Math.floor((response.count / itemPerPage))) {
+                            console.log(response.count / itemPerPage, 'dis');
+                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        } else {
+                            console.log(response.count / itemPerPage);
+
+                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        }
+                        $('#pagination').html(pagination)
                     } else {
                         toastr.error(response.message);
                     }
@@ -114,6 +199,87 @@
                     console.error(error);
                 }
             });
+        }
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            var clickedPage = $(this).data('page');
+            console.log('page');
+            if (clickedPage === 'previous') {
+                if (prevPage > 0) {
+                    console.log("Clicked Page: " + prevPage);
+                    getRepairList(prevKeywordSearch, prevPage - 1, startDate, endDate, prevStatus, prevFilter)
+                    prevPage = prevPage - 1;
+                }
+            } else if (clickedPage === 'next') {
+                if (prevPage >= 0) {
+                    console.log("Clicked Page: " + prevPage);
+                    getRepairList(prevKeywordSearch, prevPage + 1, startDate, endDate, prevStatus, prevFilter)
+                    prevPage = prevPage + 1;
+                }
+            } else {
+
+                getRepairList(prevKeywordSearch, clickedPage, startDate, endDate, prevStatus, prevFilter)
+                prevPage = clickedPage;
+                console.log("Clicked Page: " + prevPage);
+            }
+        });
+        $('#button-search').click((e) => {
+            e.preventDefault();
+            console.log('search');
+            var keyword = $('#datatable-input').val();
+            prevKeywordSearch = keyword;
+            prevPage = 0;
+            var filter = $('#optionSelect').val();
+            prevFilter = filter;
+            // if (option != prevOptionSearch || keyword != prevKeywordSearch) {
+            //     prevKeywordSearch = keyword;
+            //     prevOptionSearch = option;
+            // }l
+            console.log(startDate, endDate);
+            getRepairList(prevKeywordSearch, 0, startDate, endDate, prevStatus, prevFilter)
+        })
+        $('#reset').click((e) => {
+            e.preventDefault();
+            $("#endDate").val('');
+            $("#startDate").val('');
+            startDate = '';
+            endDate = '';
+            // if (option != prevOptionSearch || keyword != prevKeywordSearch) {
+            //     prevKeywordSearch = keyword;
+            //     prevOptionSearch = option;
+            // }l
+            getRepairList(prevKeywordSearch, 0, startDate, endDate, prevStatus, prevFilter)
+        })
+        $('#select-status').change(function(e) {
+            e.preventDefault();
+
+            const status = $('#select-status').val();
+            prevStatus = status;
+            prevPage = 0;
+            getRepairList(prevKeywordSearch, 0, $("#startDate").val(), $("#endDate").val(), status, prevFilter)
+
+        })
+        $("#startDate").on("change", function() {
+            var sDate = new Date($(this).val());
+            var eDate = new Date(sDate);
+            eDate.setMonth(eDate.getMonth() + 1);
+
+            startDate = convertInputDate(sDate);
+
+            endDate = convertInputDate(eDate);
+            $("#endDate").val(endDate);
+        });
+
+        function convertInputDate(date) {
+            const inputDate = new Date(date);
+
+            // Get year, month, and day from the Date object
+            const year = inputDate.getFullYear();
+            const month = String(inputDate.getMonth() + 1).padStart(2, '0');
+            const day = String(inputDate.getDate()).padStart(2, '0');
+
+            // Format the date in "yyyy-mm-dd" format
+            return `${year}-${month}-${day}`;
         }
         $('#editRepair').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu

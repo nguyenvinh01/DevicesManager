@@ -14,12 +14,17 @@ class BorrowDeviceController extends Controller
     public function Show()
     {
 
-        $dataBorrowDeviceList = $this->device->getBorrowDeviceList();
-        $this->view('index', ["page" => "admin/borrow", "dataBorrowDeviceList" => $dataBorrowDeviceList]);
+        $this->view('index', ["page" => "admin/borrow"]);
     }
     public function getBorrowDeviceList()
     {
-        $response = $this->device->getBorrowDeviceList();
+        $keyword = $_GET['keyword'];
+        $page = $_GET['page'];
+        $status = $_GET['status'];
+        $eDate = $_GET['eDate'];
+        $sDate = $_GET['sDate'];
+        $filter = $_GET['filter'];
+        $response = $this->device->getBorrowDeviceList($filter, $keyword, $page, $status, $eDate, $sDate);
         header('Content-Type: application/json');
         echo json_encode($response);
     }

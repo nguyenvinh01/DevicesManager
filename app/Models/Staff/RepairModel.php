@@ -10,23 +10,65 @@ require 'vendor/autoload.php';
 require_once "./app/config/library.php";
 class RepairModel extends Model
 {
-    function getRepairList($id)
+    function getRepairList($id, $filter, $keyword, $page, $status, $eDate, $sDate)
     {
-        // if ($_SESSION['quyen'] == 1) {
-        $query = "SELECT a.*, b.hoten, c.ten as tentb
-            FROM suachua as a, nguoidung as b, thietbi as c
-            WHERE a.nguoidung_id = b.id
-            AND a.thietbi_id = c.id 
-            AND a.phancong = $id
-            ORDER BY a.id DESC";
-        // } else {
-        // $query = "SELECT a.*, c.ten as tentb
-        //     FROM suachua as a, thietbi as c
-        //     WHERE a.nguoidung_id = '{$id}'
-        //     AND a.thietbi_id = c.id
+        // // if ($_SESSION['quyen'] == 1) {
+        // $query = "SELECT a.*, b.hoten, c.ten as tentb
+        //     FROM suachua as a, nguoidung as b, thietbi as c
+        //     WHERE a.nguoidung_id = b.id
+        //     AND a.thietbi_id = c.id 
+        //     AND a.phancong = $id
         //     ORDER BY a.id DESC";
+        // // } else {
+        // // $query = "SELECT a.*, c.ten as tentb
+        // //     FROM suachua as a, thietbi as c
+        // //     WHERE a.nguoidung_id = '{$id}'
+        // //     AND a.thietbi_id = c.id
+        // //     ORDER BY a.id DESC";
+        // // }
+        // $rs = $this->conn->query($query);
+        // $data = array();
+        // while ($row = $rs->fetch_assoc()) {
+        //     $data[] = $row;
         // }
+        // $queryStaff = "SELECT * FROM nguoidung WHERE quyen_id = 3";
+        // $rsStaff = $this->conn->query($queryStaff);
+        // $dataStaff = array();
+        // while ($row = $rsStaff->fetch_assoc()) {
+        //     $dataStaff[] = $row;
+        // }
+        // return [
+        //     'status' => 'success',
+        //     'data' => $data,
+        //     'staff' => $dataStaff
+        //     // 'count' => count($rsCount->fetch_all())
+        // ];
+        $offset = $page * 5;
+
+        $query = "SELECT a.*, c.ten AS tentb, b.hoten 
+            FROM suachua AS a, nguoidung AS b, thietbi AS c  
+            WHERE 1=1 AND a.thietbi_id = c.id AND a.nguoidung_id = b.id AND a.phancong = '$id'"; // Sử dụng điều kiện "1=1" để có thể thêm các điều kiện một cách linh hoạt
+
+        // if ($filter == '' && $keyword == '') {
+        //     $query .= " AND a.phancong = '$id'";
+        // }
+        if ($status != '') {
+            $query .= " AND a.tinhtrang = '$status'";
+        }
+        if ($sDate != '' && $eDate != '') {
+            $query .= " AND a.ngaygui <= '$eDate' AND a.ngaygui >= '$sDate'";
+        }
+        if ($filter == 'nguoigui' && $keyword != '') {
+            $query .= " AND EXISTS (SELECT 1 FROM nguoidung AS b WHERE b.id = a.nguoidung_id AND b.quyen_id = 2 AND b.hoten LIKE '%$keyword%')";
+        } elseif ($filter == 'thietbi' && $keyword != '') {
+            $query .= " AND c.ten LIKE '%$keyword%'";
+        }
+
+        $queryCount = $query; // Truy vấn đếm sẽ được thiết lập tương tự
+        $query .= " ORDER BY a.id DESC LIMIT 5 OFFSET $offset;";
         $rs = $this->conn->query($query);
+        $rsCount = $this->conn->query($queryCount);
+
         $data = array();
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
@@ -40,8 +82,9 @@ class RepairModel extends Model
         return [
             'status' => 'success',
             'data' => $data,
-            'staff' => $dataStaff
-            // 'count' => count($rsCount->fetch_all())
+            'staff' => $dataStaff,
+            'count' => count($rsCount->fetch_all()),
+            'query' => $query,
         ];
     }
     public function getDataModal($id)

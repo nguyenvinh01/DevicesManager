@@ -18,7 +18,13 @@ class AssignController extends Controller
     }
     public function getAssignList()
     {
-        $response = $this->assign->getAssignList($_SESSION['id']);
+        $keyword = $_GET['keyword'];
+        $page = $_GET['page'];
+        $department = $_GET['department'];
+        $eDate = $_GET['eDate'];
+        $sDate = $_GET['sDate'];
+        $filter = $_GET['filter'];
+        $response = $this->assign->getAssignList($filter, $keyword, $page, $department, $eDate, $sDate);
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -44,6 +50,12 @@ class AssignController extends Controller
     {
         $id = $_GET['id'];
         $response = $this->assign->getDeviceByType($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDepartment()
+    {
+        $response = $this->assign->getDepartment();
         header('Content-Type: application/json');
         echo json_encode($response);
     }

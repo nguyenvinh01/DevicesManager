@@ -13,15 +13,14 @@ class DeviceListController extends Controller
 
     public function Show()
     {
-
-        $dataDeviceList = $this->device->getDeviceList();
-        $dataDeviceType = $this->device->getDeviceType();
-        $this->view('index', ["page" => "admin/devicelist", "dataDeviceList" => $dataDeviceList, "dataDeviceType" => $dataDeviceType]);
+        $this->view('index', ["page" => "admin/devicelist"]);
     }
     public function getDeviceList()
     {
-
-        $response = $this->device->getDeviceList();
+        $keyword = $_GET['keyword'];
+        $page = $_GET['page'];
+        $type = $_GET['type'];
+        $response = $this->device->getDeviceList($keyword, $page, $type);
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -29,6 +28,13 @@ class DeviceListController extends Controller
     {
         $id = $_GET["id"];
         $response = $this->device->getDataModal($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+
+    public function getDeviceType()
+    {
+        $response = $this->device->getDeviceType();
         header('Content-Type: application/json');
         echo json_encode($response);
     }

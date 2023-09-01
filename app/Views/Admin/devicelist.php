@@ -11,11 +11,11 @@ if ($_SESSION['quyen'] != 1) {
         <div class="card-header">
             <div class="flex-column col-6">
                 <div class="input-group mb-3">
-                    <input id="datatable-input" type="text" class="form-control col-16" placeholder="Search name, email..." aria-label="Search..." aria-describedby="button-addon2">
+                    <input id="datatable-input" type="text" class="form-control col-16" placeholder="Tên thiết bị..." aria-label="Search..." aria-describedby="button-addon2">
                     <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
                     <div class="col-4 mx-3">
-                        <select id="filterSelect" class="form-select col" aria-label="Default select example">
-                            <option value="">Tất cả</option>
+                        <select id="device-type" class="form-select col" aria-label="Default select example">
+                            <option value="">Loại thiết bị</option>
                         </select>
 
                     </div>
@@ -43,6 +43,8 @@ if ($_SESSION['quyen'] != 1) {
                 <tbody>
                 </tbody>
             </table>
+            <ul class="pagination justify-content-end mt-3" id="pagination">
+
         </div>
         <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -216,6 +218,162 @@ if ($_SESSION['quyen'] != 1) {
             hideMethod: 'fadeOut',
         };
         getDeviceList()
+        let prevKeywordSearch = '';
+        let prevPage = 0;
+        let prevTypeSearch = '';
+
+        function getDeviceList(keyword = '', page = 0, type = '') {
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/devicelist/getDeviceList", // Đường dẫn đến controller xử lý
+                method: 'GET',
+                data: {
+                    keyword: keyword,
+                    page: page,
+                    type: type
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == "success") {
+                        console.log(response);
+                        let userTable = '';
+                        table.clear();
+                        let index = 5 * prevPage;
+                        response.data.forEach((e) => {
+                            index++;
+                            table.row.add([
+                                index,
+                                e.ten,
+                                // e.hinhanh,
+                                function() {
+                                    return (`
+                                    <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}?>"></td>
+                                    `)
+                                },
+                                e.soluong,
+                                // e.dactinhkithuat,
+                                function() {
+                                    return (`
+                                    <td>
+                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#ModalDes">
+                                    Xem</a>
+                                    </td>                                    `)
+                                },
+                                e.tenloai,
+                                e.tinhtrang,
+                                function() {
+                                    return (
+                                        `
+                                    <td style="width : 130px !important">
+                                        <button type="button" class="btn btn-primary modal-edit"  data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#ModalEdit">
+                                            Sửa
+                                        </button>
+                                        <button type="button" class="btn btn-danger modal-del" data-bs-toggle="modal" data-bs-target="#ModalDel"  data-id="${e.id}">
+                                            Xóa
+                                        </button>
+                                    </td>
+                                `
+                                    )
+                                },
+                            ])
+                        });
+                        table.draw();
+                        let typeAdd;
+                        response.devicetype.map((type) => {
+                            if (type.id == response.data.loaithietbi_id) {
+                                typeAdd += `<option value="${type.id}" selected>${type.ten}</option>`
+                            } else {
+                                typeAdd += `<option value="${type.id}">${type.ten}</option>`
+                            }
+                        })
+                        $('#type-add').append(typeAdd)
+
+                        let pagination = ""
+                        if (prevPage == 0) {
+                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                        } else {
+                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                        }
+                        let itemPerPage = 5;
+                        for (let i = 0; i < (response.count / itemPerPage); i++) {
+                            if (i == prevPage) {
+                                pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+
+                            } else {
+                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+
+                            }
+                        }
+                        if (prevPage == Math.floor((response.count / itemPerPage))) {
+                            console.log(response.count / itemPerPage, 'dis');
+                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        } else {
+                            console.log(response.count / itemPerPage);
+
+                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        }
+                        $('#pagination').html(pagination)
+                    } else {}
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            var clickedPage = $(this).data('page');
+            console.log('page');
+            if (clickedPage === 'previous') {
+                if (prevPage > 0) {
+                    console.log("Clicked Page: " + prevPage);
+                    getDeviceList(prevKeywordSearch, prevPage - 1, prevTypeSearch)
+                    prevPage = prevPage - 1;
+                }
+            } else if (clickedPage === 'next') {
+                if (prevPage >= 0) {
+                    console.log("Clicked Page: " + prevPage);
+                    getDeviceList(prevKeywordSearch, prevPage + 1, prevTypeSearch)
+                    prevPage = prevPage + 1;
+                }
+            } else {
+
+                getDeviceList(prevKeywordSearch, clickedPage, prevTypeSearch)
+                prevPage = clickedPage;
+                console.log("Clicked Page: " + prevPage);
+            }
+        });
+
+        $.ajax({
+            url: "<?php echo BASE_URL; ?>/devicelist/getDeviceType", // Đường dẫn đến controller xử lý
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+                if (response.status == "success") {
+                    let typeList;
+                    response.data.map((type) => {
+                        // if (type.id == response.data.loaithietbi_id) {
+                        typeList += `<option value="${type.id}">${type.ten}</option>`
+                        // } else {
+                        // typeList += `<option value="${type.id}">${type.ten}</option>`
+                        // }
+                    })
+                    $('#device-type').append(typeList)
+                } else {}
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+        $('#device-type').change(function(e) {
+            e.preventDefault();
+            const type = $('#device-type').val();
+            console.log(type);
+            prevTypeSearch = type;
+            prevPage = 0;
+            getDeviceList(prevKeywordSearch, 0, type)
+        })
         $('#addDevice').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
@@ -318,6 +476,19 @@ if ($_SESSION['quyen'] != 1) {
                 }
             });
         });
+
+        $('#button-search').click((e) => {
+            e.preventDefault();
+            console.log('search');
+            var keyword = $('#datatable-input').val();
+            prevKeywordSearch = keyword;
+            // if (option != prevOptionSearch || keyword != prevKeywordSearch) {
+            //     prevKeywordSearch = keyword;
+            //     prevOptionSearch = option;
+            // }
+            getDeviceList(keyword, 0, prevTypeSearch)
+        })
+
         $(document).on('click', '.modal-edit', function() {
             var id = $(this).data('id');
             console.log('edit', id);
@@ -386,71 +557,6 @@ if ($_SESSION['quyen'] != 1) {
                 }
             })
         });
-
-        function getDeviceList() {
-            $.ajax({
-                url: "<?php echo BASE_URL; ?>/devicelist/getDeviceList", // Đường dẫn đến controller xử lý
-                method: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status == "success") {
-                        console.log(response);
-                        let userTable = '';
-                        table.clear();
-                        response.data.forEach((e, index) => {
-                            table.row.add([
-                                index + 1,
-                                e.ten,
-                                // e.hinhanh,
-                                function() {
-                                    return (`
-                                    <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}?>"></td>
-                                    `)
-                                },
-                                e.soluong,
-                                // e.dactinhkithuat,
-                                function() {
-                                    return (`
-                                    <td>
-                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#ModalDes">
-                                    Xem</a>
-                                    </td>                                    `)
-                                },
-                                e.tenloai,
-                                e.tinhtrang,
-                                function() {
-                                    return (
-                                        `
-                                    <td style="width : 130px !important">
-                                        <button type="button" class="btn btn-primary modal-edit"  data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#ModalEdit">
-                                            Sửa
-                                        </button>
-                                        <button type="button" class="btn btn-danger modal-del" data-bs-toggle="modal" data-bs-target="#ModalDel"  data-id="${e.id}">
-                                            Xóa
-                                        </button>
-                                    </td>
-                                `
-                                    )
-                                },
-                            ])
-                        });
-                        table.draw();
-                        let typeAdd;
-                        response.devicetype.map((type) => {
-                            if (type.id == response.data.loaithietbi_id) {
-                                typeAdd += `<option value="${type.id}" selected>${type.ten}</option>`
-                            } else {
-                                typeAdd += `<option value="${type.id}">${type.ten}</option>`
-                            }
-                        })
-                        $('#type-add').append(typeAdd)
-                    } else {}
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        }
     })
 </script>
 

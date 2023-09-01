@@ -9,12 +9,24 @@ require_once "./app/config/library.php";
 require_once "./app/Models/Model.php";
 class NotificationModel extends Model
 {
-    function getNotification()
+    function getNotification($keyword, $page, $eDate, $sDate)
     {
+        $offset = $page * 15;
+
         $query = "SELECT *
-        FROM thongbao
-         ORDER BY id DESC";
+        FROM thongbao WHERE 1";
+        if ($sDate != '' && $eDate != '') {
+            $query .= " AND ngaytao <= '$eDate' AND ngaytao >= '$sDate'";
+        }
+        if ($keyword != '') {
+            $query .= " AND tieude LIKE '%$keyword%'";
+        }
+        $queryCount = $query;
+
+        $query .= " ORDER BY id DESC LIMIT 15 OFFSET $offset";
         $rs = $this->conn->query($query);
+        $rsCount = $this->conn->query($queryCount);
+
         $data = array();
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
@@ -22,7 +34,7 @@ class NotificationModel extends Model
         return [
             'status' => 'success',
             'data' => $data,
-            // 'count' => count($rsCount->fetch_all())
+            'count' => count($rsCount->fetch_all())
         ];
     }
     public function getDataModal($id)

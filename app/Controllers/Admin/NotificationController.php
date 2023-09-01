@@ -14,8 +14,7 @@ class NotificationController extends Controller
     public function Show()
     {
 
-        $notificationContent = $this->notification->getNotification();
-        $this->view('index', ["page" => "admin/notification", "notificationContent" => $notificationContent]);
+        $this->view('index', ["page" => "admin/notification"]);
     }
     public function getDataModal()
     {
@@ -26,7 +25,13 @@ class NotificationController extends Controller
     }
     public function getNotification()
     {
-        $response = $this->notification->getNotification();
+        $keyword = $_GET['keyword'];
+        $page = $_GET['page'];
+        $status = $_GET['status'];
+        $eDate = $_GET['eDate'];
+        $sDate = $_GET['sDate'];
+        $filter = $_GET['filter'];
+        $response = $this->notification->getNotification($keyword, $page, $eDate, $sDate);
         header('Content-Type: application/json');
         echo json_encode($response);
     }

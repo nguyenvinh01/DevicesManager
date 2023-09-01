@@ -3,13 +3,26 @@
 require_once "./app/Models/Model.php";
 class DeviceListModel extends Model
 {
-    function getDeviceList()
+    function getDeviceList($keyword, $page, $type)
     {
+        $offset = $page * 5;
+
         $query = "SELECT a.*,b.ten as 'tenloai'
         FROM thietbi as a,loaithietbi as b
-        WHERE a.loaithietbi_id = b.id 
-        ORDER BY a.id DESC";
+        WHERE a.loaithietbi_id = b.id";
+
+        if ($keyword != '') {
+            $query .= " AND a.ten LIKE '%$keyword%'";
+        }
+        if ($type != '') {
+            $query .= " AND a.loaithietbi_id = $type";
+        }
+        $queryCount = $query;
+
+        $query .= " ORDER BY a.id DESC LIMIT 5 OFFSET $offset;";
         $rs = $this->conn->query($query);
+        $rsCount = $this->conn->query($queryCount);
+
         $data = array();
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
@@ -24,7 +37,8 @@ class DeviceListModel extends Model
         return [
             'status' => 'success',
             'data' => $data,
-            'devicetype' => $dataType
+            'devicetype' => $dataType,
+            'count' => count($rsCount->fetch_all())
 
             // 'count' => count($rsCount->fetch_all())
         ];

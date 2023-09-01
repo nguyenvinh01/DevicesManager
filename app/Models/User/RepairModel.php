@@ -3,15 +3,35 @@
 require_once "./app/Models/Model.php";
 class RepairModel extends Model
 {
-    function getRepairList($id)
+    function getRepairList($filter, $keyword, $page, $status, $eDate, $sDate)
     {
+        $offset = $page * 5;
 
-        $query = "SELECT a.*, c.ten as tentb
-            FROM suachua as a, thietbi as c
-            WHERE a.nguoidung_id = '{$id}'
-            AND a.thietbi_id = c.id
-            ORDER BY a.id DESC";
+        $query = "SELECT a.*, c.ten AS tentb
+            FROM suachua AS a
+            INNER JOIN thietbi AS c ON a.thietbi_id = c.id
+            WHERE 1=1"; // Sử dụng điều kiện "1=1" để có thể thêm các điều kiện một cách linh hoạt
+
+        if ($filter == '') {
+            $query .= " AND a.nguoidung_id = '{$_SESSION['id']}'";
+        }
+        if ($status != '') {
+            $query .= " AND a.tinhtrang = '$status'";
+        }
+        if ($sDate != '' && $eDate != '') {
+            $query .= " AND a.ngaygui <= '$eDate' AND a.ngaygui >= '$sDate'";
+        }
+        if ($filter == 'nguoisuachua') {
+            $query .= " AND EXISTS (SELECT 1 FROM nguoidung AS b WHERE b.id = a.phancong AND b.quyen_id = 3 AND b.hoten LIKE '%$keyword%')";
+        } elseif ($filter == 'thietbi') {
+            $query .= " AND c.ten LIKE '%$keyword%'";
+        }
+
+        $queryCount = $query; // Truy vấn đếm sẽ được thiết lập tương tự
+        $query .= " ORDER BY a.id DESC LIMIT 5 OFFSET $offset;";
         $rs = $this->conn->query($query);
+        $rsCount = $this->conn->query($queryCount);
+
         $data = array();
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
@@ -25,8 +45,10 @@ class RepairModel extends Model
         return [
             'status' => 'success',
             'data' => $data,
-            'staff' => $dataStaff
-            // 'count' => count($rsCount->fetch_all())
+            'staff' => $dataStaff,
+            'count' => count($rsCount->fetch_all()),
+            'query' => $query,
+            'count' => $queryCount
         ];
     }
     function getDeviceType()

@@ -17,7 +17,13 @@ class RepairController extends Controller
     }
     public function getRepairList()
     {
-        $response = $this->repair->getRepairList($_SESSION['id']);
+        $keyword = $_GET['keyword'];
+        $page = $_GET['page'];
+        $status = $_GET['status'];
+        $eDate = $_GET['eDate'];
+        $sDate = $_GET['sDate'];
+        $filter = $_GET['filter'];
+        $response = $this->repair->getRepairList($_SESSION['id'], $filter, $keyword, $page, $status, $eDate, $sDate);
         header('Content-Type: application/json');
         echo json_encode($response);
     }

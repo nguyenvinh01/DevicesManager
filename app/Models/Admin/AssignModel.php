@@ -3,8 +3,10 @@
 require_once "./app/Models/Model.php";
 class AssignModel extends Model
 {
-    function getAssignList($id)
+    function getAssignList($filter, $keyword, $page, $department, $eDate, $sDate)
     {
+        $offset = $page * 10;
+
         $query = "SELECT
         ql.id,
         ql.ngaykiemtra,
@@ -26,9 +28,25 @@ class AssignModel extends Model
     LEFT JOIN
         diadiem AS DD ON ql.diadiem = DD.id
     LEFT JOIN
-        nguoidung AS nv ON ql.nhanvien_id = nv.id;";
+        nguoidung AS nv ON ql.nhanvien_id = nv.id
+    WHERE 1 ";
 
+        if ($filter == 'hoten') {
+            $query .= " AND nv.hoten LIKE '%$keyword%'";
+        } elseif ($filter == 'thietbi') {
+            $query .= " AND T.ten LIKE '%$keyword%'";
+        }
+        if ($department != '') {
+            $query .= " AND PB.id = '$department'";
+        }
+        if ($sDate != '' && $eDate != '') {
+            $query .= " AND ql.ngaykiemtra <= '$eDate' AND ql.ngaykiemtra >= '$sDate'";
+        }
+        $queryCount = $query;
+        $query .= " ORDER BY ql.id DESC LIMIT 10 OFFSET $offset;";
         $rs = $this->conn->query($query);
+        $rsCount = $this->conn->query($queryCount);
+
         $data = array();
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
@@ -36,6 +54,8 @@ class AssignModel extends Model
         return [
             'status' => 'success',
             'data' => $data,
+            'count' => count($rsCount->fetch_all()),
+            'query' => $query
         ];
     }
     function assignDevice($phongban, $tentb, $soluong)
@@ -111,7 +131,10 @@ class AssignModel extends Model
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
         }
-        return $data;
+        return [
+            'status' => 'success',
+            'data' => $data,
+        ];
     }
 
     function getDataAddModal()

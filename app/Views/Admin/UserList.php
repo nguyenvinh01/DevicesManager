@@ -401,6 +401,7 @@ if ($_SESSION['quyen'] != 1) {
         $('#select-role').change(function() {
             var role = $(this).val();
             console.log(role, 123);
+            prevPage = 0;
             getUserList(prevOptionSearch, prevKeywordSearch, prevPage, role)
         });
         $(document).on('click', '.page-link', function(e) {

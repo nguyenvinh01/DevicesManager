@@ -13,12 +13,16 @@ class BorrowHistoryController extends Controller
     }
     function Show()
     {
-        $borrowHistoryList = $this->borrowHistory->getBorrowHistoryList();
-        $this->view("index", ["page" => "user/history", "borrowHistoryList" => $borrowHistoryList]);
+        $this->view("index", ["page" => "user/history"]);
     }
     public function getBorrowHistoryList()
     {
-        $response = $this->borrowHistory->getBorrowHistoryList();
+        $keyword = $_GET['keyword'];
+        $page = $_GET['page'];
+        $status = $_GET['status'];
+        $eDate = $_GET['eDate'];
+        $sDate = $_GET['sDate'];
+        $response = $this->borrowHistory->getBorrowHistoryList($keyword, $page, $status, $eDate, $sDate);
         header('Content-Type: application/json');
         echo json_encode($response);
     }

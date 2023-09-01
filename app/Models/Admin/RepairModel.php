@@ -10,22 +10,36 @@ require 'vendor/autoload.php';
 require_once "./app/config/library.php";
 class RepairModel extends Model
 {
-    function getRepairList($id)
+    function getRepairList($filter, $keyword, $page, $status, $eDate, $sDate)
     {
-        // if ($_SESSION['quyen'] == 1) {
+        $offset = $page * 5;
+
         $query = "SELECT a.*, b.hoten, c.ten as tentb
             FROM suachua as a, nguoidung as b, thietbi as c
-            WHERE a.nguoidung_id = b.id
-            AND a.thietbi_id = c.id
-            ORDER BY a.id DESC";
-        // } else {
-        //     $query = "SELECT a.*, c.ten as tentb
-        //     FROM suachua as a, thietbi as c
-        //     WHERE a.nguoidung_id = '{$id}'
-        //     AND a.thietbi_id = c.id
-        //     ORDER BY a.id DESC";
-        // }
+            WHERE a.thietbi_id = c.id";
+        if ($filter == '') {
+            $query .= " AND a.nguoidung_id = b.id";
+        }
+        if ($status != '') {
+            $query .= " AND a.tinhtrang = '$status'";
+        }
+        if ($sDate != '' && $eDate != '') {
+            $query .= " AND a.ngaygui <= '$eDate' AND a.ngaygui >= '$sDate'";
+        }
+        if ($filter == 'nguoigui') {
+            $query .= " AND b.hoten LIKE '%$keyword%' AND b.quyen_id = 2";
+        } elseif ($filter == 'nguoisuachua') {
+            $query .= " AND b.hoten LIKE '%$keyword%' AND b.id = a.phancong AND b.quyen_id = 3";
+        } elseif ($filter == 'thietbi') {
+            $query .= " AND c.ten LIKE '%$keyword%'";
+        }
+        // $query .= " AND b.id = 361";
+        $queryCount = $query;
+        $query .= " ORDER BY a.id DESC LIMIT 5 OFFSET $offset;";
+
         $rs = $this->conn->query($query);
+        $rsCount = $this->conn->query($queryCount);
+
         $data = array();
         while ($row = $rs->fetch_assoc()) {
             $data[] = $row;
@@ -39,8 +53,8 @@ class RepairModel extends Model
         return [
             'status' => 'success',
             'data' => $data,
-            'staff' => $dataStaff
-            // 'count' => count($rsCount->fetch_all())
+            'staff' => $dataStaff,
+            'count' => count($rsCount->fetch_all()),
         ];
     }
     public function getDataModal($id)

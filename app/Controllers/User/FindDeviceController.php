@@ -13,13 +13,14 @@ class FindDeviceController extends Controller
     }
     function Show()
     {
-        $deviceList = $this->findDevice->getDeviceList();
-        $locationList = $this->findDevice->getLocation();
-        $this->view("index", ["page" => "user/finddevice", "deviceList" => $deviceList, "locationList" => $locationList]);
+        $this->view("index", ["page" => "user/finddevice"]);
     }
     public function getDeviceList()
     {
-        $response = $this->findDevice->getDeviceList();
+        $keyword = $_GET['keyword'];
+        $page = $_GET['page'];
+        $type = $_GET['type'];
+        $response = $this->findDevice->getDeviceList($keyword, $page, $type);
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -27,6 +28,12 @@ class FindDeviceController extends Controller
     {
         $id = $_GET['id'];
         $response = $this->findDevice->getDataModal($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDeviceType()
+    {
+        $response = $this->findDevice->getDeviceType();
         header('Content-Type: application/json');
         echo json_encode($response);
     }
