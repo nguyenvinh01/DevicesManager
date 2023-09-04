@@ -18,28 +18,12 @@ class VerifyModel extends Model
         $emailExistsResult = $this->conn->query($emailExistsQuery);
         $emailExists = $emailExistsResult->fetch_assoc();
         $emailCount = $emailExists['count'];
-        if ($emailCount = 0) {
+        if ($emailCount == 0) {
             return [
                 'status' => 'error',
                 'message' => 'Email chưa đăng ký trong hệ thống'
             ];
         }
-
-        // Kiểm tra trùng tài khoản
-        // $taikhoanExistsQuery = "SELECT COUNT(*) as count FROM nguoidung WHERE taikhoan = '{$taikhoan}'";
-        // $taikhoanExistsResult = $this->conn->query($taikhoanExistsQuery);
-        // $taikhoanExists = $taikhoanExistsResult->fetch_assoc();
-        // $taikhoanCount = $taikhoanExists['count'];
-
-        // if ($taikhoanCount > 0) {
-        //     return [
-        //         'status' => 'error',
-        //         'message' => 'Tài khoản đã tồn tại trong hệ thống.'
-        //     ];
-        // }
-
-        // $hashPassword = $this->hashPassword($matkhau);
-        // $token = md5(rand());
         $randomBytes = random_bytes(32); // Tạo 32 byte ngẫu nhiên
         $token = hash('sha256', $randomBytes);
         $this->SendVerify($token, $email);

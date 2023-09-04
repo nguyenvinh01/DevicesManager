@@ -107,6 +107,28 @@ class RepairModel extends Model
             ];
         }
     }
+    function getDeviceById($id)
+    {
+        $query = "SELECT * FROM thietbi WHERE id = $id;";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
+        return [
+            'status' => 'success',
+            'data' => $data,
+        ];
+    }
+    function getUserById($id)
+    {
+        $query = "SELECT hoten, email, sodienthoai FROM nguoidung WHERE id = $id;";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
+
+        return [
+            "status" => "success",
+            "data" => $data
+        ];
+    }
+
     public function sendEmailAssign($tieude, $noidung, $date, $email)
     {
         // $query = "INSERT INTO suco ( tieude, noidung, nguoidung_id) 

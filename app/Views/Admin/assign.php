@@ -69,53 +69,54 @@
             </table>
             <ul class="pagination justify-content-end mt-3" id="pagination">
 
-                <!-- Modal Update-->
-                <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Xác nhận đã xử lý</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form method="POST" enctype="multipart/form-data" id="assginStaff">
-                                    <input type="hidden" class="form-control" id="id-manage-device" name="id">
-                                    <div class="col">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label">Nhân viên :</label>
-                                                <select class="form-select" aria-label="Default select example" id="staff-list" tabindex="8" name="id-staff" required>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label">Ngày kiểm tra:</label>
-                                                <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('+2 days')); ?>" id="ngay_kiem_tra" name="ngaykiemtra" required>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <!-- <div class="row">
+        </div>
+        <!-- Modal Update-->
+        <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Xác nhận đã xử lý</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="assginStaff">
+                            <input type="hidden" class="form-control" id="id-manage-device" name="id">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Nhân viên :</label>
+                                        <select class="form-select" aria-label="Default select example" id="staff-list" tabindex="8" name="id-staff" required>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Ngày kiểm tra:</label>
+                                        <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('+2 days')); ?>" id="ngay_kiem_tra" name="ngaykiemtra" required>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- <div class="row">
                                         <div class="col-12">
                                             <label for="category-film" class="col-form-label">Thời gian:</label>
                                             <input type="text" class="form-control" id="category-film" name="thoigian" required>
                                         </div>
                                     </div> -->
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                        <button type="submit" class="btn btn-primary" name="xnsc">Xác nhận</button>
-                                    </div>
-                                </form>
                             </div>
-
-                        </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                <button type="submit" class="btn btn-primary" name="xnsc">Xác nhận</button>
+                            </div>
+                        </form>
                     </div>
-                </div>
-                <!-- Modal Update-->
 
-                <!--Des-->
-                <!-- <div class="modal fade" id="ModalDesc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                </div>
+            </div>
+        </div>
+        <!-- Modal Update-->
+
+        <!--Des-->
+        <!-- <div class="modal fade" id="ModalDesc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -128,52 +129,52 @@
                     </div>
                 </div>
             </div> -->
-                <!-- Modal Add-->
-                <div class="modal fade" id="ModalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Thêm thiết bị quản lý</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form method="POST" enctype="multipart/form-data" id="addAssign">
-                                    <div class="col">
-                                        <div class="row">
-                                            <div class="col-12 row">
-                                                <div class="col-6">
-                                                    <label for="category-film" class="col-form-label">Loại thiết bị :</label>
-                                                    <select class="form-select" aria-label="Default select example" id="devicetype" tabindex="8" name="loaithietbi" required>
-                                                    </select>
-                                                </div>
-                                                <div class="col-6">
-                                                    <label for="category-film" class="col-form-label">Thiết bị :</label>
-                                                    <select class="form-select" aria-label="Default select example" id="device-list" tabindex="8" name="thietbi" required>
-                                                    </select>
-
-                                                </div>
-                                            </div>
+        <!-- Modal Add-->
+        <div class="modal fade" id="ModalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thêm thiết bị quản lý</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="addAssign">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 row">
+                                        <div class="col-6">
+                                            <label for="category-film" class="col-form-label">Loại thiết bị :</label>
+                                            <select class="form-select" aria-label="Default select example" id="devicetype" tabindex="8" name="loaithietbi" required>
+                                            </select>
                                         </div>
-                                        <div class="row my-3">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label">Phòng ban :</label>
+                                        <div class="col-6">
+                                            <label for="category-film" class="col-form-label">Thiết bị :</label>
+                                            <select class="form-select" aria-label="Default select example" id="device-list" tabindex="8" name="thietbi" required>
+                                            </select>
 
-                                                <select class="form-select" aria-label="Default select example" id="department" tabindex="8" name="phongban" required>
-                                                    <option value="" selected>Chọn phòng ban</option>
-                                                </select>
-                                            </div>
                                         </div>
-                                        <div class="row my-3">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label">Số lượng :</label>
-                                                <input type="number" class="form-control" id="quantityInput" min="1" name="soluong">
-                                                <span id="device-quantity"></span>
-                                                <!-- <div class="input-group-append">
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Phòng ban :</label>
+
+                                        <select class="form-select" aria-label="Default select example" id="department" tabindex="8" name="phongban" required>
+                                            <option value="" selected>Chọn phòng ban</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Số lượng :</label>
+                                        <input type="number" class="form-control" id="quantityInput" min="1" name="soluong">
+                                        <span id="device-quantity"></span>
+                                        <!-- <div class="input-group-append">
                                                 <span class="input-group-text">/10</span>
                                             </div> -->
-                                            </div>
-                                        </div>
-                                        <!-- <div class="row my-3">
+                                    </div>
+                                </div>
+                                <!-- <div class="row my-3">
                                         <div class="col-12">
                                             <label for="category-film" class="col-form-label">Tình trạng :</label>
                                             <select class="form-select" aria-label="Default select example" id="department" tabindex="8" name="phongban" required>
@@ -181,23 +182,103 @@
                                             </select>
                                         </div>
                                     </div> -->
-                                        <!-- <div class="row">
+                                <!-- <div class="row">
                                         <div class="col-12">
                                             <label for="category-film" class="col-form-label">Nội dung:</label>
                                             <textarea name="noidung" class="form-control" cols="30" tabindex="8" rows="10"></textarea>
                                         </div>
                                     </div> -->
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                        <button type="submit" class="btn btn-primary">Gửi</button>
-                                    </div>
-                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                <button type="submit" class="btn btn-primary">Gửi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End -->
+
+        <!-- Desc device -->
+
+        <div class="modal fade" id="ModalDes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="desc-device-view"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-6">
+                                    <img alt="Thiet bi" id="device-image-desc" style="width: 200px !important;height: 100px !important;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tên thiết bị:</label>
+                                    <input type="text" class="form-control" id="device-name-desc" disabled>
+                                </div>
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tình trạng:</label>
+                                    <input type="text" class="form-control" id="device-status-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Số lượng:</label>
+                                    <input type="text" class="form-control" id="device-quantity-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
+                                    <textarea name="dtkt" class="form-control" disabled id="device-desc-desc" cols="30" tabindex="8" rows="10"></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
+        <!-- Desc -->
+        <!-- Modal desc user-->
+        <div class="modal fade" id="ModalUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Người kiểm tra</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="editUser">
+                            <input type="hidden" class="form-control" id="idUpdate" name="id" value="">
+                            <div class="col mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Họ tên:</label>
+                                        <input type="text" class="form-control" value="" id="hotenUpdate" disabled>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Email:</label>
+                                        <input type="text" class="form-control" value="" id="emailUpdate" disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Số điện thoại:</label>
+                                        <input type="text" class="form-control" id="sdtUpdate" value="" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal user desc-->
     </div>
 </div>
 <script>
@@ -265,9 +346,23 @@
                             index++;
                             table.row.add([
                                 index,
-                                e.ten_thietbi,
+                                // e.ten_thietbi,
+                                function() {
+                                    return (`
+                                    <td>
+                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.tentb}" data-bs-target="#ModalDes">
+                                    ${e.ten_thietbi}</a>
+                                    </td>                                    `)
+                                },
                                 e.soluong,
-                                e.ten_nv,
+                                // e.ten_nv,
+                                function() {
+                                    return (e.ten_nv ? `
+                                    <td>
+                                        <a href="" class="modal-desc-user" data-bs-toggle="modal" data-id="${e.nhanvien_id}" data-bs-target="#ModalUser">
+                                    ${e.ten_nv}</a>
+                                    </td>` : 'Chưa phân công')
+                                },
                                 e.ngaykiemtra,
                                 e.ten_phongban,
                                 e.ten_toanha + "-" + e.ten_diadiem,
@@ -277,7 +372,7 @@
                                         e.tinhtrang == "Đã xử lý" ? "" : `
                                     <td style="width : 130px !important">
                                     <button type="button" class="btn btn-primary modal-edit" data-id="${e.id}" data-bs-toggle="modal" data-bs-target="#ModalEdit">
-                                        Kiểm tra
+                                        Phân công
                                     </button>
                                     </td>
                                     `)
@@ -599,6 +694,49 @@
                 }
             });
         })
+        $(document).on('click', '.modal-desc-user', function() {
+            var id = $(this).data('id');
+            console.log(123, id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/assign/getUserById",
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    $('#hotenUpdate').val(response.data.hoten);
+                    $('#emailUpdate').val(response.data.email);
+                    $('#sdtUpdate').val(response.data.sodienthoai);
+                    // $('#idUpdate').val(response.id);
+                }
+            })
+        });
+        $(document).on('click', '.modal-desc', function() {
+            var id = $(this).data('id');
+            console.log(id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/assign/getDeviceById",
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response, 123);
+
+                    $('#desc-device-view').text(response.data.ten);
+                    $('#desc-device-detail').text(response.data.dactinhkithuat);
+                    $('#device-name-desc').val(response.data.ten)
+                    $('#device-quantity-desc').val(response.data.soluong)
+                    $('#device-desc-desc').val(response.data.dactinhkithuat)
+                    $('#device-status-desc').val(response.data.tinhtrang)
+                    $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
+                    // $('#id-del').val(response.id);
+                }
+            })
+        });
     })
 </script>
 <script>

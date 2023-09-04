@@ -35,6 +35,13 @@ class BorrowDeviceController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+    public function getDeviceDetail()
+    {
+        $id = $_GET["id"];
+        $response = $this->device->getDeviceDetail($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function updateBorrowStatus()
     {
         // if (isset($_POST['capnhat'])) {
@@ -46,5 +53,11 @@ class BorrowDeviceController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
         // }
+    }
+    public function autoUpdateStatus()
+    {
+        $response = $this->device->autoUpdateStatus();
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
 }

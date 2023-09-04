@@ -52,7 +52,7 @@
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
                         <th>Tên thiết bị</th>
-                        <th>Ảnh</th>
+                        <!-- <th>Ảnh</th> -->
                         <th>Địa điểm</th>
                         <th>Ngày mượn</th>
                         <th>Ngày trả</th>
@@ -65,6 +65,50 @@
             <ul class="pagination justify-content-end mt-3" id="pagination">
 
         </div>
+        <!-- Desc device -->
+
+        <div class="modal fade" id="ModalDes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="desc-device-view"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-6">
+                                    <img alt="Thiet bi" id="device-image-desc" style="width: 200px !important;height: 100px !important;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tên thiết bị:</label>
+                                    <input type="text" class="form-control" id="device-name-desc" disabled>
+                                </div>
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tình trạng:</label>
+                                    <input type="text" class="form-control" id="device-status-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Số lượng:</label>
+                                    <input type="text" class="form-control" id="device-quantity-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
+                                    <textarea name="dtkt" class="form-control" disabled id="device-desc-desc" cols="30" tabindex="8" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Desc -->
     </div>
 </div>
 <script>
@@ -99,11 +143,20 @@
                         index++
                         table.row.add([
                             index,
-                            e.ten,
+                            // e.ten,
+                            // function() {
+                            //     return (`
+                            // <td> 
+
+                            // </td>
+                            //         `)
+                            // },
                             function() {
                                 return (`
-                            <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}"></td>
-                                    `)
+                                    <td>
+                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.thietbi_id}" data-bs-target="#ModalDes">
+                                    ${e.ten}</a>
+                                    </td>                                    `)
                             },
                             e.diadiem,
                             e.ngaymuon,
@@ -224,6 +277,30 @@
             return `${year}-${month}-${day}`;
         }
     })
+    $(document).on('click', '.modal-desc', function() {
+        var id = $(this).data('id');
+        console.log(id);
+        $.ajax({
+            url: "<?php echo BASE_URL; ?>/borrowhistory/getDeviceById",
+            method: "GET",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(response) {
+                console.log(response, 123);
+
+                $('#desc-device-view').text(response.data.ten);
+                $('#desc-device-detail').text(response.data.dactinhkithuat);
+                $('#device-name-desc').val(response.data.ten)
+                $('#device-quantity-desc').val(response.data.soluong)
+                $('#device-desc-desc').val(response.data.dactinhkithuat)
+                $('#device-status-desc').val(response.data.tinhtrang)
+                $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
+                // $('#id-del').val(response.id);
+            }
+        })
+    });
 </script>
 <script>
     CKEDITOR.replace("editor");

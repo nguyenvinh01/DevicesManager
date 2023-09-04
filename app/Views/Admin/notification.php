@@ -62,52 +62,52 @@ if ($_SESSION['quyen'] != 1) {
             </table>
             <ul class="pagination justify-content-end mt-3" id="pagination">
 
-                <div class="modal fade" id="ModalDes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modal-body-desc-title"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div id="modal-body-desc-content">
-                            </div>
-                        </div>
+        </div>
+        <div class="modal fade" id="ModalDes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-body-desc-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div id="modal-body-desc-content">
                     </div>
                 </div>
+            </div>
+        </div>
 
 
-                <div class="modal fade" id="exampleModalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Thêm mới</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form method="POST" enctype="multipart/form-data" id="addNotification">
-                                    <div class="col">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label">Tiêu đề :</label>
-                                                <input type="text" class="form-control" id="category-film" name="tieude" required>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label">Nội dung:</label>
-                                                <textarea name="noidung" class="form-control" cols="30" tabindex="8" rows="10"></textarea>
-                                            </div>
-                                        </div>
+        <div class="modal fade" id="exampleModalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thêm mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="addNotification">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Tiêu đề :</label>
+                                        <input type="text" class="form-control" id="category-film" name="tieude" required>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                        <button type="submit" class="btn btn-primary" name="addtb">Lưu</button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Nội dung:</label>
+                                        <textarea name="noidung" class="form-control" cols="30" tabindex="8" rows="10"></textarea>
                                     </div>
-                                </form>
+                                </div>
                             </div>
-                        </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                <button type="submit" class="btn btn-primary" name="addtb">Lưu</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 </div>
@@ -146,7 +146,7 @@ if ($_SESSION['quyen'] != 1) {
                                 function() {
                                     return (`
                                     <td>
-                                    <a href="" data-bs-toggle="modal" data-bs-target="#ModalDes" class= "modal-desc" data-id = '${e.id}'>Xem</a>
+                                    <a href="" data-bs-toggle="modal" data-bs-target="#ModalDes" class="modal-desc" data-id='${e.id}'>Xem</a>
                                     </td>
                                     `)
                                 },

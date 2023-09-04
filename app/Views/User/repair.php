@@ -105,6 +105,85 @@
             <ul class="pagination justify-content-end mt-3" id="pagination">
 
         </div>
+        <!-- Desc device -->
+
+        <div class="modal fade" id="ModalDes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="desc-device-view"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-6">
+                                    <img alt="Thiet bi" id="device-image-desc" style="width: 200px !important;height: 100px !important;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tên thiết bị:</label>
+                                    <input type="text" class="form-control" id="device-name-desc" disabled>
+                                </div>
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tình trạng:</label>
+                                    <input type="text" class="form-control" id="device-status-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Số lượng:</label>
+                                    <input type="text" class="form-control" id="device-quantity-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
+                                    <textarea name="dtkt" class="form-control" disabled id="device-desc-desc" cols="30" tabindex="8" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Desc -->
+        <!-- Modal desc user-->
+        <div class="modal fade" id="ModalUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thông tin</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="editUser">
+                            <input type="hidden" class="form-control" id="idUpdate" name="id" value="">
+                            <div class="col mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Họ tên:</label>
+                                        <input type="text" class="form-control" value="" id="hotenUpdate" disabled>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Email:</label>
+                                        <input type="text" class="form-control" value="" id="emailUpdate" disabled>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Số điện thoại:</label>
+                                        <input type="text" class="form-control" id="sdtUpdate" value="" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal user desc-->
     </div>
 </div>
 <script>
@@ -150,13 +229,19 @@
                             table.row.add([
                                 index,
                                 e.ngaygui,
-                                e.tentb,
+                                function() {
+                                    return (`
+                                    <td>
+                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.thietbi_id}" data-bs-target="#ModalDes">
+                                    ${e.tentb}</a>
+                                    </td>                                    `)
+                                },
                                 e.noidung,
                                 function() {
                                     const staffName = response.staff.find(s => e.phancong === s.id);
                                     if (staffName) {
-                                        return staffName.hoten;
-                                    } else return ""
+                                        return `<a href="" class="modal-desc-user" data-bs-toggle="modal" data-id="${staffName.id}" data-bs-target="#ModalUser">${staffName.hoten}</a> `;
+                                    } else return "Chưa phân công"
                                 },
                                 e.tinhtrang,
                             ])
@@ -328,35 +413,48 @@
                 }
             });
         });
-        $('.editRepair').submit(function(e) {
-            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-            // Gửi yêu cầu Ajax
-            var formData = $(this).serialize();
-            var id = $(this).serialize().split(/[=,&]/)[1];
-
-            console.log(formData, 11, id);
+        $(document).on('click', '.modal-desc-user', function() {
+            var id = $(this).data('id');
+            console.log(123, id);
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/repair/confirmRepair", // Đường dẫn đến controller xử lý
-                method: 'POST',
-                data: formData, // Dữ liệu gửi đi từ form
+                url: "<?php echo BASE_URL; ?>/repair/getUserById",
+                method: "GET",
+                data: {
+                    id: id
+                },
                 dataType: 'json',
                 success: function(response) {
-                    if (response.status == "success") {
-                        // Hiển thị thông báo thành công
-                        toastr.success(response.message);
-                        var modalElement = document.getElementById(`exampleModalEdit${id}`);
-                        var modal = bootstrap.Modal.getInstance(modalElement);
-                        modal.hide();
-                    } else {
-                        // Hiển thị thông báo lỗi
-                        toastr.error(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Xử lý lỗi khi gửi yêu cầu Ajax
-                    console.error(error);
+                    console.log(response);
+                    $('#hotenUpdate').val(response.data.hoten);
+                    $('#emailUpdate').val(response.data.email);
+                    $('#sdtUpdate').val(response.data.sodienthoai);
+                    // $('#idUpdate').val(response.id);
                 }
-            });
+            })
+        });
+        $(document).on('click', '.modal-desc', function() {
+            var id = $(this).data('id');
+            console.log(id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/repair/getDeviceById",
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response, 123);
+
+                    $('#desc-device-view').text(response.data.ten);
+                    $('#desc-device-detail').text(response.data.dactinhkithuat);
+                    $('#device-name-desc').val(response.data.ten)
+                    $('#device-quantity-desc').val(response.data.soluong)
+                    $('#device-desc-desc').val(response.data.dactinhkithuat)
+                    $('#device-status-desc').val(response.data.tinhtrang)
+                    $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
+                    // $('#id-del').val(response.id);
+                }
+            })
         });
 
     })

@@ -74,7 +74,7 @@
                         <th>STT</th>
                         <th>Thiết bị</th>
                         <th>Số lượng</th>
-                        <th>Người kiểm tra</th>
+                        <!-- <th>Người kiểm tra</th> -->
                         <th>Thời gian kiểm tra</th>
                         <th>Phòng ban</th>
                         <th>Địa điểm</th>
@@ -103,33 +103,77 @@
                 </div>
             </div> -->
 
-                <!-- Modal Update-->
-                <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Xác nhận đã xử lý</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <!-- Modal Update-->
+        <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Xác nhận đã xử lý</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="editRepair">
+                            <input type="hidden" class="form-control" id="id-repair" name="id">
+                            <div class="col">
+                                <select class="form-select" id="list-staff" aria-label="Default select example" id="theloai" tabindex="8" name="status-repair" required>
+                                    <option value="" selected>Chọn tình trạng</option>
+                                </select>
                             </div>
-                            <div class="modal-body">
-                                <form method="POST" enctype="multipart/form-data" id="editRepair">
-                                    <input type="hidden" class="form-control" id="id-repair" name="id">
-                                    <div class="col">
-                                        <select class="form-select" id="list-staff" aria-label="Default select example" id="theloai" tabindex="8" name="status-repair" required>
-                                            <option value="" selected>Chọn tình trạng</option>
-                                        </select>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                        <button type="submit" class="btn btn-primary" name="xnsc">Xác nhận</button>
-                                    </div>
-                                </form>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                <button type="submit" class="btn btn-primary" name="xnsc">Xác nhận</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--End Modal Update-->
+        <!-- Desc device -->
+
+        <div class="modal fade" id="ModalDes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="desc-device-view"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-6">
+                                    <img alt="Thiet bi" id="device-image-desc" style="width: 200px !important;height: 100px !important;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tên thiết bị:</label>
+                                    <input type="text" class="form-control" id="device-name-desc" disabled>
+                                </div>
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tình trạng:</label>
+                                    <input type="text" class="form-control" id="device-status-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Số lượng:</label>
+                                    <input type="text" class="form-control" id="device-quantity-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
+                                    <textarea name="dtkt" class="form-control" disabled id="device-desc-desc" cols="30" tabindex="8" rows="10"></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!--End Modal Update-->
+            </div>
         </div>
+        <!-- Desc -->
     </div>
 </div>
 <script>
@@ -195,9 +239,16 @@
                             index++
                             table.row.add([
                                 index,
-                                e.ten_thietbi,
+                                // e.ten_thietbi,
+                                function() {
+                                    return (`
+                                    <td>
+                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.tentb}" data-bs-target="#ModalDes">
+                                    ${e.ten_thietbi}</a>
+                                    </td>                                    `)
+                                },
                                 e.soluong,
-                                e.ten_nv,
+                                // e.ten_nv,
                                 e.ngaykiemtra,
                                 e.ten_phongban,
                                 e.ten_toanha + "-" + e.ten_diadiem,
@@ -516,6 +567,8 @@
                         staffList += `<option value="Đang kiểm tra">Đang kiểm tra</option>`
                     } else if (response.data[0].tinhtrang == "Đang kiểm tra") {
                         staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
+                        staffList += `<option value="Cần sửa chữa">Thiếu</option>`
+                        staffList += `<option value="Hoàn thành">Hoàn thành</option>`
                         // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
 
                     } else if (response.data[0].tinhtrang == "Cần sửa chữa") {
@@ -528,6 +581,30 @@
                     console.log(1, staffList, 1);
                     $('#list-staff').append(staffList)
                     $('#id-repair').val(id)
+                }
+            })
+        });
+        $(document).on('click', '.modal-desc', function() {
+            var id = $(this).data('id');
+            console.log(id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/assign/getDeviceById",
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response, 123);
+
+                    $('#desc-device-view').text(response.data.ten);
+                    $('#desc-device-detail').text(response.data.dactinhkithuat);
+                    $('#device-name-desc').val(response.data.ten)
+                    $('#device-quantity-desc').val(response.data.soluong)
+                    $('#device-desc-desc').val(response.data.dactinhkithuat)
+                    $('#device-status-desc').val(response.data.tinhtrang)
+                    $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
+                    // $('#id-del').val(response.id);
                 }
             })
         });

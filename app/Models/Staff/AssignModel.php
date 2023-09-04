@@ -8,17 +8,21 @@ class AssignModel extends Model
         $offset = $page * 10;
 
         $query = "SELECT
-        ql.id,
-        ql.ngaykiemtra,
-        ql.tinhtrang,
+        -- ql.id,
+        -- ql.ngaykiemtra,
+        -- kt.ti as tinhtrang,
         ql.soluong,
+        ql.tentb,
+        kt.*,
         T.ten AS ten_thietbi,
         PB.tenpb AS ten_phongban,
         TN.tentoanha AS ten_toanha,
         DD.phong AS ten_diadiem,
         nv.hoten AS ten_nv
     FROM
-        quanly AS ql
+        kiemtra as kt
+    LEFT JOIN 
+    quanly AS ql on ql.id = kt.quanly_id
     LEFT JOIN
         thietbi AS T ON ql.tentb = T.id
     LEFT JOIN

@@ -26,4 +26,11 @@ class BorrowHistoryController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+    public function getDeviceById()
+    {
+        $id = $_GET['id'];
+        $response = $this->borrowHistory->getDeviceById($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
 }

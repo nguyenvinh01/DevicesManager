@@ -64,104 +64,104 @@ if ($_SESSION['quyen'] == 1) {
             </table>
             <ul class="pagination justify-content-end mt-3" id="pagination">
 
-                <!-- Modal Detail-->
-                <div class="modal fade" id="ModalDesc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Chi tiết</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" class="form-control" id="id-device-detail" name="id" value="<?php echo $arUser["id"] ?>">
-                                <div class="col">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <label for="category-film" class="col-form-label"><strong>Loại thiết bị:</strong></label>
-                                            <p id="type-device-detail"></p>
-                                            <label for="category-film" class="col-form-label"><strong>Tên thiết bị:</strong></label>
-                                            <p id="name-device-detail"></p>
-                                            <label for="category-film" class="col-form-label"><strong>Tình trạng:</strong></label>
-                                            <p id="status-device-detail"></p>
-                                            <label for="category-film" class="col-form-label"><strong>Số lượng:</strong></label>
-                                            <p id="quantity-device-detail"></p>
-                                            <div class="col-6">
-                                                <label for="category-film" class="col-form-label">Ảnh:</label>
-                                                <br>
-                                                <img id="image-device-detail" style="width: 300px !important;height: 270px !important;" src="">
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label"><strong>Đặc tính kĩ thuật:</strong></label>
-                                                <p id="desc-device-detail"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <!-- Modal Update-->
-                    <!-- Modal D-->
-
-                </div>
-                <div class="modal fade" id="ModalBorrow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Mượn thiết bị</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form method="POST" enctype="multipart/form-data" class="borrowDevice">
-                                    <input type="hidden" class="form-control" id="id-device-borrow" name="id" value="<?php echo $arUser["id"] ?>">
-                                    <div class="col">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label">Thiết bị:</label>
-                                                <input type="text" class="form-control disabled" id="name-device-borrow" value="<?php echo $arUser["ten"] ?>" name="ten" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label">Địa điểm:</label>
-                                                <select id="option-building" class="form-select col" aria-label="Default select example" name="toanha">
-                                                </select>
-                                                <label for="category-film" class="col-form-label">Phòng:</label>
-                                                <select id="option-room" class="form-select col" aria-label="Default select example" name="phong">
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label">Ngày mượn:</label>
-                                                <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('+2 days')); ?>" id="ngay_muon" name="ngaymuon" required>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label for="category-film" class="col-form-label">Ngày trả:</label>
-                                                <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('+3 days')); ?>" id="ngay_tra" name="ngaytra" required onchange="validateDate()">
-                                            </div>
-                                        </div>
-                                    </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                <button type="submit" class="btn btn-primary" name="muontb">Mượn</button>
-                            </div>
-                            </form>
-                        </div>
-
-                    </div>
-                </div>
-                <!-- Modal Update-->
         </div>
+        <!-- Modal Detail-->
+        <div class="modal fade" id="ModalDesc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Chi tiết</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" class="form-control" id="id-device-detail" name="id" value="<?php echo $arUser["id"] ?>">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label"><strong>Loại thiết bị:</strong></label>
+                                    <p id="type-device-detail"></p>
+                                    <label for="category-film" class="col-form-label"><strong>Tên thiết bị:</strong></label>
+                                    <p id="name-device-detail"></p>
+                                    <label for="category-film" class="col-form-label"><strong>Tình trạng:</strong></label>
+                                    <p id="status-device-detail"></p>
+                                    <label for="category-film" class="col-form-label"><strong>Số lượng:</strong></label>
+                                    <p id="quantity-device-detail"></p>
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Ảnh:</label>
+                                        <br>
+                                        <img id="image-device-detail" style="width: 300px !important;height: 270px !important;" src="">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label"><strong>Đặc tính kĩ thuật:</strong></label>
+                                        <p id="desc-device-detail"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Modal Update-->
+            <!-- Modal D-->
+
+        </div>
+        <div class="modal fade" id="ModalBorrow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Mượn thiết bị</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" class="borrowDevice">
+                            <input type="hidden" class="form-control" id="id-device-borrow" name="id" value="<?php echo $arUser["id"] ?>">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Thiết bị:</label>
+                                        <input type="text" class="form-control disabled" id="name-device-borrow" value="<?php echo $arUser["ten"] ?>" name="ten" readonly>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Địa điểm:</label>
+                                        <select id="option-building" class="form-select col" aria-label="Default select example" name="toanha">
+                                        </select>
+                                        <label for="category-film" class="col-form-label">Phòng:</label>
+                                        <select id="option-room" class="form-select col" aria-label="Default select example" name="phong">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Ngày mượn:</label>
+                                        <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('+2 days')); ?>" id="ngay_muon" name="ngaymuon" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Ngày trả:</label>
+                                        <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('+3 days')); ?>" id="ngay_tra" name="ngaytra" required onchange="validateDate()">
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" name="muontb">Mượn</button>
+                    </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- Modal Update-->
     </div>
     <script>
         $(document).ready(function() {

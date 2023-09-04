@@ -31,10 +31,10 @@ if ($_SESSION['quyen'] != 1) {
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
                         <th>Tên</th>
-                        <th>Ảnh</th>
+                        <!-- <th>Ảnh</th> -->
                         <th>Số lượng</th>
                         <!-- <th>Giá trị</th> -->
-                        <th>Đặc tính kĩ thuật</th>
+                        <th>Chi tiết</th>
                         <th>Loại thiết bị</th>
                         <th>Tình trạng</th>
                         <th>Thao tác</th>
@@ -46,6 +46,7 @@ if ($_SESSION['quyen'] != 1) {
             <ul class="pagination justify-content-end mt-3" id="pagination">
 
         </div>
+
         <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -105,20 +106,64 @@ if ($_SESSION['quyen'] != 1) {
                 </div>
             </div>
         </div>
+
         <!--Des-->
         <div class="modal fade" id="ModalDes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="desc-device-view"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <div class="modal-body">
+                        <div class="col">
+                            <div class="row">
+                                <!-- <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Loại thiết bị:</label>
+                                    <select class="form-select" aria-label="Default select example" id="theloai" tabindex="8" name="ltb" required>
+                                    </select>
+                                    <input type="text" class="form-control" id="device-type-desc" disabled>
 
-                    <div class="modal-body" id="desc-device-detail">
+                                </div> -->
+                                <div class="col-6">
+                                    <!-- <label for="category-film" class="col-form-label">Ảnh:</label> -->
+                                    <!-- <input type="hidden" name="size" value="1000000">
+                                    <input type="file" class="form-control" name="image" /> -->
+                                    <img alt="Thiet bi" id="device-image-desc" style="width: 200px !important;height: 100px !important;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tên thiết bị:</label>
+                                    <input type="text" class="form-control" id="device-name-desc" disabled>
+                                </div>
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tình trạng:</label>
+                                    <input type="text" class="form-control" id="device-status-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Số lượng:</label>
+                                    <input type="text" class="form-control" id="device-quantity-desc" disabled>
+                                </div>
+                                <!-- <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Giá trị:</label>
+                                        <input type="number" class="form-control" id="category-film" value="<?php echo $arUser["giatri"] ?>" name="giatri" required>
+                                    </div> -->
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
+                                    <textarea name="dtkt" class="form-control" disabled id="device-desc-desc" cols="30" tabindex="8" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <!--Dele-->
         <div class="modal fade" id="ModalDel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -182,23 +227,23 @@ if ($_SESSION['quyen'] != 1) {
                                     <div class="col-6">
                                         <label for="category-film" class="col-form-label">Số lượng:</label>
                                         <input type="number" class="form-control" id="category-film" name="soluong" required>
-                                    </div>
-                                    <!-- <div class="col-6">
+                                        </input>
+                                        <!-- <div class="col-6">
                                         <label for="category-film" class="col-form-label">Giá trị:</label>
                                         <input type="number" class="form-control" id="category-film" name="giatri" required>
                                     </div> -->
-                                </div>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
-                                        <textarea name="dtkt" class="form-control" cols="30" tabindex="8" rows="10"></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
+                                            <textarea name="dtkt" class="form-control" cols="30" tabindex="8" rows="10"></textarea>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                <button type="submit" class="btn btn-primary" name="addma">Lưu</button>
-                            </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                    <button type="submit" class="btn btn-primary" name="addma">Lưu</button>
+                                </div>
                         </form>
                     </div>
                 </div>
@@ -244,11 +289,13 @@ if ($_SESSION['quyen'] != 1) {
                                 index,
                                 e.ten,
                                 // e.hinhanh,
-                                function() {
-                                    return (`
-                                    <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}?>"></td>
-                                    `)
-                                },
+                                // function() {
+                                //     return (`
+                                //     <td> 
+                                //     <!-- <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}?>"> -->
+                                //     </td>
+                                //     `)
+                                // },
                                 e.soluong,
                                 // e.dactinhkithuat,
                                 function() {
@@ -553,6 +600,11 @@ if ($_SESSION['quyen'] != 1) {
 
                     $('#desc-device-view').text(response.data.ten);
                     $('#desc-device-detail').text(response.data.dactinhkithuat);
+                    $('#device-name-desc').val(response.data.ten)
+                    $('#device-quantity-desc').val(response.data.soluong)
+                    $('#device-desc-desc').val(response.data.dactinhkithuat)
+                    $('#device-status-desc').val(response.data.tinhtrang)
+                    $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
                     // $('#id-del').val(response.id);
                 }
             })

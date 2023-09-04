@@ -12,6 +12,8 @@ class AssignModel extends Model
         ql.ngaykiemtra,
         ql.tinhtrang,
         ql.soluong,
+        ql.tentb,
+        ql.nhanvien_id,
         T.ten AS ten_thietbi,
         PB.tenpb AS ten_phongban,
         TN.tentoanha AS ten_toanha,
@@ -110,19 +112,7 @@ class AssignModel extends Model
         ];
     }
 
-    function getDeviceById($id)
-    {
-        $query = "SELECT * FROM thietbi WHERE id = $id;";
-        $rs = $this->conn->query($query);
-        $data = $rs->fetch_assoc();
-        // while ($row = $rs->fetch_assoc()) {
-        //     $data[] = $row;
-        // }
-        return [
-            'status' => 'success',
-            'data' => $data,
-        ];
-    }
+
     function getDepartment()
     {
         $query = "SELECT * FROM phongban;";
@@ -144,7 +134,7 @@ class AssignModel extends Model
         return [
             'status' => 'success',
             'dataDeviceType' => $dataDeviceType,
-            'dataDepartment' => $dataDepartment,
+            'dataDepartment' => $dataDepartment['data'],
         ];
     }
     function getStaff()
@@ -160,6 +150,28 @@ class AssignModel extends Model
             "data" => $data
         ];
     }
+    function getDeviceById($id)
+    {
+        $query = "SELECT * FROM thietbi WHERE id = $id;";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
+        return [
+            'status' => 'success',
+            'data' => $data,
+        ];
+    }
+    function getUserById($id)
+    {
+        $query = "SELECT hoten, email, sodienthoai FROM nguoidung WHERE id = $id;";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
+
+        return [
+            "status" => "success",
+            "data" => $data
+        ];
+    }
+
     function getDeviceType()
     {
         $query = "SELECT * FROM loaithietbi";

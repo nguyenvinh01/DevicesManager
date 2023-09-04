@@ -64,9 +64,30 @@ class RepairModel extends Model
             'data' => $data,
         ];
     }
+    function getDeviceById($id)
+    {
+        $query = "SELECT * FROM thietbi WHERE id = $id;";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
+        return [
+            'status' => 'success',
+            'data' => $data,
+        ];
+    }
+    function getUserById($id)
+    {
+        $query = "SELECT hoten, email, sodienthoai FROM nguoidung WHERE id = $id;";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
+
+        return [
+            "status" => "success",
+            "data" => $data
+        ];
+    }
     public function getDataModal($id)
     {
-        $queryDevice = "SELECT m.*, t.ten  FROM muon as m, thietbi as t WHERE m.nguoidung_id = $id AND m.thietbi_id = t.id";
+        $queryDevice = "SELECT m.*, t.ten  FROM muon as m, thietbi as t WHERE m.nguoidung_id = $id AND m.thietbi_id = t.id AND m.trangthai = 'Đang mượn'";
         $rsDevice = $this->conn->query($queryDevice);
         $dataDevice = array();
         while ($row = $rsDevice->fetch_assoc()) {

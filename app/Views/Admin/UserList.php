@@ -496,31 +496,63 @@ if ($_SESSION['quyen'] != 1) {
                         ])
                     })
                     table.draw();
-                    let pagination = ""
+                    let pagination = "";
+                    let itemPerPage = 5; // Số lượng trang hiển thị trên một dãy phân trang
+                    let totalPages = Math.ceil(response.count / itemPerPage); // Tính tổng số trang
+
+                    // Tạo nút "Previous"
                     if (prevPage == 0) {
                         pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
                     } else {
                         pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
                     }
-                    let itemPerPage = 10;
-                    for (let i = 0; i < (response.count / itemPerPage); i++) {
-                        if (i == prevPage) {
-                            pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
 
-                        } else {
-                            pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+                    // Tạo dãy các trang
+                    if (totalPages <= 5) {
+                        // Nếu có ít hơn hoặc bằng 5 trang, hiển thị tất cả trang
+                        for (let i = 0; i < totalPages; i++) {
+                            if (i == prevPage) {
+                                pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
+                            } else {
+                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
+                            }
+                        }
+                    } else {
+                        // Nếu có nhiều hơn 5 trang, hiển thị ba trang trước và sau trang hiện tại
+                        let startPage = Math.max(prevPage - 2, 0); // Trang đầu tiên
+                        let endPage = Math.min(prevPage + 2, totalPages - 1); // Trang cuối cùng
 
+                        if (startPage > 0) {
+                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>';
+                            if (startPage > 1) {
+                                pagination += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                            }
+                        }
+
+                        for (let i = startPage; i <= endPage; i++) {
+                            if (i == prevPage) {
+                                pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
+                            } else {
+                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
+                            }
+                        }
+
+                        if (endPage < totalPages - 1) {
+                            if (endPage < totalPages - 2) {
+                                pagination += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                            }
+                            pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${totalPages - 1}>${totalPages}</a></li>`;
                         }
                     }
-                    if (prevPage == Math.floor((response.count / itemPerPage))) {
-                        console.log(response.count / itemPerPage, 'dis');
+
+                    // Tạo nút "Next"
+                    if (prevPage == totalPages - 1) {
                         pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
                     } else {
-                        console.log(response.count / itemPerPage);
-
                         pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
                     }
-                    $('#pagination').html(pagination)
+
+                    $('#pagination').html(pagination);
                 }
             })
         }

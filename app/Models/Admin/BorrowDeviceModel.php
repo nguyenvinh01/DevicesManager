@@ -6,14 +6,16 @@ class BorrowDeviceModel extends Model
     function getBorrowDeviceList($filter, $keyword, $page, $status, $eDate, $sDate)
     {
         $offset = $page * 5;
-
+        $curentDate = date("Y-m-d");
         $query = "SELECT a.*,b.ten, b.hinhanh, c.hoten
         FROM muon as a,thietbi as b, nguoidung as c
         WHERE a.thietbi_id = b.id 
         AND a.nguoidung_id = c.id ";
 
-        if ($status != '') {
+        if ($status != '' && $status != 'Quá hạn') {
             $query .= " AND trangthai = '$status'";
+        } else if ($status == 'Quá hạn') {
+            $query .= " AND ngaytra < '$curentDate' AND trangthai = 'Quá hạn'";
         }
         if ($sDate != '' && $eDate != '') {
             $query .= " AND ngaytra <= '$eDate' AND ngaymuon >= '$sDate'";
@@ -35,7 +37,8 @@ class BorrowDeviceModel extends Model
         return [
             'status' => 'success',
             'data' => $data,
-            'count' => count($rsCount->fetch_all())
+            'count' => count($rsCount->fetch_all()),
+            'query' => $query
         ];
     }
     function getDataModal($id)
@@ -54,6 +57,32 @@ class BorrowDeviceModel extends Model
             'data' => $data,
             // 'count' => count($rsCount->fetch_all())
         ];
+    }
+    function autoUpdateStatus()
+    {
+        $curentDate = date("Y-m-d");
+        $check = "SELECT COUNT(*) as count FROM muon WHERE trangthai = 'Đang mượn' AND ngaytra < '$curentDate'";
+        $rsCheck = $this->conn->query($check);
+        $checkResult = $rsCheck->fetch_assoc();
+        $count = $checkResult['count'];
+        if ($count > 0) {
+            $query = "UPDATE muon SET trangthai = 'Quá hạn' 
+            WHERE trangthai = 'Đang mượn' AND ngaytra < '$curentDate'";
+
+            $rs = $this->conn->query($query);
+            return [
+                'status' => 'success',
+                'data' => $rs,
+                // 'count' => count($rsCount->fetch_all())
+            ];
+        }
+    }
+    function getDeviceDetail($id)
+    {
+        $query = "SELECT * FROM thietbi WHERE id = $id";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
+        return $data;
     }
     function updateBorrowStatus($tinhtrang, $idtb, $id)
     {

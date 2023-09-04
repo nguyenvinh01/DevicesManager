@@ -12,37 +12,6 @@ class RepairModel extends Model
 {
     function getRepairList($id, $filter, $keyword, $page, $status, $eDate, $sDate)
     {
-        // // if ($_SESSION['quyen'] == 1) {
-        // $query = "SELECT a.*, b.hoten, c.ten as tentb
-        //     FROM suachua as a, nguoidung as b, thietbi as c
-        //     WHERE a.nguoidung_id = b.id
-        //     AND a.thietbi_id = c.id 
-        //     AND a.phancong = $id
-        //     ORDER BY a.id DESC";
-        // // } else {
-        // // $query = "SELECT a.*, c.ten as tentb
-        // //     FROM suachua as a, thietbi as c
-        // //     WHERE a.nguoidung_id = '{$id}'
-        // //     AND a.thietbi_id = c.id
-        // //     ORDER BY a.id DESC";
-        // // }
-        // $rs = $this->conn->query($query);
-        // $data = array();
-        // while ($row = $rs->fetch_assoc()) {
-        //     $data[] = $row;
-        // }
-        // $queryStaff = "SELECT * FROM nguoidung WHERE quyen_id = 3";
-        // $rsStaff = $this->conn->query($queryStaff);
-        // $dataStaff = array();
-        // while ($row = $rsStaff->fetch_assoc()) {
-        //     $dataStaff[] = $row;
-        // }
-        // return [
-        //     'status' => 'success',
-        //     'data' => $data,
-        //     'staff' => $dataStaff
-        //     // 'count' => count($rsCount->fetch_all())
-        // ];
         $offset = $page * 5;
 
         $query = "SELECT a.*, c.ten AS tentb, b.hoten 
@@ -118,6 +87,27 @@ class RepairModel extends Model
             'status' => 'success',
             'data' => $data,
             // 'count' => count($rsCount->fetch_all())
+        ];
+    }
+    function getDeviceById($id)
+    {
+        $query = "SELECT * FROM thietbi WHERE id = $id;";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
+        return [
+            'status' => 'success',
+            'data' => $data,
+        ];
+    }
+    function getUserById($id)
+    {
+        $query = "SELECT hoten, email, sodienthoai FROM nguoidung WHERE id = $id;";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
+
+        return [
+            "status" => "success",
+            "data" => $data
         ];
     }
     function sendRepair($idtb, $noidung)

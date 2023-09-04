@@ -35,7 +35,7 @@ require_once './app/config/constant.php';
 
                             <form method="POST" id="resend">
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="inputEmail" type="email" placeholder="" name="taikhoan" />
+                                    <input class="form-control" id="inputEmail" type="email" name="taikhoan" required />
                                     <label for="inputEmail">Tài khoản</label>
                                 </div>
 
@@ -89,9 +89,10 @@ require_once './app/config/constant.php';
                     success: function(response) {
                         console.log(response);
                         if (response.status == "success") {
-                            // window.location.href = "<?php echo BASE_URL; ?>/dashboard";
-                            // sessionStorage.setItem('isLoggedIn', 'true');
                             toastr.success(response.message);
+                            setTimeout(function() {
+                                window.location.href = "<?php echo BASE_URL; ?>/login"
+                            }, 2000)
                         } else {
                             toastr.error(response.message);
 

@@ -60,6 +60,12 @@ class AssignController extends Controller
         echo json_encode($response);
     }
 
+    public function getStaff()
+    {
+        $response = $this->assign->getStaff();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function getDeviceById()
     {
         $id = $_GET['id'];
@@ -67,9 +73,11 @@ class AssignController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
-    public function getStaff()
+    public function getUserById()
     {
-        $response = $this->assign->getStaff();
+        $id = $_GET['id'];
+
+        $response = $this->assign->getUserById($id);
         header('Content-Type: application/json');
         echo json_encode($response);
     }

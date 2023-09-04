@@ -40,7 +40,21 @@ class RepairController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+    public function getDeviceById()
+    {
+        $id = $_GET['id'];
+        $response = $this->repair->getDeviceById($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getUserById()
+    {
+        $id = $_GET['id'];
 
+        $response = $this->repair->getUserById($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     function sendRepair()
     {
         // if (isset($_POST['ycsc'])) {

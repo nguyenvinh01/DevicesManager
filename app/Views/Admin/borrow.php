@@ -28,6 +28,9 @@ if ($_SESSION['quyen'] == 2) {
                             <option value="Đang mượn">Đang mượn</option>
                             <option value="Chờ phê duyệt">Chờ phê duyệt</option>
                             <option value="Đã trả">Đã trả</option>
+                            <option value="Đã phê duyệt">Đã phê duyệt</option>
+                            <option value="Bị từ chối">Bị từ chối</option>
+                            <option value="Quá hạn">Quá hạn</option>
                             <!-- <option value="3">Nhân viên</option> -->
                         </select>
                     </div>
@@ -59,7 +62,7 @@ if ($_SESSION['quyen'] == 2) {
                         <th>STT</th>
                         <th>Người dùng</th>
                         <th>Tên thiết bị</th>
-                        <th>Ảnh</th>
+                        <!-- <th>Ảnh</th> -->
                         <th>Ngày mượn</th>
                         <th>Ngày trả</th>
                         <th>Địa điểm</th>
@@ -89,18 +92,8 @@ if ($_SESSION['quyen'] == 2) {
                                 <div class="row">
                                     <div class="col-12">
                                         <label for="category-film" class="col-form-label">Tình trạng:</label>
-                                        <select class="form-select" aria-label="Default select example" id="select-status" tabindex="8" name="tinhtrang" required>
+                                        <select class="form-select" aria-label="Default select example" id="select-status-edit" tabindex="8" name="tinhtrang" required>
                                             <option value="" selected>Chọn tình trạng</option>
-                                            <?php if ($arUser["trangthai"] == "Chờ phê duyệt") { ?>
-                                                <option value="Đã phê duyệt">Phê duyệt yêu cầu</option>
-                                                <option value="Bị từ chối">Từ chối yêu cầu</option>
-                                            <?php } ?>
-                                            <?php if ($arUser["trangthai"] == "Đã phê duyệt") { ?>
-                                                <option value="Đang mượn">Đang mượn</option>
-                                            <?php } ?>
-                                            <?php if ($arUser["trangthai"] == "Đang mượn") { ?>
-                                                <option value="Đã trả">Đã trả</option>
-                                            <?php } ?>
                                         </select>
                                     </div>
                                 </div>
@@ -115,6 +108,52 @@ if ($_SESSION['quyen'] == 2) {
                 </div>
             </div>
         </div>
+
+
+        <!-- Desc device -->
+
+        <div class="modal fade" id="ModalDes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="desc-device-view"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-6">
+                                    <img alt="Thiet bi" id="device-image-desc" style="width: 200px !important;height: 100px !important;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tên thiết bị:</label>
+                                    <input type="text" class="form-control" id="device-name-desc" disabled>
+                                </div>
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Tình trạng:</label>
+                                    <input type="text" class="form-control" id="device-status-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Số lượng:</label>
+                                    <input type="text" class="form-control" id="device-quantity-desc" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
+                                    <textarea name="dtkt" class="form-control" disabled id="device-desc-desc" cols="30" tabindex="8" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Desc -->
     </div>
 </div>
 <script>
@@ -126,7 +165,26 @@ if ($_SESSION['quyen'] == 2) {
         let startDate = '';
         let endDate = '';
         let prevFilter = '';
-
+        $.ajax({
+            url: "<?php echo BASE_URL; ?>/borrowdevice/autoUpdateStatus", // Đường dẫn đến controller xử lý
+            method: 'POST',
+            // data: formData, // Dữ liệu gửi đi từ form
+            dataType: 'json',
+            success: function(response) {
+                console.log('update status');
+                if (response.status == "success") {
+                    // Hiển thị thông báo thành công
+                    // toastr.success(response.message);
+                } else {
+                    // Hiển thị thông báo lỗi
+                    // toastr.error(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                // Xử lý lỗi khi gửi yêu cầu Ajax
+                console.error(error);
+            }
+        });
         getBorrowDeviceList()
 
         function getBorrowDeviceList(keyword = '', page = 0, sDate = '', eDate = '', status = '', filter = '') {
@@ -154,12 +212,19 @@ if ($_SESSION['quyen'] == 2) {
                             table.row.add([
                                 index,
                                 e.hoten,
-                                e.ten,
+                                // e.ten,
                                 function() {
                                     return (`
-                                    <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}?>"></td>
-                                    `)
+                                    <td>
+                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.thietbi_id}" data-bs-target="#ModalDes">
+                                    ${e.ten}</a>
+                                    </td>                                    `)
                                 },
+                                // function() {
+                                //     return (`
+                                //     <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}?>"></td>
+                                //     `)
+                                // },
                                 convertDateFormat(e.ngaymuon),
                                 convertDateFormat(e.ngaytra),
                                 // e.dactinhkithuat,
@@ -180,31 +245,64 @@ if ($_SESSION['quyen'] == 2) {
                         });
                         table.draw();
 
-                        let pagination = ""
-                        let itemPerPage = 5;
+                        let pagination = "";
+                        let itemPerPage = 5; // Số lượng trang hiển thị trên một dãy phân trang
+                        let totalPages = Math.ceil(response.count / itemPerPage); // Tính tổng số trang
+
+                        // Tạo nút "Previous"
                         if (prevPage == 0) {
                             pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
                         } else {
                             pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
                         }
-                        for (let i = 0; i < (response.count / itemPerPage); i++) {
-                            if (i == prevPage) {
-                                pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
 
-                            } else {
-                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+                        // Tạo dãy các trang
+                        if (totalPages <= 3) {
+                            // Nếu có ít hơn hoặc bằng 3 trang, hiển thị tất cả trang
+                            for (let i = 0; i < totalPages; i++) {
+                                if (i == prevPage) {
+                                    pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
+                                } else {
+                                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
+                                }
+                            }
+                        } else {
+                            // Nếu có nhiều hơn 3 trang, hiển thị ba trang trước và sau trang hiện tại
+                            let startPage = Math.max(prevPage - 1, 0); // Trang đầu tiên
+                            let endPage = Math.min(prevPage + 1, totalPages - 1); // Trang cuối cùng
 
+                            if (startPage > 0) {
+                                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>';
+                                if (startPage > 1) {
+                                    pagination += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                                }
+                            }
+
+                            for (let i = startPage; i <= endPage; i++) {
+                                if (i == prevPage) {
+                                    pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
+                                } else {
+                                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
+                                }
+                            }
+
+                            if (endPage < totalPages - 1) {
+                                if (endPage < totalPages - 2) {
+                                    pagination += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                                }
+                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${totalPages - 1}>${totalPages}</a></li>`;
                             }
                         }
-                        if (prevPage == Math.floor((response.count / itemPerPage))) {
-                            console.log(response.count / itemPerPage, 'dis');
+
+                        // Tạo nút "Next"
+                        if (prevPage == totalPages - 1) {
                             pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
                         } else {
-                            console.log(response.count / itemPerPage);
-
                             pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
                         }
-                        $('#pagination').html(pagination)
+
+                        $('#pagination').html(pagination);
+
                     } else {
                         // Hiển thị thông báo lỗi
                         toastr.error(response.message);
@@ -330,7 +428,7 @@ if ($_SESSION['quyen'] == 2) {
                     if (response.status == "success") {
                         // Hiển thị thông báo thành công
                         toastr.success(response.message);
-                        var modalElement = document.getElementById(`exampleModalEdit${id}`);
+                        var modalElement = document.getElementById(`ModalEdit${id}`);
                         var modal = bootstrap.Modal.getInstance(modalElement);
                         modal.hide();
                     } else {
@@ -356,22 +454,44 @@ if ($_SESSION['quyen'] == 2) {
                 success: function(response) {
                     console.log(response, id);
 
-                    $('#select-status').html('');
-                    $('#select-status').append(`<option value="" selected>Chọn tình trạng</option>`)
+                    $('#select-status-edit').html('');
+                    $('#select-status-edit').append(`<option value="" selected>Chọn tình trạng</option>`)
 
                     let option;
-                    if (response.data[0].trangthai === "Chờ phê duyệt") {
+                    if (response.data[0].trangthai == "Chờ phê duyệt") {
                         option += `<option value = "Đã phê duyệt"> Phê duyệt yêu cầu </option> 
                         <option value = "Bị từ chối"> Từ chối yêu cầu </option>`
-                    } else if (response.data[0].trangthai === "Đã phê duyệt") {
+                    } else if (response.data[0].trangthai == "Đã phê duyệt") {
                         option += `<option value = "Đang mượn" > Đang mượn </option>`
                     } else {
                         option += `<option value = "Đã trả">Đã trả </option>`
                     }
-
-                    $('#select-status').append(option)
+                    $('#select-status-edit').append(option)
                     $('#id-update').val(response.data[0].id);
                     $('#id-device').val(response.data[0].thietbi_id);
+                }
+            })
+        });
+        $(document).on('click', '.modal-desc', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/devicelist/getDataModal",
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response.data.dactinhkithuat);
+
+                    $('#desc-device-view').text(response.data.ten);
+                    $('#desc-device-detail').text(response.data.dactinhkithuat);
+                    $('#device-name-desc').val(response.data.ten)
+                    $('#device-quantity-desc').val(response.data.soluong)
+                    $('#device-desc-desc').val(response.data.dactinhkithuat)
+                    $('#device-status-desc').val(response.data.tinhtrang)
+                    $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
+                    // $('#id-del').val(response.id);
                 }
             })
         });

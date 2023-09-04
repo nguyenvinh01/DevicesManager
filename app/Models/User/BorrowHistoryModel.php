@@ -35,4 +35,14 @@ class BorrowHistoryModel extends Model
             'count' => count($rsCount->fetch_all())
         ];
     }
+    function getDeviceById($id)
+    {
+        $query = "SELECT * FROM thietbi WHERE id = $id;";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_assoc();
+        return [
+            'status' => 'success',
+            'data' => $data,
+        ];
+    }
 }
