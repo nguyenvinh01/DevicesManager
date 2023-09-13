@@ -62,7 +62,7 @@ if ($_SESSION['quyen'] == 2) {
                         <th>STT</th>
                         <th>Người dùng</th>
                         <th>Tên thiết bị</th>
-                        <!-- <th>Ảnh</th> -->
+                        <!-- <th>Số lượng</th> -->
                         <th>Ngày mượn</th>
                         <th>Ngày trả</th>
                         <th>Địa điểm</th>
@@ -86,8 +86,9 @@ if ($_SESSION['quyen'] == 2) {
                     </div>
                     <div class="modal-body">
                         <form method="POST" enctype="multipart/form-data" id="updateStatus">
-                            <input type="hidden" class="form-control" id="id-update" name="id" value="<?php echo $arUser["id"] ?>">
-                            <input type="hidden" class="form-control" id="id-device" name="thietbiid" value="<?php echo $arUser["thietbi_id"] ?>">
+                            <input type="hidden" class="form-control" id="id-update" name="id">
+                            <input type="hidden" class="form-control" id="id-device" name="thietbiid">
+                            <!-- <input type="hidden" class="form-control" id="id-quantity" name="soluong"> -->
                             <div class="col">
                                 <div class="row">
                                     <div class="col-12">
@@ -138,8 +139,8 @@ if ($_SESSION['quyen'] == 2) {
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <label for="category-film" class="col-form-label">Số lượng:</label>
-                                    <input type="text" class="form-control" id="device-quantity-desc" disabled>
+                                    <label for="category-film" class="col-form-label">Mã thiết bị:</label>
+                                    <input type="text" class="form-control" id="device-code-desc" disabled>
                                 </div>
                             </div>
                             <div class="row">
@@ -212,14 +213,14 @@ if ($_SESSION['quyen'] == 2) {
                             table.row.add([
                                 index,
                                 e.hoten,
-                                // e.ten,
                                 function() {
                                     return (`
                                     <td>
-                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.thietbi_id}" data-bs-target="#ModalDes">
+                                    <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.thietbi_id}" data-bs-target="#ModalDes">
                                     ${e.ten}</a>
                                     </td>                                    `)
                                 },
+                                // e.soluong,
                                 // function() {
                                 //     return (`
                                 //     <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}?>"></td>
@@ -231,12 +232,19 @@ if ($_SESSION['quyen'] == 2) {
                                 e.diadiem,
                                 e.trangthai,
                                 function() {
-                                    return (e.trangthai == "Đã trả" || e.trangthai == "Bị từ chối" ? '' :
+                                    return (e.trangthai == "Đã trả" || e.trangthai == "Từ chối yêu cầu" || e.trangthai == "Quá hạn" ? '' :
                                         `
                                     <td style="width : 130px !important">
-                                    <button type="button" class="btn btn-primary modal-edit" data-bs-toggle="modal" data-id=${e.id} data-bs-target="#ModalEdit">
-                                        Cập nhật
-                                        </button>                                    
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Thao tác
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <button type="button" class="btn btn-primary modal-edit dropdown-item" data-bs-toggle="modal" data-id=${e.id} data-bs-target="#ModalEdit">
+                                                    Cập nhật trạng thái
+                                                </button>  
+                                            </ul>
+                                        </div>
                                     </td>
                                 `
                                     )
@@ -460,15 +468,20 @@ if ($_SESSION['quyen'] == 2) {
                     let option;
                     if (response.data[0].trangthai == "Chờ phê duyệt") {
                         option += `<option value = "Đã phê duyệt"> Phê duyệt yêu cầu </option> 
-                        <option value = "Bị từ chối"> Từ chối yêu cầu </option>`
+                        <option value = "Từ chối yêu cầu"> Từ chối yêu cầu </option>`
                     } else if (response.data[0].trangthai == "Đã phê duyệt") {
                         option += `<option value = "Đang mượn" > Đang mượn </option>`
                     } else {
                         option += `<option value = "Đã trả">Đã trả </option>`
+                        option += `<option value = "Trả Thiếu">Trả Thiếu </option>`
+                        option += `<option value = "Làm mất">Làm mất </option>`
                     }
                     $('#select-status-edit').append(option)
                     $('#id-update').val(response.data[0].id);
                     $('#id-device').val(response.data[0].thietbi_id);
+                    $('#id-quantity').val(response.data[0].soluong);
+
+
                 }
             })
         });
@@ -487,7 +500,7 @@ if ($_SESSION['quyen'] == 2) {
                     $('#desc-device-view').text(response.data.ten);
                     $('#desc-device-detail').text(response.data.dactinhkithuat);
                     $('#device-name-desc').val(response.data.ten)
-                    $('#device-quantity-desc').val(response.data.soluong)
+                    $('#device-code-desc').val(response.data.mathietbi)
                     $('#device-desc-desc').val(response.data.dactinhkithuat)
                     $('#device-status-desc').val(response.data.tinhtrang)
                     $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)

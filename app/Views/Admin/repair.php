@@ -123,12 +123,12 @@
                                     <input type="text" class="form-control" id="device-status-desc" disabled>
                                 </div>
                             </div>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <div class="col-6">
                                     <label for="category-film" class="col-form-label">Số lượng:</label>
                                     <input type="text" class="form-control" id="device-quantity-desc" disabled>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="row">
                                 <div class="col-12">
                                     <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
@@ -235,7 +235,7 @@
                                 // e.hoten,
                                 function() {
                                     return (
-                                        `<a href="" class="modal-desc-user" data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#ModalUser">${e.hoten}</a> `)
+                                        `<a href="" class="modal-desc-user" data-bs-toggle="modal" data-id="${e.nguoidung_id}" data-bs-target="#ModalUser">${e.hoten}</a> `)
                                 },
                                 function() {
                                     const staffName = response.staff.find(s => e.phancong === s.id);
@@ -476,7 +476,7 @@
                     $('#desc-device-view').text(response.data.ten);
                     $('#desc-device-detail').text(response.data.dactinhkithuat);
                     $('#device-name-desc').val(response.data.ten)
-                    $('#device-quantity-desc').val(response.data.soluong)
+                    // $('#device-quantity-desc').val(response.data.soluong)
                     $('#device-desc-desc').val(response.data.dactinhkithuat)
                     $('#device-status-desc').val(response.data.tinhtrang)
                     $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)

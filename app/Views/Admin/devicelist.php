@@ -1,10 +1,3 @@
-<?php
-
-if ($_SESSION['quyen'] != 1) {
-    header("Location: dashboard");
-}
-?>
-
 <div class="container-fluid px-4">
     <h1 class="mt-4">Danh sách thiết bị</h1>
     <div class="card mb-4">
@@ -21,22 +14,32 @@ if ($_SESSION['quyen'] != 1) {
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
-                Thêm mới
-            </button>
+            <div>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                    Thêm mới
+                </button>
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="btnradio1">Radio 1</label>
+
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio2">Radio 2</label>
+
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio3">Radio 3</label>
+                </div>
+            </div>
         </div>
         <div class="card-body">
             <table id="datatablesSimple">
                 <thead>
                     <tr style="background-color : #6D6D6D">
+                        <th></th>
                         <th>STT</th>
                         <th>Tên</th>
-                        <!-- <th>Ảnh</th> -->
-                        <th>Số lượng</th>
-                        <!-- <th>Giá trị</th> -->
+                        <th>Mã thiết bị</th>
                         <th>Chi tiết</th>
                         <th>Loại thiết bị</th>
-                        <th>Tình trạng</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -56,14 +59,10 @@ if ($_SESSION['quyen'] != 1) {
                     </div>
                     <div class="modal-body">
                         <form method="POST" enctype="multipart/form-data" id="editDevice">
-                            <input type="hidden" class="form-control" id="id-edit" name="id" value="<?php echo $arUser["id"] ?>">
+                            <input type="hidden" class="form-control" id="id-edit" name="id">
                             <div class="col">
                                 <div class="row">
-                                    <div class="col-6">
-                                        <label for="category-film" class="col-form-label">Loại thiết bị:</label>
-                                        <select class="form-select" aria-label="Default select example" id="theloai" tabindex="8" name="ltb" required>
-                                        </select>
-                                    </div>
+
                                     <div class="col-6">
                                         <label for="category-film" class="col-form-label">Ảnh:</label>
                                         <input type="hidden" name="size" value="1000000">
@@ -72,23 +71,27 @@ if ($_SESSION['quyen'] != 1) {
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
-                                        <label for="category-film" class="col-form-label">Tên thiết bị:</label>
-                                        <input type="text" class="form-control" id="device-name-edit" value="<?php echo $arUser["ten"] ?>" name="ten" required>
+                                        <label for="category-film" class="col-form-label">Danh mục thiết bị:</label>
+                                        <select class="form-select cate-add" aria-label="Default select example" id="danhmuc-edit" tabindex="8" name="categories" required>
+                                            <option value="" selected>Chọn danh mục thiết bị</option>
+                                        </select>
                                     </div>
                                     <div class="col-6">
-                                        <label for="category-film" class="col-form-label">Tình trạng:</label>
-                                        <input type="text" class="form-control" id="device-status-edit" value="<?php echo $arUser["tinhtrang"] ?>" name="tinhtrang" required>
+                                        <label for="category-film" class="col-form-label">Loại thiết bị:</label>
+                                        <select class="form-select type-add" aria-label="Default select example" id="theloai-edit" tabindex="8" name="ltb" required>
+                                            <option value="" selected>Chọn loại thiết bị</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
-                                        <label for="category-film" class="col-form-label">Số lượng:</label>
-                                        <input type="number" class="form-control" id="device-quantity-edit" value="<?php echo $arUser["soluong"] ?>" name="soluong" required>
+                                        <label for="category-film" class="col-form-label">Tên thiết bị:</label>
+                                        <input type="text" class="form-control" id="device-name-edit" name="ten" required>
                                     </div>
-                                    <!-- <div class="col-6">
-                                        <label for="category-film" class="col-form-label">Giá trị:</label>
-                                        <input type="number" class="form-control" id="category-film" value="<?php echo $arUser["giatri"] ?>" name="giatri" required>
-                                    </div> -->
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Tình trạng:</label>
+                                        <input type="text" class="form-control" id="device-status-edit" name="tinhtrang" required>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
@@ -106,7 +109,70 @@ if ($_SESSION['quyen'] != 1) {
                 </div>
             </div>
         </div>
+        <!-- End Edit -->
 
+
+        <!-- Start duplicate -->
+        <div class="modal fade" id="ModalDuplicate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Sao chép</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="duplicateDevice">
+                            <input type="hidden" class="form-control" id="id-dup" name="id">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Ảnh:</label>
+                                        <input type="hidden" name="size" value="1000000">
+                                        <input type="file" class="form-control" name="image" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Danh mục thiết bị:</label>
+                                        <select class="form-select cate-add" aria-label="Default select example" id="danhmuc-dup" tabindex="8" name="categories" required>
+                                            <option value="" selected>Chọn danh mục thiết bị</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Loại thiết bị:</label>
+                                        <select class="form-select type-add" aria-label="Default select example" id="theloai-dup" tabindex="8" name="ltb" required>
+                                            <option value="" selected>Chọn loại thiết bị</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Tên thiết bị:</label>
+                                        <input type="text" class="form-control" id="device-name-dup" name="ten" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Tình trạng:</label>
+                                        <input type="text" class="form-control" id="device-status-dup" name="tinhtrang" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
+                                        <textarea name="dtkt" class="form-control" id="device-desc-dup" cols="30" tabindex="8" rows="10"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" name="editma">Tạo</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End duplicate -->
         <!--Des-->
         <div class="modal fade" id="ModalDes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -118,17 +184,7 @@ if ($_SESSION['quyen'] != 1) {
                     <div class="modal-body">
                         <div class="col">
                             <div class="row">
-                                <!-- <div class="col-6">
-                                    <label for="category-film" class="col-form-label">Loại thiết bị:</label>
-                                    <select class="form-select" aria-label="Default select example" id="theloai" tabindex="8" name="ltb" required>
-                                    </select>
-                                    <input type="text" class="form-control" id="device-type-desc" disabled>
-
-                                </div> -->
                                 <div class="col-6">
-                                    <!-- <label for="category-film" class="col-form-label">Ảnh:</label> -->
-                                    <!-- <input type="hidden" name="size" value="1000000">
-                                    <input type="file" class="form-control" name="image" /> -->
                                     <img alt="Thiet bi" id="device-image-desc" style="width: 200px !important;height: 100px !important;">
                                 </div>
                             </div>
@@ -144,13 +200,9 @@ if ($_SESSION['quyen'] != 1) {
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <label for="category-film" class="col-form-label">Số lượng:</label>
-                                    <input type="text" class="form-control" id="device-quantity-desc" disabled>
+                                    <label for="category-film" class="col-form-label">Mã thiết bị: </label>
+                                    <input type="text" class="form-control" id="device-code-desc" disabled>
                                 </div>
-                                <!-- <div class="col-6">
-                                        <label for="category-film" class="col-form-label">Giá trị:</label>
-                                        <input type="number" class="form-control" id="category-film" value="<?php echo $arUser["giatri"] ?>" name="giatri" required>
-                                    </div> -->
                             </div>
                             <div class="row">
                                 <div class="col-12">
@@ -201,16 +253,25 @@ if ($_SESSION['quyen'] != 1) {
                         <form method="POST" enctype="multipart/form-data" id="addDevice">
                             <div class="col">
                                 <div class="row">
-                                    <div class="col-6">
-                                        <label for="category-film" class="col-form-label">Loại thiết bị:</label>
-                                        <select class="form-select" aria-label="Default select example" id="type-add" tabindex="8" name="ltb" required>
-                                            <option value="" selected>Chọn loại thiết bị</option>
-                                        </select>
-                                    </div>
+
                                     <div class="col-6">
                                         <label for="category-film" class="col-form-label">Ảnh:</label>
                                         <input type="hidden" name="size" value="1000000">
                                         <input type="file" class="form-control" name="image" required />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Danh mục thiết bị:</label>
+                                        <select class="form-select cate-add" aria-label="Default select example" tabindex="8" name="categories" required>
+                                            <option value="" selected>Chọn danh mục thiết bị</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="category-film" class="col-form-label">Loại thiết bị:</label>
+                                        <select class="form-select type-add" aria-label="Default select example" tabindex="8" name="ltb" required>
+                                            <option value="" selected>Chọn loại thiết bị</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -224,15 +285,6 @@ if ($_SESSION['quyen'] != 1) {
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-6">
-                                        <label for="category-film" class="col-form-label">Số lượng:</label>
-                                        <input type="number" class="form-control" id="category-film" name="soluong" required>
-                                        </input>
-                                        <!-- <div class="col-6">
-                                        <label for="category-film" class="col-form-label">Giá trị:</label>
-                                        <input type="number" class="form-control" id="category-film" name="giatri" required>
-                                    </div> -->
-                                    </div>
                                     <div class="row">
                                         <div class="col-12">
                                             <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
@@ -263,18 +315,23 @@ if ($_SESSION['quyen'] != 1) {
             hideMethod: 'fadeOut',
         };
         getDeviceList()
+        let selectedRowsData = [];
+
         let prevKeywordSearch = '';
         let prevPage = 0;
         let prevTypeSearch = '';
+        // console.log(<?php $_GET['type'] ?>, 122);
 
         function getDeviceList(keyword = '', page = 0, type = '') {
+            let cate = '<?php echo $_GET['cate'] ?>'
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/devicelist/getDeviceList", // Đường dẫn đến controller xử lý
+                url: `<?php echo BASE_URL; ?>/devicelist/getDeviceList`, // Đường dẫn đến controller xử lý
                 method: 'GET',
                 data: {
                     keyword: keyword,
                     page: page,
-                    type: type
+                    type: type,
+                    cate: cate
                 },
                 dataType: 'json',
                 success: function(response) {
@@ -286,9 +343,12 @@ if ($_SESSION['quyen'] != 1) {
                         response.data.forEach((e) => {
                             index++;
                             table.row.add([
+                                function() {
+                                    return `<td><input type="checkbox"></td>`
+                                },
                                 index,
                                 e.ten,
-                                // e.hinhanh,
+                                e.mathietbi,
                                 // function() {
                                 //     return (`
                                 //     <td> 
@@ -296,7 +356,7 @@ if ($_SESSION['quyen'] != 1) {
                                 //     </td>
                                 //     `)
                                 // },
-                                e.soluong,
+                                // e.soluong,
                                 // e.dactinhkithuat,
                                 function() {
                                     return (`
@@ -306,34 +366,51 @@ if ($_SESSION['quyen'] != 1) {
                                     </td>                                    `)
                                 },
                                 e.tenloai,
-                                e.tinhtrang,
+                                // e.tinhtrang,
                                 function() {
                                     return (
                                         `
                                     <td style="width : 130px !important">
-                                        <button type="button" class="btn btn-primary modal-edit"  data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#ModalEdit">
-                                            Sửa
-                                        </button>
-                                        <button type="button" class="btn btn-danger modal-del" data-bs-toggle="modal" data-bs-target="#ModalDel"  data-id="${e.id}">
-                                            Xóa
-                                        </button>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Thao tác
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <button type="button" class="btn btn-primary modal-edit dropdown-item"  data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#ModalEdit">
+                                                    Sửa thông tin
+                                                </button>
+                                                <button type="button" class="btn btn-danger modal-del dropdown-item" data-bs-toggle="modal" data-bs-target="#ModalDel"  data-id="${e.id}">
+                                                Xóa thiết bị
+                                                </button>
+                                                <button type="button" class="btn btn-danger modal-dup dropdown-item" data-bs-toggle="modal" data-bs-target="#ModalDuplicate"  data-id="${e.id}">
+                                                Sao chép
+                                                </button>
+                                            </ul>
+                                        </div>
                                     </td>
-                                `
+                                        `
                                     )
                                 },
                             ])
                         });
                         table.draw();
-                        let typeAdd;
-                        response.devicetype.map((type) => {
-                            if (type.id == response.data.loaithietbi_id) {
-                                typeAdd += `<option value="${type.id}" selected>${type.ten}</option>`
-                            } else {
-                                typeAdd += `<option value="${type.id}">${type.ten}</option>`
-                            }
-                        })
-                        $('#type-add').append(typeAdd)
-
+                        // $('#type-add').html('')
+                        // let typeAdd = `<option value="">Chọn loại</option>`;
+                        // response.devicetype.map((type) => {
+                        //     // if (type.id == response.data.loaithietbi_id) {
+                        //     //     typeAdd += `<option value="${type.id}" selected>${type.ten}</option>`
+                        //     // } else {
+                        //     typeAdd += `<option value="${type.maloai}">${type.ten}</option>`
+                        //     // }
+                        // })
+                        // $('#type-add').append(typeAdd)
+                        $('.cate-add').each(function() {
+                            let cateAdd = `<option value="">Chọn Danh mục</option>`;
+                            response.categories.data.map((cate) => {
+                                cateAdd += `<option value="${cate.madanhmuc}">${cate.tendanhmuc}</option>`;
+                            });
+                            $(this).html(cateAdd);
+                        });
                         let pagination = ""
                         if (prevPage == 0) {
                             pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
@@ -350,15 +427,16 @@ if ($_SESSION['quyen'] != 1) {
 
                             }
                         }
-                        if (prevPage == Math.floor((response.count / itemPerPage))) {
-                            console.log(response.count / itemPerPage, 'dis');
-                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        } else {
-                            console.log(response.count / itemPerPage);
+                        // if (prevPage == Math.floor((response.count / itemPerPage))) {
+                        //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        // } else {
+                        //     console.log(response.count / itemPerPage);
 
-                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        }
+                        //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        // }
+
                         $('#pagination').html(pagination)
+                        prevTypeSearch = type;
                     } else {}
                 },
                 error: function(xhr, status, error) {
@@ -391,20 +469,56 @@ if ($_SESSION['quyen'] != 1) {
             }
         });
 
+        $('.cate-add').change(function() {
+            let cate = $(this).val();
+            console.log(cate, '123');
+            console.log(cate, '123');
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/devicelist/getDeviceType", // Đường dẫn đến controller xử lý
+                method: 'GET',
+                data: {
+                    cate: cate
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == "success") {
+                        let typeList;
+                        $('.type-add').html('')
+                        $('.type-add').each(function() {
+                            let typeAdd = `<option value="">Chọn loại thiết bị</option>`;
+                            response.data.map((type) => {
+                                // if (type.id == response.data.loaithietbi_id) {
+                                //     typeAdd += `<option value="${type.id}" selected>${type.ten}</option>`
+                                // } else {
+                                typeAdd += `<option value="${type.maloai}">${type.ten}</option>`
+                                // }
+                            })
+                            $(this).append(typeAdd)
+                        })
+                        // $('#device-type').append(typeList)
+                    } else {}
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+
+        })
         $.ajax({
             url: "<?php echo BASE_URL; ?>/devicelist/getDeviceType", // Đường dẫn đến controller xử lý
             method: 'GET',
+            data: {
+                cate: '<?php echo $_GET['cate'] ?>'
+            },
             dataType: 'json',
             success: function(response) {
                 console.log(response);
                 if (response.status == "success") {
                     let typeList;
                     response.data.map((type) => {
-                        // if (type.id == response.data.loaithietbi_id) {
-                        typeList += `<option value="${type.id}">${type.ten}</option>`
-                        // } else {
-                        // typeList += `<option value="${type.id}">${type.ten}</option>`
-                        // }
+                        typeList += `<option value="${type.maloai}">${type.ten}</option>`
+
                     })
                     $('#device-type').append(typeList)
                 } else {}
@@ -414,7 +528,7 @@ if ($_SESSION['quyen'] != 1) {
             }
         });
         $('#device-type').change(function(e) {
-            e.preventDefault();
+            // e.preventDefault();
             const type = $('#device-type').val();
             console.log(type);
             prevTypeSearch = type;
@@ -425,9 +539,39 @@ if ($_SESSION['quyen'] != 1) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
             var formData = new FormData(this);
+            formData.append('cate', '<?php echo $_GET['cate'] ?>')
             console.log(formData);
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/devicelist/addDevice", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                data: formData,
+                dataType: 'json',
+                processData: false, // Không xử lý dữ liệu FormData
+                contentType: false, // Không đặt tiêu đề Content-Type
+                success: function(response) {
+                    if (response.status == "success") {
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById('exampleModalAdd');
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                    } else {
+                        toastr.error(response.message);
+
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+        $('#duplicateDevice').submit(function(e) {
+            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            // Gửi yêu cầu Ajax
+            var formData = new FormData(this);
+            // formData.append('cate', '<?php echo $_GET['cate'] ?>')
+            console.log(formData);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/devicelist/duplicateDevice", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: formData,
                 dataType: 'json',
@@ -536,12 +680,12 @@ if ($_SESSION['quyen'] != 1) {
             getDeviceList(keyword, 0, prevTypeSearch)
         })
 
-        $(document).on('click', '.modal-edit', function() {
+        $(document).on('click', '.modal-dup', function() {
             var id = $(this).data('id');
-            console.log('edit', id);
+            console.log('dup', id);
 
             $.ajax({
-                url: `<?php echo BASE_URL; ?>/devicelist/getDataModal?id=${id}`,
+                url: `<?php echo BASE_URL; ?>/devicelist/getDataModal`,
                 method: "GET",
                 data: {
                     id: id
@@ -549,25 +693,78 @@ if ($_SESSION['quyen'] != 1) {
                 dataType: 'json',
                 success: function(response) {
                     let typeList;
-                    console.log(response.devicetype, '1');
-                    response.devicetype.map((type) => {
-                        if (type.id == response.data.loaithietbi_id) {
-                            typeList += `<option value="${type.id}" selected>${type.ten}</option>`
+                    let cateList;
+                    console.log(response, 1);
+                    $('#theloai-dup').html('')
+                    $('#danhmuc-dup').html('')
+                    response.cate.map((type) => {
+                        if (type.madanhmuc == response.data.madanhmuc) {
+                            cateList += `<option value="${type.madanhmuc}" selected>${type.tendanhmuc}</option>`
                         } else {
-                            typeList += `<option value="${type.id}">${type.ten}</option>`
+                            cateList += `<option value="${type.madanhmuc}">${type.tendanhmuc}</option>`
                         }
                     })
+                    $('#danhmuc-dup').append(cateList);
+
+                    response.devicetype.map((type) => {
+                        if (type.maloai == response.data.loaithietbi_code) {
+                            typeList += `<option value="${type.maloai}" selected>${type.ten}</option>`
+                        } else {
+                            typeList += `<option value="${type.maloai}">${type.ten}</option>`
+                        }
+                    })
+                    $('#theloai-dup').append(typeList);
+                    $('#id-dup').val(response.data.id);
+                    $('#device-name-dup').val(response.data.ten)
+                    $('#device-desc-dup').val(response.data.dactinhkithuat)
+                    $('#device-status-dup').val(response.data.tinhtrang)
+                    // $('#id-edit').val(response.id);
+                }
+            })
+        });
+        $(document).on('click', '.modal-edit', function() {
+            var id = $(this).data('id');
+            console.log('edit', id);
+
+            $.ajax({
+                url: `<?php echo BASE_URL; ?>/devicelist/getDataModal`,
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    let typeList;
+                    let cateList;
+                    console.log(response, 1);
+                    $('#theloai-edit').html('')
+                    $('#danhmuc-edit').html('')
+                    response.cate.map((type) => {
+                        if (type.madanhmuc == response.data.madanhmuc) {
+                            cateList += `<option value="${type.madanhmuc}" selected>${type.tendanhmuc}</option>`
+                        } else {
+                            cateList += `<option value="${type.madanhmuc}">${type.tendanhmuc}</option>`
+                        }
+                    })
+                    $('#danhmuc-edit').append(cateList);
+
+                    response.devicetype.map((type) => {
+                        if (type.maloai == response.data.loaithietbi_code) {
+                            typeList += `<option value="${type.maloai}" selected>${type.ten}</option>`
+                        } else {
+                            typeList += `<option value="${type.maloai}">${type.ten}</option>`
+                        }
+                    })
+                    $('#theloai-edit').append(typeList);
                     $('#theloai').append(typeList);
                     $('#id-edit').val(response.data.id);
                     $('#device-name-edit').val(response.data.ten)
-                    $('#device-quantity-edit').val(response.data.soluong)
                     $('#device-desc-edit').val(response.data.dactinhkithuat)
                     $('#device-status-edit').val(response.data.tinhtrang)
                     // $('#id-edit').val(response.id);
                 }
             })
         });
-
         $(document).on('click', '.modal-del', function() {
             var id = $(this).data('id');
             $.ajax({
@@ -601,7 +798,7 @@ if ($_SESSION['quyen'] != 1) {
                     $('#desc-device-view').text(response.data.ten);
                     $('#desc-device-detail').text(response.data.dactinhkithuat);
                     $('#device-name-desc').val(response.data.ten)
-                    $('#device-quantity-desc').val(response.data.soluong)
+                    $('#device-code-desc').val(response.data.mathietbi)
                     $('#device-desc-desc').val(response.data.dactinhkithuat)
                     $('#device-status-desc').val(response.data.tinhtrang)
                     $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)

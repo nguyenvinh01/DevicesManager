@@ -4,10 +4,10 @@ if (empty($_SESSION['taikhoanadmin'])) {
     header("Location: login");
     exit();
 }
-if (!isset($_GET["url"])) {
-    header("Location: dashboard");
-    exit();
-}
+// if (!isset($_GET["url"])) {
+//     header("Location: dashboard");
+//     exit();
+// }
 
 require_once './app/config/constant.php';
 ?>
@@ -21,7 +21,7 @@ require_once './app/config/constant.php';
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>HỆ THỐNG</title>
+    <title>HỆ THỐNG QUẢN LÝ THIẾT BỊ</title>
 
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="<?php echo BASE_URL; ?>/public/css/styles.css" rel="stylesheet" />
@@ -76,9 +76,16 @@ require_once './app/config/constant.php';
             searching: false,
             bPaginate: false,
             info: false,
+            "language": {
+                "emptyTable": "Không có dữ liệu"
+            }
         });
         $(document).ready(function() {
-
+            // Handle checkbox click event to get selected rows
+            $('#dataTable tbody').on('click', 'input[type="checkbox"]', function() {
+                var data = table.row($(this).parents('tr')).data();
+                console.log(data); // Display selected row data in the console
+            });
             var isLoggedIn = sessionStorage.getItem('isLoggedIn');
             console.log('login');
             if (isLoggedIn) {

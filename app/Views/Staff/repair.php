@@ -121,8 +121,8 @@
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <label for="category-film" class="col-form-label">Số lượng:</label>
-                                    <input type="text" class="form-control" id="device-quantity-desc" disabled>
+                                    <label for="category-film" class="col-form-label">Mã thiết bị:</label>
+                                    <input type="text" class="form-control" id="device-code-desc" disabled>
                                 </div>
                             </div>
                             <div class="row">
@@ -466,7 +466,7 @@
                     $('#desc-device-view').text(response.data.ten);
                     $('#desc-device-detail').text(response.data.dactinhkithuat);
                     $('#device-name-desc').val(response.data.ten)
-                    $('#device-quantity-desc').val(response.data.soluong)
+                    $('#device-code-desc').val(response.data.mathietbi)
                     $('#device-desc-desc').val(response.data.dactinhkithuat)
                     $('#device-status-desc').val(response.data.tinhtrang)
                     $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)

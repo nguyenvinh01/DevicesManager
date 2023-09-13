@@ -1,10 +1,3 @@
-<?php
-
-if ($_SESSION['quyen'] != 1) {
-    header("Location: dashboard");
-}
-?>
-
 <div class="container-fluid px-4">
     <h1 class="mt-4">Danh sách thông báo</h1>
     <div class="card mb-4">

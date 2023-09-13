@@ -30,12 +30,19 @@ class DeviceTypeController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+    public function getDeviceCategories()
+    {
+        $response = $this->deviceType->getDeviceCategories();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function addDeviceType()
     {
         // if (isset($_POST['adddm'])) {
         $ten = $_POST['ten'];
+        $cate = $_POST['categories'];
 
-        $response = $this->deviceType->addDeviceType($ten);
+        $response = $this->deviceType->addDeviceType($ten, $cate);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }

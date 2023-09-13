@@ -1,9 +1,3 @@
-<?php
-if ($_SESSION['quyen'] == 1) {
-    header("Location: dashboard");
-}
-
-?>
 <div class="container-fluid px-4">
     <h1 class="mt-4">Tra cứu thiết bị</h1>
     <div class="card mb-4">
@@ -28,6 +22,11 @@ if ($_SESSION['quyen'] == 1) {
                     </div>
 
                 </div>
+                <div class="">
+                    <button type="button" class="btn btn-success" id="borrow-all">
+                        Mượn nhiều
+                    </button>
+                </div>
                 <!-- <div class="col-16 d-flex flex-row">
                     <div class="form-group me-3">
                         <label for="startDate">Ngày bắt đầu:</label>
@@ -51,6 +50,7 @@ if ($_SESSION['quyen'] == 1) {
             <table id="datatablesSimple">
                 <thead>
                     <tr style="background-color : #6D6D6D">
+                        <th></th>
                         <th>STT</th>
                         <th>Tên</th>
                         <th>Ảnh</th>
@@ -66,7 +66,7 @@ if ($_SESSION['quyen'] == 1) {
 
         </div>
         <!-- Modal Detail-->
-        <div class="modal fade" id="ModalDesc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="ModalDesc" tabindex="-1" style="z-index: 1060 !important" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -84,8 +84,8 @@ if ($_SESSION['quyen'] == 1) {
                                     <p id="name-device-detail"></p>
                                     <label for="category-film" class="col-form-label"><strong>Tình trạng:</strong></label>
                                     <p id="status-device-detail"></p>
-                                    <label for="category-film" class="col-form-label"><strong>Số lượng:</strong></label>
-                                    <p id="quantity-device-detail"></p>
+                                    <!-- <label for="category-film" class="col-form-label"><strong>Số lượng:</strong></label>
+                                    <p id="quantity-device-detail"></p> -->
                                     <div class="col-6">
                                         <label for="category-film" class="col-form-label">Ảnh:</label>
                                         <br>
@@ -107,10 +107,62 @@ if ($_SESSION['quyen'] == 1) {
 
                 </div>
             </div>
-            <!-- Modal Update-->
-            <!-- Modal D-->
-
         </div>
+        <!-- Modal detail-->
+        <!-- Modal \Multi-->
+        <div class="modal fade" id="ModalBorrowMul" tabindex="-1" style="z-index: 1050 !important" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Mượn thiết bị</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="borrowMultiDevice">
+                            <!-- <input type="hidden" class="form-control" id="id-device-borrow" name="id" value="<?php echo $arUser["id"] ?>"> -->
+                            <div class="col">
+                                <div class="row">
+                                    <h2>Danh sách thiết bị mượn<i class="bi bi-trash3"></i></h2>
+                                    <div class="col-12">
+                                        <ul class="list-group" id="multi-device-desc">
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Địa điểm:</label>
+                                        <select id="option-building" class="form-select col" aria-label="Default select example" name="toanha">
+                                        </select>
+                                        <label for="category-film" class="col-form-label">Phòng:</label>
+                                        <select id="option-room" class="form-select col" aria-label="Default select example" name="phong">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Ngày mượn:</label>
+                                        <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('+2 days')); ?>" id="ngay_muon" name="ngaymuon" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Ngày trả:</label>
+                                        <input type="date" class="form-control" min="<?php echo date('Y-m-d', strtotime('+3 days')); ?>" id="ngay_tra" name="ngaytra" required onchange="validateDate()">
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" name="muontb">Mượn</button>
+                    </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- Modal Multi-->
+        <!-- Modal D-->
         <div class="modal fade" id="ModalBorrow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -125,9 +177,22 @@ if ($_SESSION['quyen'] == 1) {
                                 <div class="row">
                                     <div class="col-12">
                                         <label for="category-film" class="col-form-label">Thiết bị:</label>
-                                        <input type="text" class="form-control disabled" id="name-device-borrow" value="<?php echo $arUser["ten"] ?>" name="ten" readonly>
+                                        <input type="text" class="form-control disabled" id="name-device-borrow" name="ten" readonly>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label"> Mã thiết bị:</label>
+                                        <input type="text" class="form-control disabled" id="code-device-borrow" name="mathietbi" readonly>
+                                    </div>
+                                </div>
+                                <!-- <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Số lượng: </label>
+                                        <input type="number" class="form-control disabled" id="quantity-device-borrow" name="soluong">
+                                        <span id="quantity-device"></span>
+                                    </div>
+                                </div> -->
                                 <div class="row">
                                     <div class="col-12">
                                         <label for="category-film" class="col-form-label">Địa điểm:</label>
@@ -165,6 +230,8 @@ if ($_SESSION['quyen'] == 1) {
     </div>
     <script>
         $(document).ready(function() {
+            var column = table.column(0); // Cột thứ tư, lấy theo index (0-based)
+            column.visible(!column.visible());
             toastr.options = {
                 closeButton: true,
                 progressBar: true,
@@ -176,9 +243,108 @@ if ($_SESSION['quyen'] == 1) {
             let prevKeywordSearch = '';
             let prevPage = 0;
             let prevType = '';
+            let listBorrow = [];
             getDeviceList()
 
+            $(document).on('click', '#remove-item-multi', function(e) {
+                e.preventDefault();
+                console.log(123);
+                var id = $(this).data('id');
+                removeItem(id);
+            });
+
+            $('#borrow-all').click(function() {
+                listBorrow = [];
+                var checkboxes = document.querySelectorAll('input[name="item"]:checked');
+                checkboxes.forEach((check) => {
+                    if (!listBorrow.some((item) => item == check.value)) {
+                        // listBorrow.append(check.value)
+                        listBorrow = [...listBorrow, check.value];
+
+                    }
+                })
+                console.log(listBorrow);
+                if (listBorrow.length == 0) {
+
+                    var column = table.column(0); // Cột thứ tư, lấy theo index (0-based)
+                    column.visible(!column.visible());
+                } else {
+                    $('#ModalBorrowMul').modal('show')
+                    console.log(1231123, listBorrow.length);
+                    $.ajax({
+                        url: "<?php echo BASE_URL; ?>/finddevice/getMultiDevice", // Đường dẫn đến controller xử lý
+                        method: 'GET',
+                        data: {
+                            id: listBorrow
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            console.log(response, 'list');
+                            let list = '';
+                            $('#multi-device-desc').html('')
+
+                            response.data.forEach((device) => {
+                                list += `
+                                <a class="list-group-item list-group-item-action" aria-current="true">
+                                    <div class="d-flex w-100 justify-content-between modal-desc" data-id="${device.id}" onclick="$('#ModalDesc').modal('show')">
+                                        <p class="mb-1" id="multi-device-code">${device.ten}</p>
+                                        <p class="mb-1" id="multi-device-name">${device.mathietbi}</p>
+                                    </div>
+                                    <p class="fas fa-window-close" id="remove-item-multi" data-id="${device.id}"></p>
+                                    </a>
+                                `
+                            })
+                            $('#multi-device-desc').html(list)
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error);
+                        }
+                    });
+                }
+            })
+
+            function removeItem(id) {
+                listBorrow = listBorrow.filter((item) => item != id)
+                console.log(listBorrow, 'new');
+                if (listBorrow.length > 0) {
+
+                    $.ajax({
+                        url: "<?php echo BASE_URL; ?>/finddevice/getMultiDevice", // Đường dẫn đến controller xử lý
+                        method: 'GET',
+                        data: {
+                            id: listBorrow
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            console.log(response, 'list');
+                            let list = '';
+                            $('#multi-device-desc').html('')
+
+                            response.data.forEach((device) => {
+                                list += `
+                                    <a class="list-group-item list-group-item-action" aria-current="true">
+                                        <div class="d-flex w-100 justify-content-between modal-desc" data-id="${device.id}" onclick="$('#ModalDesc').modal('show')">
+                                            <p class="mb-1" id="multi-device-code">${device.ten}</p>
+                                            <p class="mb-1" id="multi-device-name">${device.mathietbi}</p>
+                                        </div>
+                                        <p class="fas fa-window-close" id="remove-item-multi" data-id="${device.id}"></p>
+                                    </a>
+                                    `
+                            })
+                            $('#multi-device-desc').html(list)
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error);
+                        }
+                    });
+                } else {
+                    $('#multi-device-desc').html('Không có thiết bị')
+
+                }
+            }
+
             function getDeviceList(keyword = '', page = 0, type = '') {
+                let cate = '<?php echo $_GET['cate'] ?>'
                 $.ajax({
                     url: "<?php echo BASE_URL; ?>/finddevice/getDeviceList", // Đường dẫn đến controller xử lý
                     method: 'GET',
@@ -186,6 +352,7 @@ if ($_SESSION['quyen'] == 1) {
                         keyword: keyword,
                         page: page,
                         type: type,
+                        cate: cate
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -197,11 +364,18 @@ if ($_SESSION['quyen'] == 1) {
                             response.data.forEach((e) => {
                                 index++
                                 table.row.add([
+                                    function() {
+                                        return (`
+                                        <td>
+                                        <input class="form-check-input" type="checkbox" name="item" value="${e.id}">
+                                        </td>
+                                        `)
+                                    },
                                     index,
                                     e.ten,
                                     function() {
                                         return (`
-                            <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}"></td>
+                                        <td> <img style="width: 300px !important;height: 200px !important;" src="./uploads/image/${e.hinhanh}"></td>
                                     `)
                                     },
                                     e.tenloai,
@@ -359,6 +533,39 @@ if ($_SESSION['quyen'] == 1) {
                 });
             });
 
+
+            $('#borrowMultiDevice').submit(function(e) {
+                e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+                // Gửi yêu cầu Ajax
+                var formData = $(this).serialize();
+                // formData.append('id', listBorrow)
+                formData += `&id=${listBorrow}`
+                console.log(formData);
+                $.ajax({
+                    url: "<?php echo BASE_URL; ?>/finddevice/borrowMultiDevice", // Đường dẫn đến controller xử lý
+                    method: 'POST',
+                    data: formData, // Dữ liệu gửi đi từ form
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(response);
+                        if (response.status == "success") {
+                            // Hiển thị thông báo thành công
+                            // toastr.success(response.message);
+                            // var modalElement = document.getElementById(`exampleModalEdit${id}`);
+                            // var modal = bootstrap.Modal.getInstance(modalElement);
+                            // modal.hide();
+                        } else {
+                            // Hiển thị thông báo lỗi
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Xử lý lỗi khi gửi yêu cầu Ajax
+                        console.error(error);
+                    }
+                });
+            });
+
             $(document).on('click', '.modal-desc', function() {
                 var id = $(this).data('id');
                 $.ajax({
@@ -375,7 +582,7 @@ if ($_SESSION['quyen'] == 1) {
                         $('#type-device-detail').text(response.data.loaitb);
                         $('#name-device-detail').text(response.data.ten);
                         $('#status-device-detail').text(response.data.tinhtrang);
-                        $('#quantity-device-detail').text(response.data.soluong);
+                        // $('#quantity-device-detail').text(response.data.soluong);
                         $('#image-device-detail').attr('src', `./uploads/image/${response.data.hinhanh}`);
                         $('#desc-device-detail').text(response.data.dactinhkithuat);
                         // $('#id-del').val(response.id);
@@ -395,6 +602,10 @@ if ($_SESSION['quyen'] == 1) {
                     success: function(response) {
                         $('#id-device-borrow').val(response.data.id);
                         $('#name-device-borrow').val(response.data.ten);
+                        // $('#quantity-device-borrow').attr('max', response.data.soluong);
+                        // $('#quantity-device').text(`Số lượng còn lại: ${response.data.soluong}`);
+                        $('#code-device-borrow').val(response.data.mathietbi);
+
                     }
                 })
             });
@@ -415,7 +626,6 @@ if ($_SESSION['quyen'] == 1) {
                                 value: item.phong,
                                 text: item.phong
                             }))
-                            console.log(item);
                         })
                     },
                     error: function(xhr, status, error) {

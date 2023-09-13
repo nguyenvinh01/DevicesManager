@@ -12,6 +12,7 @@
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
                         <th>Tên loại thiết bị</th>
+                        <th>Mã loại</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -85,6 +86,12 @@
                                 <div class="col">
                                     <div class="row">
                                         <div class="col-12">
+                                            <label for="category-film" class="col-form-label">Danh mục thiết bị:</label>
+                                            <select class="form-select" aria-label="Default select example" id="cate-add" tabindex="8" name="categories" required>
+                                                <option value="" selected>Chọn danh mục thiết bị</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
                                             <label for="devicetype-name-add" class="col-form-label">Tên loại thiết bị:</label>
                                             <input type="text" class="form-control" id="devicetype-name-add" name="ten" required>
                                         </div>
@@ -114,9 +121,38 @@
             hideMethod: 'fadeOut',
         };
         getDeviceType()
+        // $('#cate-add').change(function() {
+        //     let cate = $('#cate-add').val();
+        //     console.log(cate, '123');
+        $.ajax({
+            url: "<?php echo BASE_URL; ?>/devicelist/getDeviceCategories", // Đường dẫn đến controller xử lý
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+                if (response.status == "success") {
+                    $('#cate-add').html('')
+                    let cateAdd = `<option value="">Chọn Danh mục</option>`;
+                    response.data.map((cate) => {
+                        // if (type.id == response.data.loaithietbi_id) {
+                        //     typeAdd += `<option value="${type.id}" selected>${type.ten}</option>`
+                        // } else {
+                        cateAdd += `<option value="${cate.madanhmuc}">${cate.tendanhmuc}</option>`
+                        // }
+                    })
+                    $('#cate-add').append(cateAdd)
+                } else {}
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+        // })
         $('#addType').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
+            console.log($('#addType').serialize());
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/deviceType/addDeviceType", // Đường dẫn đến controller xử lý
                 method: 'POST',
@@ -248,6 +284,7 @@
                             table.row.add([
                                 index + 1,
                                 e.ten,
+                                e.maloai,
                                 function() {
                                     return (
                                         `

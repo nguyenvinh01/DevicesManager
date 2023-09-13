@@ -24,7 +24,13 @@ class Model
         for ($i = 0; $i < $length; $i++) {
             $otp .= $characters[rand(0, strlen($characters) - 1)];
         }
-
         return $otp;
+    }
+    function getLastId($table)
+    {
+        $query = "SELECT MAX(id) AS last_id FROM $table";
+        $rs = $this->conn->query($query);
+        $id = $rs->fetch_assoc();
+        return $id['last_id'];
     }
 }

@@ -73,7 +73,7 @@
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
                         <th>Thiết bị</th>
-                        <th>Số lượng</th>
+                        <!-- <th>Số lượng</th> -->
                         <!-- <th>Người kiểm tra</th> -->
                         <th>Thời gian kiểm tra</th>
                         <th>Phòng ban</th>
@@ -247,7 +247,7 @@
                                     ${e.ten_thietbi}</a>
                                     </td>                                    `)
                                 },
-                                e.soluong,
+                                // e.soluong,
                                 // e.ten_nv,
                                 e.ngaykiemtra,
                                 e.ten_phongban,

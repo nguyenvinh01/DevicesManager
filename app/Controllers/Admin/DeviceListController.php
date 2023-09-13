@@ -20,7 +20,8 @@ class DeviceListController extends Controller
         $keyword = $_GET['keyword'];
         $page = $_GET['page'];
         $type = $_GET['type'];
-        $response = $this->device->getDeviceList($keyword, $page, $type);
+        $cate = $_GET['cate'];
+        $response = $this->device->getDeviceList($keyword, $page, $type, $cate);
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -34,7 +35,14 @@ class DeviceListController extends Controller
 
     public function getDeviceType()
     {
-        $response = $this->device->getDeviceType();
+        $cate = $_GET['cate'];
+        $response = $this->device->getDeviceType($cate);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDeviceCategories()
+    {
+        $response = $this->device->getDeviceCategories();
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -43,10 +51,11 @@ class DeviceListController extends Controller
         // if (isset($_POST['addma'])) {
         $ten = $_POST['ten'];
         $tinhtrang = $_POST['tinhtrang'];
-        $soluong = $_POST['soluong'];
+        // $soluong = $_POST['soluong'];
         // $giatri = $_POST['giatri'];
         $ltb  = $_POST['ltb'];
         $dtkt  = $_POST['dtkt'];
+        $cate  = $_POST['cate'];
         //Upload ảnh
         $file_name = $_FILES['image']['name'];
         $file_size = $_FILES['image']['size'];
@@ -59,7 +68,7 @@ class DeviceListController extends Controller
         $target = "./uploads/image/" . basename($image);
         move_uploaded_file($_FILES['image']['tmp_name'], $target);
 
-        $response = $this->device->addDevice($ten, $tinhtrang, $soluong, $ltb, $dtkt, $image);
+        $response = $this->device->addDevice($ten, $tinhtrang, $ltb, $dtkt, $image, $cate);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }
@@ -69,16 +78,18 @@ class DeviceListController extends Controller
         // if (isset($_POST['editma'])) {
         $ten = $_POST['ten'];
         $tinhtrang = $_POST['tinhtrang'];
-        $soluong = $_POST['soluong'];
+        // $soluong = $_POST['soluong'];
         // $giatri = $_POST['giatri'];
         $ltb  = $_POST['ltb'];
         $dtkt  = $_POST['dtkt'];
         $id  = $_POST['id'];
+        $cate  = $_POST['categories'];
+
         //Upload ảnh
         $file_name = $_FILES['image']['name'];
         if (empty($file_name)) {
 
-            $response = $this->device->editDevice($id, $ten, $tinhtrang, $soluong, $ltb, $dtkt, null);
+            $response = $this->device->editDevice($id, $ten, $tinhtrang, $ltb, $dtkt, null, $cate);
             header('Content-Type: application/json');
             echo json_encode($response);
         } else {
@@ -91,7 +102,42 @@ class DeviceListController extends Controller
             $image = $_FILES['image']['name'];
             $target = "./uploads/image/" . basename($image);
             move_uploaded_file($_FILES['image']['tmp_name'], $target);
-            $response =  $this->device->editDevice($id, $ten, $tinhtrang, $soluong, $ltb, $dtkt, $image);
+            $response =  $this->device->editDevice($id, $ten, $tinhtrang, $ltb, $dtkt, $image, $cate);
+            header('Content-Type: application/json');
+            echo json_encode($response);
+        }
+        // }
+    }
+    public function duplicateDevice()
+    {
+        // if (isset($_POST['editma'])) {
+        $ten = $_POST['ten'];
+        $tinhtrang = $_POST['tinhtrang'];
+        // $soluong = $_POST['soluong'];
+        // $giatri = $_POST['giatri'];
+        $ltb  = $_POST['ltb'];
+        $dtkt  = $_POST['dtkt'];
+        $id  = $_POST['id'];
+        $cate  = $_POST['categories'];
+
+        //Upload ảnh
+        $file_name = $_FILES['image']['name'];
+        if (empty($file_name)) {
+
+            $response = $this->device->duplicateDevice($id, $ten, $tinhtrang, $ltb, $dtkt, null, $cate);
+            header('Content-Type: application/json');
+            echo json_encode($response);
+        } else {
+            $file_size = $_FILES['image']['size'];
+            $file_tmp = $_FILES['image']['tmp_name'];
+            $file_type = $_FILES['image']['type'];
+            $file_parts = explode('.', $_FILES['image']['name']);
+            $file_ext = strtolower(end($file_parts));
+            $expensions = array("jpeg", "jpg", "png");
+            $image = $_FILES['image']['name'];
+            $target = "./uploads/image/" . basename($image);
+            move_uploaded_file($_FILES['image']['tmp_name'], $target);
+            $response =  $this->device->duplicateDevice($id, $ten, $tinhtrang, $ltb, $dtkt, $image, $cate);
             header('Content-Type: application/json');
             echo json_encode($response);
         }

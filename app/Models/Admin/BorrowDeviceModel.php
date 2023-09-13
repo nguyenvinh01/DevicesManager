@@ -91,19 +91,17 @@ class BorrowDeviceModel extends Model
         WHERE `id`='{$id}'";
         $result = $this->conn->query($query);
         if ($result) {
-            if ($tinhtrang == "Đã trả" || $tinhtrang == "Bị từ chối") {
+            if ($tinhtrang == "Đã trả" || $tinhtrang == "Từ chối yêu cầu") {
                 $update = "UPDATE `thietbi` 
-                SET `soluong`= soluong + 1
+                SET `trangthai`= 'Sẵn Sàng'
                 WHERE `id`='{$idtb}'";
                 $this->conn->query($update);
             }
-            // header("Location: ../borrowdevice?msg=1");
             return [
                 "status" => "success",
                 "message" => "Cập nhật thành công"
             ];
         } else {
-            // header("Location: ../borrowdevice?msg=2");
             return [
                 "status" => "error",
                 "message" => "Cập nhật thất bại"

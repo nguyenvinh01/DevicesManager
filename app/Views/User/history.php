@@ -52,7 +52,7 @@
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
                         <th>Tên thiết bị</th>
-                        <!-- <th>Ảnh</th> -->
+                        <th>Mã thiết bị</th>
                         <th>Địa điểm</th>
                         <th>Ngày mượn</th>
                         <th>Ngày trả</th>
@@ -91,12 +91,23 @@
                                     <input type="text" class="form-control" id="device-status-desc" disabled>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <label for="category-film" class="col-form-label">Số lượng:</label>
-                                    <input type="text" class="form-control" id="device-quantity-desc" disabled>
-                                </div>
-                            </div>
+                            <!-- <div class="row">
+                                <table id="datatablesSimple">
+                                    <thead>
+                                        <tr style="background-color : #6D6D6D">
+                                            <th>STT</th>
+                                            <th>Tên thiết bị</th>
+                                            <th>Mã thiết bị</th>
+                                            <th>Địa điểm</th>
+                                            <th>Ngày mượn</th>
+                                            <th>Ngày trả</th>
+                                            <th>Tình trạng</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div> -->
                             <div class="row">
                                 <div class="col-12">
                                     <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
@@ -158,6 +169,7 @@
                                     ${e.ten}</a>
                                     </td>                                    `)
                             },
+                            e.mathietbi,
                             e.diadiem,
                             e.ngaymuon,
                             e.ngaytra,
@@ -293,7 +305,7 @@
                 $('#desc-device-view').text(response.data.ten);
                 $('#desc-device-detail').text(response.data.dactinhkithuat);
                 $('#device-name-desc').val(response.data.ten)
-                $('#device-quantity-desc').val(response.data.soluong)
+                // $('#device-quantity-desc').val(response.data.soluong)
                 $('#device-desc-desc').val(response.data.dactinhkithuat)
                 $('#device-status-desc').val(response.data.tinhtrang)
                 $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
