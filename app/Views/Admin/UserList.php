@@ -29,15 +29,31 @@
                 </div>
             </div>
             <div>
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                <!-- <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                     Thêm mới
                 </button>
-                <!-- <button class="btn btn-success" id="btn-export">
+                <button class="btn btn-success" id="btn-export">
                     Export
                 </button>
                 <button class="btn btn-success" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
                     Import
                 </button> -->
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Thao tác
+                    </button>
+                    <div class="dropdown-menu">
+                        <button type="button" class="btn btn-success dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                            Thêm mới
+                        </button>
+                        <button class="btn btn-success dropdown-item" id="btn-export">
+                            Export
+                        </button>
+                        <button class="btn btn-success dropdown-item" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
+                            Import
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="card-body">
@@ -130,6 +146,13 @@
                                             <label for="category-film" class="col-form-label">Địa chỉ:</label>
                                             <input type="text" class="form-control" id="diachiUpdate" name="diachi" value="" required>
                                         </div>
+                                        <div class="col-6">
+                                            <label for="category-film" class="col-form-label">Phòng ban:</label>
+
+                                            <select class="form-select" aria-label="Default select example" id="department-edit" tabindex="8" name="phongban" required>
+                                                <option value="" selected>Chọn phòng ban</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -184,13 +207,22 @@
                                             <input type="text" class="form-control" id="addUserAddress" name="diachi" required>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="category-film" class="col-form-label">Phòng ban:</label>
+
+                                            <select class="form-select" aria-label="Default select example" id="department" tabindex="8" name="phongban" required>
+                                                <option value="" selected>Chọn phòng ban</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                    <button type="submit" class="btn btn-primary" name="addnv">Lưu</button>
-                                </div>
-                            </form>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-primary" name="addnv">Lưu</button>
+                        </div>
+                        </form>
 
                     </div>
                 </div>
@@ -421,8 +453,28 @@
                 console.log("Clicked Page: " + prevPage);
             }
         });
+        let phongban;
+        $.ajax({
+            url: "<?php echo BASE_URL; ?>/userlist/getDepartment", // Đường dẫn đến controller xử lý
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response.data, 123);
+                response.data.forEach((pb) => {
+                    // console.log(pb, 123);
+
+                    phongban += `<option value="${pb.id}">${pb.tenpb}</option>`
+                })
+                $('#department').append(phongban);
+
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
         $(document).on('click', '.modal-Edit', function() {
             var id = $(this).data('id');
+            let phongbanedit = '';
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/userlist/getModalEdit",
                 method: "POST",
@@ -431,13 +483,22 @@
                 },
                 dataType: 'json',
                 success: function(response) {
-                    $('#hotenUpdate').val(response.hoten);
-                    $('#emailUpdate').val(response.email);
-                    $('#diachiUpdate').val(response.diachi);
-                    $('#sdtUpdate').val(response.sodienthoai);
-                    $('#matkhauUpdate').val(response.matkhau);
-                    $('#taikhoanUpdate').val(response.taikhoan);
-                    $('#idUpdate').val(response.id);
+                    $('#hotenUpdate').val(response.data.hoten);
+                    $('#emailUpdate').val(response.data.email);
+                    $('#diachiUpdate').val(response.data.diachi);
+                    $('#sdtUpdate').val(response.data.sodienthoai);
+                    $('#matkhauUpdate').val(response.data.matkhau);
+                    $('#taikhoanUpdate').val(response.data.taikhoan);
+                    $('#idUpdate').val(response.data.id);
+                    response.location.forEach((pb) => {
+                        // console.log(pb, 123);
+                        if (pb.id == response.data.phongban) {
+                            phongbanedit += `<option value="${pb.id}" selected>${pb.tenpb}</option>`
+                        } else {
+                            phongbanedit += `<option value="${pb.id}">${pb.tenpb}</option>`
+                        }
+                    })
+                    $('#department-edit').append(phongbanedit);
                 }
             })
         });

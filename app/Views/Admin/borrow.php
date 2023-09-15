@@ -61,12 +61,13 @@ if ($_SESSION['quyen'] == 2) {
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
                         <th>Người dùng</th>
-                        <th>Tên thiết bị</th>
+                        <!-- <th>Tên thiết bị</th> -->
+                        <th>Mã đơn mượn</th>
                         <!-- <th>Số lượng</th> -->
                         <th>Ngày mượn</th>
                         <th>Ngày trả</th>
                         <th>Địa điểm</th>
-                        <th>Tình trạng</th>
+                        <!-- <th>Tình trạng</th> -->
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -155,6 +156,45 @@ if ($_SESSION['quyen'] == 2) {
             </div>
         </div>
         <!-- Desc -->
+        <!-- Desc borrow -->
+
+        <div class="modal fade" id="ModalDescBorrow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="desc-borrow-view">Danh sách thiết bị mượn</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="updateStatusBorrow">
+                            <div class="col">
+                                <div class="row">
+                                    <input type="hidden" class="form-control" id="id-borrow" name="borrow-id">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Mã thiết bị</th>
+                                                <th>Tên thiết bị</th>
+                                                <th>Trạng thái</th>
+                                                <!-- <th>Thao tác</th> -->
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-borrow-detail">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" name="capnhat">Cập nhật</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Desc Borrow -->
     </div>
 </div>
 <script>
@@ -173,13 +213,13 @@ if ($_SESSION['quyen'] == 2) {
             dataType: 'json',
             success: function(response) {
                 console.log('update status');
-                if (response.status == "success") {
-                    // Hiển thị thông báo thành công
-                    // toastr.success(response.message);
-                } else {
-                    // Hiển thị thông báo lỗi
-                    // toastr.error(response.message);
-                }
+                // if (response.status == "success") {
+                //     // Hiển thị thông báo thành công
+                //     // toastr.success(response.message);
+                // } else {
+                //     // Hiển thị thông báo lỗi
+                //     // toastr.error(response.message);
+                // }
             },
             error: function(xhr, status, error) {
                 // Xử lý lỗi khi gửi yêu cầu Ajax
@@ -202,9 +242,9 @@ if ($_SESSION['quyen'] == 2) {
                 },
                 dataType: 'json',
                 success: function(response) {
+                    console.log(response);
                     if (response.status == "success") {
                         // Hiển thị thông báo thành công
-                        console.log(response, );
                         let userTable = '';
                         table.clear();
                         let index = page * 5;
@@ -213,13 +253,14 @@ if ($_SESSION['quyen'] == 2) {
                             table.row.add([
                                 index,
                                 e.hoten,
-                                function() {
-                                    return (`
-                                    <td>
-                                    <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.thietbi_id}" data-bs-target="#ModalDes">
-                                    ${e.ten}</a>
-                                    </td>                                    `)
-                                },
+                                // function() {
+                                //     return (`
+                                //     <td>
+                                //     <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.thietbi_id}" data-bs-target="#ModalDes">
+                                //     ${e.ten}</a>
+                                //     </td>                                    `)
+                                // },
+                                e.madonmuon,
                                 // e.soluong,
                                 // function() {
                                 //     return (`
@@ -230,24 +271,23 @@ if ($_SESSION['quyen'] == 2) {
                                 convertDateFormat(e.ngaytra),
                                 // e.dactinhkithuat,
                                 e.diadiem,
-                                e.trangthai,
+                                // e.trangthai,
                                 function() {
-                                    return (e.trangthai == "Đã trả" || e.trangthai == "Từ chối yêu cầu" || e.trangthai == "Quá hạn" ? '' :
-                                        `
+                                    // return (e.trangthai == "Đã trả" || e.trangthai == "Từ chối yêu cầu" || e.trangthai == "Quá hạn" ? '' :
+                                    return (`
                                     <td style="width : 130px !important">
                                         <div class="dropdown">
                                             <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 Thao tác
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <button type="button" class="btn btn-primary modal-edit dropdown-item" data-bs-toggle="modal" data-id=${e.id} data-bs-target="#ModalEdit">
+                                                <button type="button" class="btn btn-primary modal-desc-borrow dropdown-item" data-bs-toggle="modal" data-id=${e.madonmuon} data-bs-target="#ModalDescBorrow">
                                                     Cập nhật trạng thái
                                                 </button>  
                                             </ul>
                                         </div>
                                     </td>
-                                `
-                                    )
+                                `)
                                 },
                             ])
                         });
@@ -488,7 +528,7 @@ if ($_SESSION['quyen'] == 2) {
         $(document).on('click', '.modal-desc', function() {
             var id = $(this).data('id');
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/devicelist/getDataModal",
+                url: "<?php echo BASE_URL; ?>/borrowdevice/getDataModal",
                 method: "GET",
                 data: {
                     id: id
@@ -505,6 +545,122 @@ if ($_SESSION['quyen'] == 2) {
                     $('#device-status-desc').val(response.data.tinhtrang)
                     $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
                     // $('#id-del').val(response.id);
+                }
+            })
+        });
+        $('#updateStatusBorrow').submit(function(e) {
+            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            // Gửi yêu cầu Ajax
+            var formData = $(this).serialize();
+            // var formData = $(this).serializeJSON();
+            // var formData = new FormData(this);
+
+            var id = $(this).serialize().split(/[=,&]/)[1];
+            const params = new URLSearchParams(formData);
+
+            const paramsArray = [];
+
+            params.forEach((value, key) => {
+                paramsArray.push({
+                    key,
+                    value
+                });
+            });
+            paramsArray.shift()
+            console.log(paramsArray, 11, id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/borrowdevice/updateBorrowStatus", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                data: {
+                    id: id,
+                    status: paramsArray
+                }, // Dữ liệu gửi đi từ form
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response)
+                    if (response.status == "success") {
+                        // Hiển thị thông báo thành công
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById(`ModalDescBorrow`);
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        });
+        $(document).on('click', '.modal-desc-borrow', function() {
+            var id = $(this).data('id');
+            console.log(id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/borrowdevice/getBorrowDetail",
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response, 123);
+                    $('#table-borrow-detail').html('')
+                    let list;
+                    // Tạo danh sách select và tùy chọn trước vòng lặp
+                    const selects = [];
+                    const options = {};
+
+                    // Tạo danh sách các tùy chọn cho mỗi trạng thái
+                    options['Chờ phê duyệt'] = `
+                            <option value="Đã phê duyệt">Phê duyệt yêu cầu</option>
+                            <option value="Từ chối yêu cầu">Từ chối yêu cầu</option>
+                        `;
+
+                    options['Đã phê duyệt'] = `<option value="Đang mượn">Đang mượn</option>`;
+
+                    options['Đang mượn'] = `
+                    <option value="Đã trả">Đã trả</option>
+                    <option value="Thất lạc">Thất lạc</option>
+                    <option value="Sửa chữa">Sửa chữa</option>
+                    `;
+                    options['Quá hạn'] = `
+                    <option value="Đã trả">Đã trả</option>
+                    <option value="Thất lạc">Thất lạc</option>
+                    <option value="Sửa chữa">Sửa chữa</option>
+                    `;
+                    //    options['Khác'] = `<option value="Đã trả">Đã trả</option>
+                    //    <option value="Trả thiếu">Trả thiếu</option>
+                    //    <option value="Làm mất">Làm mất</option>`;
+                    let index = 1;
+                    const statusBorrow = ['Đã trả', 'Thất lạc', 'Chờ sửa chữa', 'Từ chối yêu cầu']
+                    response.data.forEach((borrow) => {
+                        const selectId = `select-status-borrow-${borrow.id}`;
+                        const selectHtml = `
+                        <select class="form-select" aria-label="Default select example" id="${selectId}" tabindex="8" name="${borrow.mathietbi}" required>
+                            <option value="${borrow.trangthai}" selected hidden>${borrow.trangthai}</option>
+                            ${options[`${borrow.trangthai}`]}
+                        </select>
+                    `;
+                        selects.push({
+                            id: selectId,
+                            trangthai: borrow.trangthai
+                        });
+                        list += `
+                        <tr>
+                            <td>${index}</td>
+                            <td>${borrow.mathietbi}</td>
+                            <td>${borrow.ten}</td>
+                            <td>${statusBorrow.some((e) => borrow.trangthai == e) ? borrow.trangthai : selectHtml}</td>
+                        </tr>
+                            `
+                        index++;
+                    })
+
+                    $('#table-borrow-detail').html(list)
+                    $('#id-borrow').val(response.data[0].madonmuon)
                 }
             })
         });

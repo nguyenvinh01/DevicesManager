@@ -176,9 +176,24 @@ class RepairModel extends Model
     }
     function updateStatusRepair($id, $status)
     {
+        $queryGetId = "SELECT thietbi_id, madonmuon FROM suachua WHERE id = '$id'";
+        $rsId = $this->conn->query($queryGetId);
+        $dataId = $rsId->fetch_assoc();
         $query = "UPDATE `suachua` 
         SET `tinhtrang`= '$status'
         WHERE `id`=$id";
+        if ($status == 'Hoàn thành') {
+            $queryUpdateDevice = "UPDATE thietbi SET trangthai = 'Sẵn Sàng' WHERE id = '{$dataId['thietbi_id']}'";
+            $queryUpdateBorrow = "UPDATE muon SET trangthai = 'Đã trả' WHERE thietbi_id = '{$dataId['thietbi_id']}' AND madonmuon = '{$dataId['madonmuon']}'";
+            $this->conn->query($queryUpdateDevice);
+            $this->conn->query($queryUpdateBorrow);
+        }
+        if ($status == 'Hỏng') {
+            $queryUpdateDevice = "UPDATE thietbi SET trangthai = 'Hỏng' WHERE id = '{$dataId['thietbi_id']}'";
+            // $queryUpdateBorrow = "UPDATE muon SET trangthai = 'Đã trả' WHERE thietbi_id = '{$dataId['thietbi_id']}' AND madonmuon = '{$dataId['madonmuon']}'";
+            $this->conn->query($queryUpdateDevice);
+            // $this->conn->query($queryUpdateBorrow);
+        }
         $result = $this->conn->query($query);
         if ($result) {
             return [

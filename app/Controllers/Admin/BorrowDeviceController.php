@@ -42,14 +42,26 @@ class BorrowDeviceController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+    // public function updateBorrowStatus()
+    // {
+    //     // if (isset($_POST['capnhat'])) {
+    //     $tinhtrang = $_POST['tinhtrang'];
+    //     $id  = $_POST['id'];
+    //     $idtb  = $_POST['thietbiid'];
+
+    //     $response = $this->device->updateBorrowStatus($tinhtrang, $idtb, $id);
+    //     header('Content-Type: application/json');
+    //     echo json_encode($response);
+    //     // }
+    // }
     public function updateBorrowStatus()
     {
         // if (isset($_POST['capnhat'])) {
-        $tinhtrang = $_POST['tinhtrang'];
+        $tinhtrang = $_POST['status'];
         $id  = $_POST['id'];
-        $idtb  = $_POST['thietbiid'];
+        // $idtb  = $_POST['thietbiid'];
 
-        $response = $this->device->updateBorrowStatus($tinhtrang, $idtb, $id);
+        $response = $this->device->updateBorrowStatus($tinhtrang, $id);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }
@@ -57,6 +69,13 @@ class BorrowDeviceController extends Controller
     public function autoUpdateStatus()
     {
         $response = $this->device->autoUpdateStatus();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getBorrowDetail()
+    {
+        $id = $_GET['id'];
+        $response = $this->device->getBorrowDetail($id);
         header('Content-Type: application/json');
         echo json_encode($response);
     }

@@ -29,7 +29,14 @@ class AssignController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+    public function getAssignDetail()
+    {
+        $idCapPhat = $_GET['idCapPhat'];
 
+        $response = $this->assign->getAssignDetail($idCapPhat);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function addAssign()
     {
         $phongban = $_POST['phongban'];
@@ -86,6 +93,18 @@ class AssignController extends Controller
         $id  = $_POST['id'];
         $status  = $_POST['status-repair'];
         $response = $this->assign->updateStatusRepair($id, $status);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        // }
+    }
+    public function updateAssignStatus()
+    {
+        // if (isset($_POST['capnhat'])) {
+        $tinhtrang = $_POST['status'];
+        $id  = $_POST['id'];
+        // $idtb  = $_POST['thietbiid'];
+
+        $response = $this->assign->updateAssignStatus($tinhtrang, $id);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }

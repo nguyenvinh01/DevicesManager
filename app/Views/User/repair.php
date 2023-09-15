@@ -376,9 +376,9 @@
                 success: function(response) {
                     console.log(response, 'repair');
                     $('#add-select').html('');
-                    $('#add-select').append(`<option value="" selected>Chọn tình trạng</option>`);
+                    $('#add-select').append(`<option value="" selected>Chọn thiết bị</option>`);
                     response.staff.map((s) => {
-                        staffList += `<option value="${s.thietbi_id}">${s.ten}</option>`
+                        staffList += `<option value="${s.thietbi_id}/${s.madonmuon}">${s.ten}</option>`
                     })
                     console.log(1, staffList, 1);
                     $('#add-select').append(staffList)
@@ -389,6 +389,7 @@
         $('#addRepair').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
+            console.log($('#addRepair').serialize());
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/repair/sendRepair", // Đường dẫn đến controller xử lý
                 method: 'POST',

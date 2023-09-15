@@ -193,7 +193,7 @@
                     if (response.status == "success") {
                         // Hiển thị thông báo thành công
                         toastr.success(response.message);
-                        var modalElement = document.getElementById(`exampleModalEdit${id}`);
+                        var modalElement = document.getElementById(`ModalEdit`);
                         var modal = bootstrap.Modal.getInstance(modalElement);
                         modal.hide();
                     } else {
@@ -223,7 +223,7 @@
                 success: function(response) {
                     if (response.status == "success") {
                         toastr.success(response.message);
-                        var modalElement = document.getElementById(`exampleModalDel${id}`);
+                        var modalElement = document.getElementById(`ModalDel`);
                         var modal = bootstrap.Modal.getInstance(modalElement);
                         modal.hide();
                     } else {

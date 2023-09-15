@@ -104,11 +104,23 @@ class FindDeviceModel extends Model
 
     function borrowDevice($idtb, $ngaymuon, $ngaytra, $toanha, $phong, $mathietbi)
     {
+        $queryLastId = "SELECT MAX(madonmuon) AS count
+        FROM muon
+        WHERE nguoidung_id = '{$_SESSION["id"]}';";
+        $rsLastId = $this->conn->query($queryLastId);
+
+        $lastId = $rsLastId->fetch_assoc();
+
+        // Tách phần số ra khỏi mã cũ
+        $id = (int)substr($lastId['count'], -5); // Lấy 5 ký tự cuối cùng
+        // $maloai = $this->getDeviceTypeCode($ltb);
+        $madonmuon = "U" . $_SESSION["id"] . "-" . str_pad($id + 1, 5, "0", STR_PAD_LEFT);
+
         $queryNameBuilding = "SELECT tentoanha FROM toanha WHERE id = $toanha";
         $resultNameBuilding = $this->conn->query($queryNameBuilding);
         $nameBuilding = $resultNameBuilding->fetch_assoc();
-        $query = "INSERT INTO muon (thietbi_id, ngaymuon, ngaytra, nguoidung_id, diadiem, trangthai, mathietbi) 
-            VALUES ( '{$idtb}', '{$ngaymuon}', '{$ngaytra}', '{$_SESSION["id"]}', '{$nameBuilding['tentoanha']}-{$phong}' , 'Chờ phê duyệt', '$mathietbi');";
+        $query = "INSERT INTO muon (thietbi_id, ngaymuon, ngaytra, nguoidung_id, diadiem, trangthai, mathietbi, madonmuon) 
+            VALUES ( '{$idtb}', '{$ngaymuon}', '{$ngaytra}', '{$_SESSION["id"]}', '{$nameBuilding['tentoanha']}-{$phong}' , 'Chờ phê duyệt', '$mathietbi', '$madonmuon');";
         $result = $this->conn->query($query);
         if ($result) {
             $update = "UPDATE `thietbi` 

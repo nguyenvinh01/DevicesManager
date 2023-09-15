@@ -54,13 +54,13 @@
                 <thead>
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
-                        <th>Thiết bị</th>
-                        <th>Số lượng</th>
+                        <th>Mã đơn cấp phát</th>
+                        <!-- <th>Số lượng</th> -->
                         <th>Người kiểm tra</th>
                         <th>Thời gian kiểm tra</th>
                         <th>Phòng ban</th>
                         <th>Địa điểm</th>
-                        <th>Tình trạng</th>
+                        <!-- <th>Tình trạng</th> -->
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -143,16 +143,37 @@
                                 <div class="row">
                                     <div class="col-12 row">
                                         <div class="col-6">
-                                            <label for="category-film" class="col-form-label">Loại thiết bị :</label>
-                                            <select class="form-select" aria-label="Default select example" id="devicetype" tabindex="8" name="loaithietbi" required>
+                                            <label for="category-film" class="col-form-label">Danh mục thiết bị:</label>
+                                            <select class="form-select" aria-label="Default select example" id="cate-add" tabindex="8" name="categories" required>
+                                                <option value="" selected>Chọn danh mục thiết bị</option>
                                             </select>
                                         </div>
                                         <div class="col-6">
+                                            <label for="category-film" class="col-form-label">Loại thiết bị:</label>
+                                            <select class="form-select type-add" aria-label="Default select example" id="devicetype" tabindex="8" name="ltb" required>
+                                                <option value="" selected>Chọn loại thiết bị</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="row">
+                                    <div class="col-12 row">
+                                        <div class="col">
                                             <label for="category-film" class="col-form-label">Thiết bị :</label>
                                             <select class="form-select" aria-label="Default select example" id="device-list" tabindex="8" name="thietbi" required>
                                             </select>
 
                                         </div>
+                                    </div>
+                                </div> -->
+                                <div class="row my-3">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Số lượng :</label>
+                                        <input type="number" class="form-control" id="quantityInput" min="1" name="soluong">
+                                        <span id="device-quantity"></span>
+                                        <!-- <div class="input-group-append">
+                                                <span class="input-group-text">/10</span>
+                                            </div> -->
                                     </div>
                                 </div>
                                 <div class="row my-3">
@@ -164,16 +185,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row my-3">
-                                    <div class="col-12">
-                                        <label for="category-film" class="col-form-label">Số lượng :</label>
-                                        <input type="number" class="form-control" id="quantityInput" min="1" name="soluong">
-                                        <span id="device-quantity"></span>
-                                        <!-- <div class="input-group-append">
-                                                <span class="input-group-text">/10</span>
-                                            </div> -->
-                                    </div>
-                                </div>
+
                                 <!-- <div class="row my-3">
                                         <div class="col-12">
                                             <label for="category-film" class="col-form-label">Tình trạng :</label>
@@ -279,6 +291,45 @@
             </div>
         </div>
         <!-- Modal user desc-->
+        <!-- Desc Assign -->
+
+        <div class="modal fade" id="ModalDescAssign" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="desc-borrow-view">Danh sách thiết bị mượn</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="updateStatusBorrow">
+                            <div class="col">
+                                <div class="row">
+                                    <input type="hidden" class="form-control" id="id-borrow" name="borrow-id">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Mã thiết bị</th>
+                                                <th>Tên thiết bị</th>
+                                                <th>Tình trạng</th>
+                                                <!-- <th>Thao tác</th> -->
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-assign-detail">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" name="capnhat">Cập nhật</button> -->
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Desc Assign -->
     </div>
 </div>
 <script>
@@ -346,15 +397,15 @@
                             index++;
                             table.row.add([
                                 index,
-                                // e.ten_thietbi,
-                                function() {
-                                    return (`
-                                    <td>
-                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.tentb}" data-bs-target="#ModalDes">
-                                    ${e.ten_thietbi}</a>
-                                    </td>                                    `)
-                                },
-                                e.soluong,
+                                e.madoncapphat,
+                                // function() {
+                                //     return (`
+                                //     <td>
+                                //         <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.tentb}" data-bs-target="#ModalDes">
+                                //     ${e.ten_thietbi}</a>
+                                //     </td>                                    `)
+                                // },
+                                // e.soluong,
                                 // e.ten_nv,
                                 function() {
                                     return (e.ten_nv ? `
@@ -366,14 +417,25 @@
                                 e.ngaykiemtra,
                                 e.ten_phongban,
                                 e.ten_toanha + "-" + e.ten_diadiem,
-                                e.tinhtrang,
+                                // e.tinhtrang,
                                 function() {
                                     return (
-                                        e.tinhtrang == "Đã xử lý" ? "" : `
+                                        `
+
                                     <td style="width : 130px !important">
-                                    <button type="button" class="btn btn-primary modal-edit" data-id="${e.id}" data-bs-toggle="modal" data-bs-target="#ModalEdit">
-                                        Phân công
-                                    </button>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Thao tác
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <button type="button" class="btn btn-primary modal-desc-assign dropdown-item" data-id="${e.madoncapphat}" data-bs-toggle="modal" data-bs-target="#ModalDescAssign">
+                                                Chi tiết
+                                                </button>
+                                                <button type="button" class="btn btn-primary modal-edit dropdown-item" data-id="${e.madoncapphat}" data-bs-toggle="modal" data-bs-target="#ModalEdit">
+                                                Phân công
+                                                </button>
+                                            </ul>
+                                        </div>
                                     </td>
                                     `)
                                 },
@@ -503,7 +565,7 @@
             // Gửi yêu cầu Ajax
             console.log('submit');
             var formData = new FormData(this);
-            console.log(formData, 'addAssign');
+            // console.log($('#addAssign').serialize(), 'addAssign');
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/assign/addAssign", // Đường dẫn đến controller xử lý
                 method: 'POST',
@@ -518,7 +580,6 @@
                         var modal = bootstrap.Modal.getInstance(modalElement);
                         modal.hide();
                     } else {
-                        // Hiển thị thông báo lỗi
                         toastr.error(response.message);
                     }
                 },
@@ -538,21 +599,15 @@
             const id = $('#devicetype option').filter(":selected").val();
             console.log(id);
             $.ajax({
-                url: `<?php echo BASE_URL; ?>/assign/getDeviceByType?id=${id}`, // Đường dẫn đến controller xử lý
+                url: `<?php echo BASE_URL; ?>/assign/getDeviceById?id=${id}`, // Đường dẫn đến controller xử lý
                 method: 'GET',
                 // data: formData, // Dữ liệu gửi đi từ form
                 dataType: 'json',
                 success: function(response) {
                     console.log(response);
                     if (response.status == "success") {
-                        $('#device-list').html('');
-                        $('#device-list').append('<option value="" selected>Chọn loại thiết bị</option>');
-                        response.data.forEach((d) => {
-                            deviceList += `<option value="${d.id}">${d.ten}</option>`
-                        })
-
-                        $('#device-list').append(deviceList);
-
+                        $('#device-quantity').text(`Số lượng thiết bị trong kho: ${response.data.count}`);
+                        $('#quantityInput').attr('max', response.data.count)
                     } else {}
                 },
                 error: function(xhr, status, error) {
@@ -598,7 +653,7 @@
         })
         $('#add-button').click(function(e) {
             e.preventDefault();
-            let deviceType;
+            // let deviceType;
             let department;
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/assign/getDataAddModal", // Đường dẫn đến controller xử lý
@@ -608,12 +663,12 @@
                 success: function(response) {
                     console.log(response);
                     if (response.status == "success") {
-                        $('#devicetype').html('');
-                        $('#devicetype').append('<option value="" selected>Chọn loại thiết bị</option>');
-                        response.dataDeviceType.forEach((dt) => {
-                            deviceType += `<option value="${dt.id}">${dt.ten}</option>`
-                        })
-                        $('#devicetype').append(deviceType);
+                        // $('#devicetype').html('');
+                        // $('#devicetype').append('<option value="" selected>Chọn loại thiết bị</option>');
+                        // response.dataDeviceType.forEach((dt) => {
+                        //     deviceType += `<option value="${dt.id}">${dt.ten}</option>`
+                        // })
+                        // $('#devicetype').append(deviceType);
 
 
                         $('#department').html('');
@@ -662,6 +717,104 @@
                 }
             });
         });
+
+        $.ajax({
+            url: "<?php echo BASE_URL; ?>/assign/getDeviceCategories", // Đường dẫn đến controller xử lý
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
+                if (response.status == "success") {
+                    $('#cate-add').html('')
+                    let cateAdd = `<option value="">Chọn Danh mục</option>`;
+                    response.data.map((cate) => {
+                        // if (type.id == response.data.loaithietbi_id) {
+                        //     typeAdd += `<option value="${type.id}" selected>${type.ten}</option>`
+                        // } else {
+                        cateAdd += `<option value="${cate.madanhmuc}">${cate.tendanhmuc}</option>`
+                        // }
+                    })
+                    $('#cate-add').append(cateAdd)
+                } else {}
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+        $('#cate-add').change(function() {
+            let cate = $(this).val();
+            console.log(cate, '123');
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/assign/getDeviceType", // Đường dẫn đến controller xử lý
+                method: 'GET',
+                data: {
+                    cate: cate
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == "success") {
+                        let typeList;
+                        $('#devicetype').html('')
+                        $('#devicetype').each(function() {
+                            let typeAdd = `<option value="">Chọn loại thiết bị</option>`;
+                            response.data.map((type) => {
+                                // if (type.id == response.data.loaithietbi_id) {
+                                //     typeAdd += `<option value="${type.id}" selected>${type.ten}</option>`
+                                // } else {
+                                typeAdd += `<option value="${type.maloai}">${type.ten} (${type.so_luong})</option>`
+                                // }
+                            })
+                            $(this).append(typeAdd)
+                        })
+                        // $('#device-type').append(typeList)
+                    } else {}
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+
+        })
+        $(document).on('click', '.modal-desc-assign', function(e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            let staffList;
+            console.log('modaledit', id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/assign/getAssignDetail", // Đường dẫn đến controller xử lý
+                method: 'GET',
+                data: {
+                    idCapPhat: id
+                }, // Dữ liệu gửi đi từ form
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == "success") {
+                        let index = 1;
+                        let list;
+                        response.data.forEach((assign) => {
+
+                            list += `
+                        <tr>
+                            <td>${index}</td>
+                            <td>${assign.mathietbi}</td>
+                            <td>${assign.ten_thietbi}</td>
+                            <td>${assign.tinhtrang == null ? '' : assign.tinhtrang}</td>
+                        </tr>
+                            `
+                            index++;
+                        })
+                        $('#table-assign-detail').html(list)
+
+                    } else {}
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        })
         $(document).on('click', '.modal-edit', function(e) {
             e.preventDefault();
             var id = $(this).data('id');

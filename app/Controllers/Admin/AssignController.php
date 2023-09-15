@@ -28,13 +28,21 @@ class AssignController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+    public function getAssignDetail()
+    {
+        $idCapPhat = $_GET['idCapPhat'];
 
+        $response = $this->assign->getAssignDetail($idCapPhat);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
     public function addAssign()
     {
         $phongban = $_POST['phongban'];
-        $tentb = $_POST['thietbi'];
+        // $tentb = $_POST['thietbi'];
         $soluong = $_POST['soluong'];
-        $response = $this->assign->assignDevice($phongban, $tentb, $soluong);
+        $type = $_POST['ltb'];
+        $response = $this->assign->assignDevice($phongban, $soluong, $type);
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -63,6 +71,19 @@ class AssignController extends Controller
     public function getStaff()
     {
         $response = $this->assign->getStaff();
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDeviceType()
+    {
+        $cate = $_GET['cate'];
+        $response = $this->assign->getDeviceType($cate);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDeviceCategories()
+    {
+        $response = $this->assign->getDeviceCategories();
         header('Content-Type: application/json');
         echo json_encode($response);
     }

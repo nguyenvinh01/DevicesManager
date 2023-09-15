@@ -196,10 +196,10 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <label for="category-film" class="col-form-label">Địa điểm:</label>
-                                        <select id="option-building" class="form-select col" aria-label="Default select example" name="toanha">
+                                        <select id="option-building-borrow" class="form-select col" aria-label="Default select example" name="toanha">
                                         </select>
                                         <label for="category-film" class="col-form-label">Phòng:</label>
-                                        <select id="option-room" class="form-select col" aria-label="Default select example" name="phong">
+                                        <select id="option-room-borrow" class="form-select col" aria-label="Default select example" name="phong">
                                         </select>
                                     </div>
                                 </div>
@@ -428,6 +428,7 @@
                                 location += `<option value="${l.id_toanha}">${l.toanha}</option>`
                             })
                             $('#option-building').append(location)
+                            $('#option-building-borrow').append(location)
                         } else {}
                     },
                     error: function(xhr, status, error) {
@@ -634,7 +635,30 @@
                     }
                 })
             })
-
+            $('#option-building-borrow').on('change', function(e) {
+                $.ajax({
+                    url: "<?php echo BASE_URL; ?>/finddevice/getRoom",
+                    method: "GET",
+                    data: {
+                        id: e.target.value
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(response, 'room');
+                        $('#option-room-borrow').empty();
+                        $.each(response.data, (i, item) => {
+                            $('#option-room-borrow').append($('<option>', {
+                                value: item.phong,
+                                text: item.phong
+                            }))
+                        })
+                    },
+                    error: function(xhr, status, error) {
+                        // Xử lý lỗi khi gửi yêu cầu Ajax
+                        console.error('error');
+                    }
+                })
+            })
         })
     </script>
     <script>

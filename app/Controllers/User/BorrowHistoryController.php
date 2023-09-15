@@ -33,4 +33,11 @@ class BorrowHistoryController extends Controller
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+    public function getBorrowDetail()
+    {
+        $id = $_GET['id'];
+        $response = $this->borrowHistory->getBorrowDetail($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
 }

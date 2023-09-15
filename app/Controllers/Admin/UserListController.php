@@ -54,7 +54,8 @@ class UserListController extends Controller
         $sdt = $_POST['sdt'];
         $taikhoan = $_POST['taikhoan'];
         $diachi = $_POST['diachi'];
-        $response =  $this->userList->addUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi);
+        $phongban = $_POST['phongban'];
+        $response =  $this->userList->addUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi, $phongban);
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -62,13 +63,14 @@ class UserListController extends Controller
     {
         $hoten = $_POST['hoten'];
         $email  = $_POST['email'];
-        $matkhau  = $_POST['matkhau'];
+        // $matkhau  = $_POST['matkhau'];
         $sdt = $_POST['sdt'];
         $taikhoan = $_POST['taikhoan'];
         $diachi = $_POST['diachi'];
         $id  = $_POST['id'];
+        $phongban = $_POST['phongban'];
 
-        $response =  $this->userList->editUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi, $id);
+        $response =  $this->userList->editUser($hoten, $email, $sdt, $taikhoan, $diachi, $id, $phongban);
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -78,6 +80,12 @@ class UserListController extends Controller
         $id  = $_POST['id'];
 
         $response = $this->userList->deleteUser($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDepartment()
+    {
+        $response = $this->userList->getDepartment();
         header('Content-Type: application/json');
         echo json_encode($response);
     }

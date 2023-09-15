@@ -18,28 +18,18 @@
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                     Thêm mới
                 </button>
-                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="btnradio1">Radio 1</label>
-
-                    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio2">Radio 2</label>
-
-                    <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio3">Radio 3</label>
-                </div>
             </div>
         </div>
         <div class="card-body">
             <table id="datatablesSimple">
                 <thead>
                     <tr style="background-color : #6D6D6D">
-                        <th></th>
                         <th>STT</th>
                         <th>Tên</th>
                         <th>Mã thiết bị</th>
                         <th>Chi tiết</th>
                         <th>Loại thiết bị</th>
+                        <th>Trạng thái</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -343,9 +333,6 @@
                         response.data.forEach((e) => {
                             index++;
                             table.row.add([
-                                function() {
-                                    return `<td><input type="checkbox"></td>`
-                                },
                                 index,
                                 e.ten,
                                 e.mathietbi,
@@ -366,6 +353,7 @@
                                     </td>                                    `)
                                 },
                                 e.tenloai,
+                                e.trangthai,
                                 // e.tinhtrang,
                                 function() {
                                     return (
@@ -411,13 +399,14 @@
                             });
                             $(this).html(cateAdd);
                         });
+
                         let pagination = ""
+                        let itemPerPage = 5;
                         if (prevPage == 0) {
                             pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
                         } else {
                             pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
                         }
-                        let itemPerPage = 5;
                         for (let i = 0; i < (response.count / itemPerPage); i++) {
                             if (i == prevPage) {
                                 pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
@@ -427,14 +416,15 @@
 
                             }
                         }
-                        // if (prevPage == Math.floor((response.count / itemPerPage))) {
-                        //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        // } else {
-                        //     console.log(response.count / itemPerPage);
+                        console.log(Math.floor((response.count / itemPerPage)) - 1, 'page');
+                        if (prevPage == Math.floor((response.count / itemPerPage))) {
+                            console.log(response.count / itemPerPage, 'dis');
+                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        } else {
+                            console.log(response.count / itemPerPage);
 
-                        //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        // }
-
+                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        }
                         $('#pagination').html(pagination)
                         prevTypeSearch = type;
                     } else {}
@@ -462,7 +452,6 @@
                     prevPage = prevPage + 1;
                 }
             } else {
-
                 getDeviceList(prevKeywordSearch, clickedPage, prevTypeSearch)
                 prevPage = clickedPage;
                 console.log("Clicked Page: " + prevPage);

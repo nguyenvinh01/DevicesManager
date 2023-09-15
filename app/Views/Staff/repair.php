@@ -378,10 +378,10 @@
                     console.log(response, 'res');
                     if (response.status == "success") {
                         // Hiển thị thông báo thành công
-                        // toastr.success(response.message);
-                        // var modalElement = document.getElementById(`exampleModalEdit${id}`);
-                        // var modal = bootstrap.Modal.getInstance(modalElement);
-                        // modal.hide();
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById(`ModalEdit`);
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
                     } else {
                         // Hiển thị thông báo lỗi
                         console.log(response);
@@ -415,15 +415,19 @@
                     if (response.data[0].tinhtrang == "Chờ xử lý") {
                         staffList += `<option value="Đang kiểm tra">Đang kiểm tra</option>`
                     } else if (response.data[0].tinhtrang == "Đang kiểm tra") {
-                        staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
+                        staffList += `
+                        <option value="Cần sửa chữa">Cần sửa chữa</option>
+                        <option value="Hoàn thành">Hoàn thành</option>
+                        `
                         // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
 
                     } else if (response.data[0].tinhtrang == "Cần sửa chữa") {
-                        staffList += `<option value="Đang sửa chữa">Đang sửa chữa</option>`
-                        // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
+                        staffList += `
+                        <option value="Đang sửa chữa">Đang sửa chữa</option>
+                        <option value="Hỏng">Không thể sửa chữa</option>
+                        `
                     } else if (response.data[0].tinhtrang == "Đang sửa chữa") {
                         staffList += `<option value="Hoàn thành">Hoàn thành</option>`
-                        // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
                     }
                     console.log(1, staffList, 1);
                     $('#list-staff').append(staffList)

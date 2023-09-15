@@ -99,14 +99,24 @@ class RepairModel extends Model
     }
     function sendRepair($idtb, $noidung)
     {
-        $query = "INSERT INTO suachua (thietbi_id, noidung, nguoidung_id, tinhtrang) 
-            VALUES ( '{$idtb}', '{$noidung}','{$_SESSION['id']}', 'Chờ xử lý') ";
+        $arr = explode("/", $idtb);
+        $query = "INSERT INTO suachua (thietbi_id, noidung, nguoidung_id, tinhtrang, madonmuon) 
+            VALUES ( '{$arr[0]}', '{$noidung}','{$_SESSION['id']}', 'Chờ xử lý', '{$arr[1]}') ";
+        $queryUpdate = "UPDATE thietbi SET trangthai = 'Chờ sửa chữa' WHERE id = '$arr[0]'";
+        $queryUpdateBorrow = "UPDATE muon SET trangthai = 'Chờ sửa chữa' WHERE thietbi_id = '$arr[0]' AND madonmuon = '{$arr[1]}'";
+
         $result = $this->conn->query($query);
+        $this->conn->query($queryUpdate);
+        $this->conn->query($queryUpdateBorrow);
         if ($result) {
             // header("Location: ../repair?msg=1");
             return [
                 "status" => "success",
-                "message" => "Gửi thành công"
+                "message" => "Gửi thành công",
+                "" => $query,
+                "" => $queryUpdate,
+                "" => $queryUpdateBorrow,
+
             ];
         } else {
             // header("Location: ../repair?msg=2");

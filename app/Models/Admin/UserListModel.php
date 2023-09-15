@@ -43,8 +43,16 @@ class UserListModel extends Model
     {
         $query = "SELECT * FROM nguoidung WHERE id = $id;";
         $rs = $this->conn->query($query);
-
-        return $rs->fetch_assoc();
+        $queryLocation = "SELECT * FROM phongban";
+        $rsLocation = $this->conn->query($queryLocation);
+        $dataLocation = array();
+        while ($row = $rsLocation->fetch_assoc()) {
+            $dataLocation[] = $row;
+        }
+        return [
+            "data" => $rs->fetch_assoc(),
+            'location' => $dataLocation
+        ];
     }
 
     public function getModalDel($id)
@@ -55,7 +63,7 @@ class UserListModel extends Model
         return $rs->fetch_assoc();
     }
 
-    public function addUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi)
+    public function addUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi, $phongban)
     {
         // Kiểm tra trùng email
         $emailExistsQuery = "SELECT COUNT(*) as count FROM nguoidung WHERE email = '{$email}'";
@@ -83,8 +91,8 @@ class UserListModel extends Model
         }
 
         // Thực hiện câu lệnh INSERT
-        $insertQuery = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi, quyen_id) 
-                    VALUES ('{$hoten}', '{$email}', '{$matkhau}', '{$sdt}', '{$taikhoan}', '{$diachi}', 2)";
+        $insertQuery = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi, phongban, quyen_id) 
+                    VALUES ('{$hoten}', '{$email}', '{$matkhau}', '{$sdt}', '{$taikhoan}' ,'{$diachi}', '{$phongban}', 2)";
         $result = $this->conn->query($insertQuery);
 
         if ($result) {
@@ -99,7 +107,7 @@ class UserListModel extends Model
             ];
         }
     }
-    public function editUser($hoten, $email, $matkhau, $sdt, $taikhoan, $diachi, $id)
+    public function editUser($hoten, $email, $sdt, $taikhoan, $diachi, $id, $phongban)
     {
         // Kiểm tra trùng email
         $emailExistsQuery = "SELECT COUNT(*) as count FROM nguoidung WHERE email = '{$email}' AND id != '{$id}'";
@@ -127,7 +135,7 @@ class UserListModel extends Model
 
         // Thực hiện câu lệnh UPDATE
         $query = "UPDATE `nguoidung` 
-                SET `hoten`='{$hoten}',`email`='{$email}',`sodienthoai`='{$sdt}',`taikhoan`='{$taikhoan}',`diachi`='{$diachi}', `matkhau`='{$matkhau}', `quyen_id`=2
+                SET `hoten`='{$hoten}',`email`='{$email}',`sodienthoai`='{$sdt}',`taikhoan`='{$taikhoan}',`diachi`='{$diachi}', `phongban` = '{$phongban}'
                 WHERE `id`='{$id}'";
         $result = $this->conn->query($query);
         if ($result) {
@@ -167,7 +175,18 @@ class UserListModel extends Model
             ];
         }
     }
-
+    public function getDepartment()
+    {
+        $query = "SELECT * FROM phongban";
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return [
+            'data' => $data,
+        ];
+    }
     function getUniqueFileName($fileName)
     {
         $baseName = pathinfo($fileName, PATHINFO_FILENAME);

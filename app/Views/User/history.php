@@ -51,12 +51,15 @@
                 <thead>
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
-                        <th>Tên thiết bị</th>
-                        <th>Mã thiết bị</th>
+                        <!-- <th>Tên thiết bị</th> -->
+                        <!-- <th>Mã thiết bị</th> -->
+                        <th>Mã đơn mượn</th>
+                        <th>Số lượng thiết bị</th>
                         <th>Địa điểm</th>
                         <th>Ngày mượn</th>
                         <th>Ngày trả</th>
-                        <th>Tình trạng</th>
+                        <th>Thao tác</th>
+                        <!-- <th>Tình trạng</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -120,6 +123,38 @@
             </div>
         </div>
         <!-- Desc -->
+        <!-- Desc borrow -->
+
+        <div class="modal fade" id="ModalDescBorrow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="desc-borrow-view">Danh sách thiết bị mượn</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col">
+                            <div class="row">
+                                <table class="table table-borderless">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Mã thiết bị</th>
+                                            <th>Tên thiết bị</th>
+                                            <th>Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-borrow-detail">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Desc Borrow -->
     </div>
 </div>
 <script>
@@ -162,18 +197,41 @@
                             // </td>
                             //         `)
                             // },
-                            function() {
-                                return (`
-                                    <td>
-                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.thietbi_id}" data-bs-target="#ModalDes">
-                                    ${e.ten}</a>
-                                    </td>                                    `)
-                            },
-                            e.mathietbi,
+                            // function() {
+                            //     return (`
+                            //         <td>
+                            //             <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.thietbi_id}" data-bs-target="#ModalDes">
+                            //         ${e.ten}</a>
+                            //         </td>                                    `)
+                            // },
+                            // e.mathietbi,
+                            e.madonmuon,
+                            e.count_donmuon,
                             e.diadiem,
                             e.ngaymuon,
                             e.ngaytra,
-                            e.trangthai,
+                            // e.trangthai,
+                            function() {
+                                return (
+                                    `
+                                    <td style="width : 130px !important">
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Thao tác
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <button type="button" class="btn btn-primary modal-desc-borrow dropdown-item" data-bs-toggle="modal" data-id="${e.madonmuon}" data-bs-target="#ModalDescBorrow">
+                                                    Chi tiết
+                                                </button>
+                                                <button type="button" class="btn btn-primary modal-desc-borrow dropdown-item" data-bs-toggle="modal" data-id="${e.madonmuon}" data-bs-target="#ModalDescBorrow">
+                                                    Thu hồi mượn
+                                                </button>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                        `
+                                )
+                            },
                         ])
                     });
                     table.draw();
@@ -310,6 +368,37 @@
                 $('#device-status-desc').val(response.data.tinhtrang)
                 $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
                 // $('#id-del').val(response.id);
+            }
+        })
+    });
+    $(document).on('click', '.modal-desc-borrow', function() {
+        var id = $(this).data('id');
+        console.log(id);
+        $.ajax({
+            url: "<?php echo BASE_URL; ?>/borrowhistory/getBorrowDetail",
+            method: "GET",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(response) {
+                console.log(response, 123);
+                $('#table-borrow-detail').html('')
+                let list;
+                let index = 1;
+                response.data.forEach((borrow) => {
+                    list += `
+                        <tr>
+                            <td>${index}</td>
+                            <td>${borrow.mathietbi}</td>
+                            <td>${borrow.ten}</td>
+                            <td>${borrow.trangthai}</td>
+                        </tr>
+                    `
+                    index++;
+                })
+                $('#table-borrow-detail').html(list)
+
             }
         })
     });

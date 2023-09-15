@@ -72,7 +72,7 @@
                 <thead>
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
-                        <th>Thiết bị</th>
+                        <th>Mã đơn cấp phát</th>
                         <!-- <th>Số lượng</th> -->
                         <!-- <th>Người kiểm tra</th> -->
                         <th>Thời gian kiểm tra</th>
@@ -105,7 +105,7 @@
 
         </div>
         <!-- Modal Update-->
-        <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -128,7 +128,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!--End Modal Update-->
         <!-- Desc device -->
 
@@ -174,6 +174,45 @@
             </div>
         </div>
         <!-- Desc -->
+        <!-- Desc Assign -->
+
+        <div class="modal fade" id="ModalDescAssign" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="desc-borrow-view">Danh sách thiết bị mượn</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" enctype="multipart/form-data" id="updateStatusAssign">
+                            <div class="col">
+                                <div class="row">
+                                    <input type="hidden" class="form-control" id="id-assign" name="borrow-id">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Mã thiết bị</th>
+                                                <th>Tên thiết bị</th>
+                                                <th>Tình trạng</th>
+                                                <!-- <th>Thao tác</th> -->
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-assign-detail">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary" name="capnhat">Cập nhật</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Desc Assign -->
     </div>
 </div>
 <script>
@@ -240,13 +279,14 @@
                             table.row.add([
                                 index,
                                 // e.ten_thietbi,
-                                function() {
-                                    return (`
-                                    <td>
-                                        <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.tentb}" data-bs-target="#ModalDes">
-                                    ${e.ten_thietbi}</a>
-                                    </td>                                    `)
-                                },
+                                // function() {
+                                //     return (`
+                                //     <td>
+                                //         <a href="" class="modal-desc" data-bs-toggle="modal" data-id="${e.tentb}" data-bs-target="#ModalDes">
+                                //     ${e.ten_thietbi}</a>
+                                //     </td>                                    `)
+                                // },
+                                e.madoncapphat,
                                 // e.soluong,
                                 // e.ten_nv,
                                 e.ngaykiemtra,
@@ -256,12 +296,24 @@
                                 function() {
                                     return (
                                         e.tinhtrang == "Đã xử lý" ? "" : `
-                                    <td style="width : 130px !important">
-                                    <button type="button" class="btn btn-primary modal-edit" data-id="${e.id}" data-bs-toggle="modal" data-bs-target="#ModalEdit">
-                                        Kiểm tra
-                                    </button>
+                                        <td style="width : 130px !important">
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Thao tác
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <button type="button" class="btn btn-primary modal-desc-assign dropdown-item" data-id="${e.madoncapphat}" data-bs-toggle="modal" data-bs-target="#ModalDescAssign">
+                                                Chi tiết
+                                                </button>
+                                            </ul>
+                                        </div>
                                     </td>
                                     `)
+                                    // <td style="width : 130px !important">
+                                    // <button type="button" class="btn btn-primary modal-edit" data-id="${e.id}" data-bs-toggle="modal" data-bs-target="#ModalEdit">
+                                    //     Kiểm tra
+                                    // </button>
+                                    // </td>
                                 },
                             ])
                         });
@@ -391,36 +443,36 @@
             prevPage = 0;
             getAssignList(prevKeywordSearch, 0, $("#startDate").val(), $("#endDate").val(), prevDepartment, prevFilter, prevStatus)
         })
-        $('#addAssign').submit(function(e) {
-            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-            // Gửi yêu cầu Ajax
-            console.log('submit');
-            var formData = new FormData(this);
-            console.log(formData, 'addAssign');
-            $.ajax({
-                url: "<?php echo BASE_URL; ?>/assign/addAssign", // Đường dẫn đến controller xử lý
-                method: 'POST',
-                data: $('#addAssign').serialize(),
-                dataType: 'json',
-                success: function(response) {
-                    console.log(response);
-                    if (response.status == "success") {
-                        // Hiển thị thông báo thành công
-                        toastr.success(response.message);
-                        var modalElement = document.getElementById('ModalAdd');
-                        var modal = bootstrap.Modal.getInstance(modalElement);
-                        modal.hide();
-                    } else {
-                        // Hiển thị thông báo lỗi
-                        toastr.error(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Xử lý lỗi khi gửi yêu cầu Ajax
-                    console.error("error");
-                }
-            });
-        });
+        // $('#addAssign').submit(function(e) {
+        //     e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+        //     // Gửi yêu cầu Ajax
+        //     console.log('submit');
+        //     var formData = new FormData(this);
+        //     console.log(formData, 'addAssign');
+        //     $.ajax({
+        //         url: "<?php echo BASE_URL; ?>/assign/addAssign", // Đường dẫn đến controller xử lý
+        //         method: 'POST',
+        //         data: $('#addAssign').serialize(),
+        //         dataType: 'json',
+        //         success: function(response) {
+        //             console.log(response);
+        //             if (response.status == "success") {
+        //                 // Hiển thị thông báo thành công
+        //                 toastr.success(response.message);
+        //                 var modalElement = document.getElementById('ModalAdd');
+        //                 var modal = bootstrap.Modal.getInstance(modalElement);
+        //                 modal.hide();
+        //             } else {
+        //                 // Hiển thị thông báo lỗi
+        //                 toastr.error(response.message);
+        //             }
+        //         },
+        //         error: function(xhr, status, error) {
+        //             // Xử lý lỗi khi gửi yêu cầu Ajax
+        //             console.error("error");
+        //         }
+        //     });
+        // });
 
         $('#devicetype').on('change', function(e) {
             e.preventDefault();
@@ -482,24 +534,106 @@
             });
         })
 
-        $('#assginStaff').submit(function(e) {
+        // $('#assginStaff').submit(function(e) {
+        //     e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+        //     // Gửi yêu cầu Ajax
+        //     var formData = $(this).serialize();
+        //     var id = $(this).serialize().split(/[=,&]/)[1];
+
+        //     console.log(formData, 11, id);
+        //     $.ajax({
+        //         url: "<?php echo BASE_URL; ?>/assign/assignStaff", // Đường dẫn đến controller xử lý
+        //         method: 'POST',
+        //         data: formData, // Dữ liệu gửi đi từ form
+        //         dataType: 'json',
+        //         success: function(response) {
+        //             console.log(response);
+        //             if (response.status == "success") {
+        //                 // Hiển thị thông báo thành công
+        //                 toastr.success(response.message);
+        //                 var modalElement = document.getElementById(`ModalEdit`);
+        //                 var modal = bootstrap.Modal.getInstance(modalElement);
+        //                 modal.hide();
+        //             } else {
+        //                 // Hiển thị thông báo lỗi
+        //                 toastr.error(response.message);
+        //             }
+        //         },
+        //         error: function(xhr, status, error) {
+        //             // Xử lý lỗi khi gửi yêu cầu Ajax
+        //             console.error(error);
+        //         }
+        //     });
+        // });
+        // $('#editRepair').submit(function(e) {
+        //     e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+        //     // Gửi yêu cầu Ajax
+        //     var formData = $(this).serialize();
+        //     var id = $(this).serialize().split(/[=,&]/)[1];
+
+        //     console.log(formData, 11, id);
+        //     $.ajax({
+        //         url: "<?php echo BASE_URL; ?>/assign/updateStatusRepair", // Đường dẫn đến controller xử lý
+        //         method: 'POST',
+        //         data: formData, // Dữ liệu gửi đi từ form
+        //         dataType: 'json',
+        //         success: function(response) {
+        //             console.log(response, 'res');
+        //             if (response.status == "success") {
+        //                 // Hiển thị thông báo thành công
+        //                 // toastr.success(response.message);
+        //                 // var modalElement = document.getElementById(`exampleModalEdit${id}`);
+        //                 // var modal = bootstrap.Modal.getInstance(modalElement);
+        //                 // modal.hide();
+        //             } else {
+        //                 // Hiển thị thông báo lỗi
+        //                 console.log(response);
+        //                 // toastr.error(response.message);
+        //             }
+        //         },
+        //         error: function(xhr, status, error) {
+        //             // Xử lý lỗi khi gửi yêu cầu Ajax
+        //             // toastr.error(xhr.responseText);
+
+        //             console.error(xhr, status, error);
+        //         }
+        //     });
+        // });
+        $('#updateStatusAssign').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
             var formData = $(this).serialize();
-            var id = $(this).serialize().split(/[=,&]/)[1];
+            // var formData = $(this).serializeJSON();
+            // var formData = new FormData(this);
 
-            console.log(formData, 11, id);
+            var id = $(this).serialize().split(/[=,&]/)[1];
+            const params = new URLSearchParams(formData);
+
+            const paramsArray = [];
+
+            params.forEach((value, key) => {
+                paramsArray.push({
+                    key,
+                    value
+                });
+                console.log(value, key);
+            });
+            paramsArray.shift()
+            console.log(paramsArray, params, 11, id);
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/assign/assignStaff", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/assign/updateAssignStatus", // Đường dẫn đến controller xử lý
                 method: 'POST',
-                data: formData, // Dữ liệu gửi đi từ form
+                data: {
+                    id: id,
+                    status: paramsArray
+                }, // Dữ liệu gửi đi từ form
                 dataType: 'json',
                 success: function(response) {
-                    console.log(response);
+                    console.log(response)
                     if (response.status == "success") {
                         // Hiển thị thông báo thành công
                         toastr.success(response.message);
-                        var modalElement = document.getElementById(`ModalEdit`);
+                        var modalElement = document.getElementById(`ModalDescAssign`);
                         var modal = bootstrap.Modal.getInstance(modalElement);
                         modal.hide();
                     } else {
@@ -513,40 +647,72 @@
                 }
             });
         });
-        $('#editRepair').submit(function(e) {
-            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-            // Gửi yêu cầu Ajax
-            var formData = $(this).serialize();
-            var id = $(this).serialize().split(/[=,&]/)[1];
-
-            console.log(formData, 11, id);
+        $(document).on('click', '.modal-desc-assign', function(e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            let staffList;
+            console.log('modaledit', id);
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/assign/updateStatusRepair", // Đường dẫn đến controller xử lý
-                method: 'POST',
-                data: formData, // Dữ liệu gửi đi từ form
+                url: "<?php echo BASE_URL; ?>/assign/getAssignDetail", // Đường dẫn đến controller xử lý
+                method: 'GET',
+                data: {
+                    idCapPhat: id
+                }, // Dữ liệu gửi đi từ form
                 dataType: 'json',
                 success: function(response) {
-                    console.log(response, 'res');
+                    console.log(response);
                     if (response.status == "success") {
-                        // Hiển thị thông báo thành công
-                        // toastr.success(response.message);
-                        // var modalElement = document.getElementById(`exampleModalEdit${id}`);
-                        // var modal = bootstrap.Modal.getInstance(modalElement);
-                        // modal.hide();
-                    } else {
-                        // Hiển thị thông báo lỗi
-                        console.log(response);
-                        // toastr.error(response.message);
-                    }
+                        let index = 1;
+                        let list;
+                        const statusAssign = ['Hoàn thành']
+
+                        response.data.forEach((assign) => {
+                            const options = {};
+
+                            // Tạo danh sách các tùy chọn cho mỗi trạng thái
+                            options['Chờ xử lý'] = `
+                            <option value="Đang kiểm tra">Đang kiểm tra</option>
+                                `;
+
+                            options['Đang kiểm tra'] = `<option value="Cần sửa chữa">Cần sửa chữa</option>
+                            <option value="Cần sửa chữa">Thiếu</option>
+                            <option value="Hoàn thành">Hoàn thành</option>`;
+
+                            options['Cần sửa chữa'] = `
+                            <option value="Đang sửa chữa">Đang sửa chữa</option>
+                            `;
+                            options['Đang sửa chữa'] = `
+                            <option value="Hoàn thành">Hoàn thành</option>
+                            `;
+                            const selectId = `select-status-assign-${assign.id}`;
+
+                            const selectHtml = `
+                            <select class="form-select" aria-label="Default select example" id="${selectId}" tabindex="8" name="${assign.id_thietbi}" required>
+                                <option value="${assign.trangthai}" selected hidden>${assign.trangthai}</option>
+                                ${options[`${assign.trangthai}`]}
+                            </select>
+                        `;
+                            list += `
+                            <tr>
+                                <td>${index}</td>
+                                <td>${assign.mathietbi}</td>
+                                <td>${assign.ten_thietbi}</td>
+                                <td>${selectHtml}</td>
+                            </tr>
+                            `
+                            index++;
+                        })
+                        $('#table-assign-detail').html(list)
+                        $('#id-assign').val(response.data[0].madoncapphat)
+
+                    } else {}
                 },
                 error: function(xhr, status, error) {
                     // Xử lý lỗi khi gửi yêu cầu Ajax
-                    // toastr.error(xhr.responseText);
-
-                    console.error(xhr, status, error);
+                    console.error(error);
                 }
             });
-        });
+        })
         $(document).on('click', '.modal-edit', function() {
             var id = $(this).data('id');
             console.log('edit', id);

@@ -8,23 +8,22 @@ class AssignModel extends Model
         $offset = $page * 10;
 
         $query = "SELECT
-        -- ql.id,
-        -- ql.ngaykiemtra,
-        -- kt.ti as tinhtrang,
+        ql.id,
+        ql.madoncapphat,
+        ql.ngaykiemtra,
+        ql.tinhtrang,
         ql.soluong,
         ql.tentb,
-        kt.*,
+        ql.nhanvien_id,
         T.ten AS ten_thietbi,
         PB.tenpb AS ten_phongban,
         TN.tentoanha AS ten_toanha,
         DD.phong AS ten_diadiem,
         nv.hoten AS ten_nv
     FROM
-        kiemtra as kt
-    LEFT JOIN 
-    quanly AS ql on ql.id = kt.quanly_id
+        quanly AS ql
     LEFT JOIN
-        thietbi AS T ON ql.tentb = T.id
+        thietbi AS T ON ql.id_thietbi = T.id
     LEFT JOIN
         phongban AS PB ON ql.phongban = PB.id
     LEFT JOIN
@@ -48,6 +47,8 @@ class AssignModel extends Model
         if ($sDate != '' && $eDate != '') {
             $query .= " AND ql.ngaykiemtra <= '$eDate' AND ql.ngaykiemtra >= '$sDate'";
         }
+        $query .= " GROUP BY ql.madoncapphat";
+
         $queryCount = $query;
         $query .= " ORDER BY ql.id DESC LIMIT 10 OFFSET $offset;";
         $rs = $this->conn->query($query);
@@ -61,6 +62,49 @@ class AssignModel extends Model
             'status' => 'success',
             'data' => $data,
             'count' => count($rsCount->fetch_all()),
+            'query' => $query
+        ];
+    }
+
+    function getAssignDetail($idCapPhat)
+    {
+
+        $query = "SELECT
+        ql.id,
+        ql.id_thietbi,
+        ql.madoncapphat,
+        ql.ngaykiemtra,
+        ql.tinhtrang as trangthai,
+        ql.soluong,
+        T.ten AS ten_thietbi,
+        T.mathietbi AS mathietbi,
+        PB.tenpb AS ten_phongban,
+        TN.tentoanha AS ten_toanha,
+        DD.phong AS ten_diadiem,
+        nv.hoten AS ten_nv
+    FROM
+        quanly AS ql
+    LEFT JOIN
+        thietbi AS T ON ql.id_thietbi = T.id
+    LEFT JOIN
+        phongban AS PB ON ql.phongban = PB.id
+    LEFT JOIN
+        toanha AS TN ON ql.toanha = TN.id
+    LEFT JOIN
+        diadiem AS DD ON ql.diadiem = DD.id
+    LEFT JOIN
+        nguoidung AS nv ON ql.nhanvien_id = nv.id
+    WHERE
+        ql.madoncapphat = '${idCapPhat}'";
+        $rs = $this->conn->query($query);
+
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return [
+            'status' => 'success',
+            'data' => $data,
             'query' => $query
         ];
     }
@@ -192,5 +236,43 @@ class AssignModel extends Model
                 "message" => "Có lỗi xảy ra khi cập nhật"
             ];
         }
+    }
+    function updateAssignStatus($tinhtrang, $id)
+    {
+
+        foreach ($tinhtrang as $keyValue) {
+            $query = "UPDATE quanly SET tinhtrang = '{$keyValue['value']}' WHERE madoncapphat = '$id' AND id_thietbi = '{$keyValue['key']}'";
+            $this->conn->query($query);
+            if ($keyValue['value'] == 'Thu hồi') {
+                $queryUpdate = "UPDATE thietbi SET tinhtrang = 'Sẵn Sàng' WHERE mathietbi = '{$keyValue['key']}';";
+                $this->conn->query($queryUpdate);
+            } else if ($keyValue['value'] == 'Sửa chữa') {
+                $queryUpdate = "UPDATE thietbi SET tinhtrang = 'Chờ sửa chữa' WHERE mathietbi = '{$keyValue['key']}';";
+                $this->conn->query($queryUpdate);
+            } else if ($keyValue['value'] == 'Thất lạc') {
+                $queryUpdate = "UPDATE thietbi SET tinhtrang = 'Thất lạc' WHERE mathietbi = '{$keyValue['key']}';";
+                $this->conn->query($queryUpdate);
+            }
+        }
+        // $result = $this->conn->query($query);
+        // if ($result) {
+        // if ($tinhtrang == "Đã trả" || $tinhtrang == "Từ chối yêu cầu") {
+        //     $update = "UPDATE `thietbi` 
+        //     SET `trangthai`= 'Sẵn Sàng'
+        //     WHERE `id`='{$idtb}'";
+        //     $this->conn->query($update);
+        // }
+        return [
+            "status" => "success",
+            "message" => "Cập nhật thành công",
+            "query" => $query,
+            // "" => $queryUpdate
+        ];
+        // } else {
+        //     return [
+        //         "status" => "error",
+        //         "message" => "Cập nhật thất bại"
+        //     ];
+        // }
     }
 }
