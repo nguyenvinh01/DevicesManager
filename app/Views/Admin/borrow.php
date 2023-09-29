@@ -52,6 +52,14 @@ if ($_SESSION['quyen'] == 2) {
 
                         <input type="button" class="form-control btn-success" id="reset" name="reset" value="Reset">
                     </div>
+                    <div class="form-group ms-3">
+                        <label for="btn-export"></label>
+                        <!-- <button class="btn btn-success" id="btn-export">
+                            Export
+                        </button> -->
+                        <input type="button" class="form-control btn-success" id="btn-export" name="reset" value="Export">
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -385,6 +393,42 @@ if ($_SESSION['quyen'] == 2) {
                 console.log("Clicked Page: " + prevPage);
             }
         });
+        $('#btn-export').click(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/borrowdevice/exportExcel",
+                data: {
+                    keyword: prevKeywordSearch,
+                    status: prevStatus,
+                    eDate: endDate,
+                    sDate: startDate,
+                    filter: prevFilter
+                },
+                method: "POST",
+                success: function(response) {
+                    console.log(response, 'response');
+                    // if (response === 'success') {
+                    $.ajax({
+                        url: response,
+                        method: 'GET',
+                        xhrFields: {
+                            responseType: 'blob'
+                        },
+                        success: function(data) {
+                            console.log(data, 'data');
+                            saveAs(data, response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(error, 'loi');
+                        }
+                    });
+                    // } else {
+                    //     console.log(response.message);
+                    // }
+                },
+                error: function() {}
+            });
+        });
         $('#button-search').click((e) => {
             e.preventDefault();
             console.log('search');
@@ -462,7 +506,6 @@ if ($_SESSION['quyen'] == 2) {
             // Gửi yêu cầu Ajax
             var formData = $(this).serialize();
             // var formData = $(this).serializeJSON();
-            // var formData = new FormData(this);
 
             var id = $(this).serialize().split(/[=,&]/)[1];
 

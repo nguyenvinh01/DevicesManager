@@ -88,21 +88,6 @@
 
             <ul class="pagination justify-content-end mt-3" id="pagination">
 
-                <!--Des-->
-                <!-- <div class="modal fade" id="ModalDesc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Nội dung</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <?php echo $arUser["noidung"] ?>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
         </div>
         <!-- Modal Update-->
         <!-- <div class="modal fade" id="ModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -443,36 +428,6 @@
             prevPage = 0;
             getAssignList(prevKeywordSearch, 0, $("#startDate").val(), $("#endDate").val(), prevDepartment, prevFilter, prevStatus)
         })
-        // $('#addAssign').submit(function(e) {
-        //     e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-        //     // Gửi yêu cầu Ajax
-        //     console.log('submit');
-        //     var formData = new FormData(this);
-        //     console.log(formData, 'addAssign');
-        //     $.ajax({
-        //         url: "<?php echo BASE_URL; ?>/assign/addAssign", // Đường dẫn đến controller xử lý
-        //         method: 'POST',
-        //         data: $('#addAssign').serialize(),
-        //         dataType: 'json',
-        //         success: function(response) {
-        //             console.log(response);
-        //             if (response.status == "success") {
-        //                 // Hiển thị thông báo thành công
-        //                 toastr.success(response.message);
-        //                 var modalElement = document.getElementById('ModalAdd');
-        //                 var modal = bootstrap.Modal.getInstance(modalElement);
-        //                 modal.hide();
-        //             } else {
-        //                 // Hiển thị thông báo lỗi
-        //                 toastr.error(response.message);
-        //             }
-        //         },
-        //         error: function(xhr, status, error) {
-        //             // Xử lý lỗi khi gửi yêu cầu Ajax
-        //             console.error("error");
-        //         }
-        //     });
-        // });
 
         $('#devicetype').on('change', function(e) {
             e.preventDefault();
@@ -534,71 +489,7 @@
             });
         })
 
-        // $('#assginStaff').submit(function(e) {
-        //     e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-        //     // Gửi yêu cầu Ajax
-        //     var formData = $(this).serialize();
-        //     var id = $(this).serialize().split(/[=,&]/)[1];
 
-        //     console.log(formData, 11, id);
-        //     $.ajax({
-        //         url: "<?php echo BASE_URL; ?>/assign/assignStaff", // Đường dẫn đến controller xử lý
-        //         method: 'POST',
-        //         data: formData, // Dữ liệu gửi đi từ form
-        //         dataType: 'json',
-        //         success: function(response) {
-        //             console.log(response);
-        //             if (response.status == "success") {
-        //                 // Hiển thị thông báo thành công
-        //                 toastr.success(response.message);
-        //                 var modalElement = document.getElementById(`ModalEdit`);
-        //                 var modal = bootstrap.Modal.getInstance(modalElement);
-        //                 modal.hide();
-        //             } else {
-        //                 // Hiển thị thông báo lỗi
-        //                 toastr.error(response.message);
-        //             }
-        //         },
-        //         error: function(xhr, status, error) {
-        //             // Xử lý lỗi khi gửi yêu cầu Ajax
-        //             console.error(error);
-        //         }
-        //     });
-        // });
-        // $('#editRepair').submit(function(e) {
-        //     e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-        //     // Gửi yêu cầu Ajax
-        //     var formData = $(this).serialize();
-        //     var id = $(this).serialize().split(/[=,&]/)[1];
-
-        //     console.log(formData, 11, id);
-        //     $.ajax({
-        //         url: "<?php echo BASE_URL; ?>/assign/updateStatusRepair", // Đường dẫn đến controller xử lý
-        //         method: 'POST',
-        //         data: formData, // Dữ liệu gửi đi từ form
-        //         dataType: 'json',
-        //         success: function(response) {
-        //             console.log(response, 'res');
-        //             if (response.status == "success") {
-        //                 // Hiển thị thông báo thành công
-        //                 // toastr.success(response.message);
-        //                 // var modalElement = document.getElementById(`exampleModalEdit${id}`);
-        //                 // var modal = bootstrap.Modal.getInstance(modalElement);
-        //                 // modal.hide();
-        //             } else {
-        //                 // Hiển thị thông báo lỗi
-        //                 console.log(response);
-        //                 // toastr.error(response.message);
-        //             }
-        //         },
-        //         error: function(xhr, status, error) {
-        //             // Xử lý lỗi khi gửi yêu cầu Ajax
-        //             // toastr.error(xhr.responseText);
-
-        //             console.error(xhr, status, error);
-        //         }
-        //     });
-        // });
         $('#updateStatusAssign').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
@@ -675,7 +566,7 @@
                                 `;
 
                             options['Đang kiểm tra'] = `<option value="Cần sửa chữa">Cần sửa chữa</option>
-                            <option value="Cần sửa chữa">Thiếu</option>
+                            <option value="Thất lạc">Thất lạc</option>
                             <option value="Hoàn thành">Hoàn thành</option>`;
 
                             options['Cần sửa chữa'] = `
@@ -733,7 +624,7 @@
                         staffList += `<option value="Đang kiểm tra">Đang kiểm tra</option>`
                     } else if (response.data[0].tinhtrang == "Đang kiểm tra") {
                         staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
-                        staffList += `<option value="Cần sửa chữa">Thiếu</option>`
+                        staffList += `<option value="Thất lạc">Thất lạc</option>`
                         staffList += `<option value="Hoàn thành">Hoàn thành</option>`
                         // staffList += `<option value="Cần sửa chữa">Cần sửa chữa</option>`
 

@@ -3,7 +3,7 @@
 require_once('./app/Models/Admin/DeviceListModel.php');
 require_once('./app/core/Controller.php');
 
-class DeviceListController extends Controller
+class DevicelistController extends Controller
 {
     var $device;
     public function __construct()
@@ -13,7 +13,7 @@ class DeviceListController extends Controller
 
     public function Show()
     {
-        $this->view('index', ["page" => "admin/devicelist"]);
+        $this->view('index', ["page" => "Admin/devicelist"]);
     }
     public function getDeviceList()
     {
@@ -50,7 +50,7 @@ class DeviceListController extends Controller
     {
         // if (isset($_POST['addma'])) {
         $ten = $_POST['ten'];
-        $tinhtrang = $_POST['tinhtrang'];
+        // $tinhtrang = $_POST['tinhtrang'];
         // $soluong = $_POST['soluong'];
         // $giatri = $_POST['giatri'];
         $ltb  = $_POST['ltb'];
@@ -68,7 +68,7 @@ class DeviceListController extends Controller
         $target = "./uploads/image/" . basename($image);
         move_uploaded_file($_FILES['image']['tmp_name'], $target);
 
-        $response = $this->device->addDevice($ten, $tinhtrang, $ltb, $dtkt, $image, $cate);
+        $response = $this->device->addDevice($ten, $ltb, $dtkt, $image, $cate);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }
@@ -112,7 +112,7 @@ class DeviceListController extends Controller
     {
         // if (isset($_POST['editma'])) {
         $ten = $_POST['ten'];
-        $tinhtrang = $_POST['tinhtrang'];
+        // $tinhtrang = $_POST['tinhtrang'];
         // $soluong = $_POST['soluong'];
         // $giatri = $_POST['giatri'];
         $ltb  = $_POST['ltb'];
@@ -124,7 +124,7 @@ class DeviceListController extends Controller
         $file_name = $_FILES['image']['name'];
         if (empty($file_name)) {
 
-            $response = $this->device->duplicateDevice($id, $ten, $tinhtrang, $ltb, $dtkt, null, $cate);
+            $response = $this->device->duplicateDevice($id, $ten, $ltb, $dtkt, null, $cate);
             header('Content-Type: application/json');
             echo json_encode($response);
         } else {
@@ -137,7 +137,7 @@ class DeviceListController extends Controller
             $image = $_FILES['image']['name'];
             $target = "./uploads/image/" . basename($image);
             move_uploaded_file($_FILES['image']['tmp_name'], $target);
-            $response =  $this->device->duplicateDevice($id, $ten, $tinhtrang, $ltb, $dtkt, $image, $cate);
+            $response =  $this->device->duplicateDevice($id, $ten, $ltb, $dtkt, $image, $cate);
             header('Content-Type: application/json');
             echo json_encode($response);
         }
@@ -149,5 +149,17 @@ class DeviceListController extends Controller
         $response = $this->device->deleteDevice($id);
         header('Content-Type: application/json');
         echo json_encode($response);
+    }
+    public function exportExcel()
+    {
+        $keyword = $_POST['keyword'];
+        $type = $_POST['type'];
+        $cate = $_POST['cate'];
+        $response = $this->device->exportExcel($keyword, $type, $cate);
+
+        // header('Content-Type: application/json');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment; filename="exported_data.xls"');
+        echo $response;
     }
 }

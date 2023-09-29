@@ -13,7 +13,7 @@ class FindDeviceController extends Controller
     }
     function Show()
     {
-        $this->view("index", ["page" => "user/finddevice"]);
+        $this->view("index", ["page" => "User/finddevice"]);
     }
     public function getDeviceList()
     {
@@ -41,7 +41,8 @@ class FindDeviceController extends Controller
     }
     public function getDeviceType()
     {
-        $response = $this->findDevice->getDeviceType();
+        $cate = $_GET['cate'];
+        $response = $this->findDevice->getDeviceType($cate);
         header('Content-Type: application/json');
         echo json_encode($response);
     }

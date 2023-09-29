@@ -15,7 +15,7 @@ class IncidentController extends Controller
     {
 
         $incidentContent = $this->incident->getIncidentList();
-        $this->view('index', ["page" => "admin/incident", "incidentContent" => $incidentContent]);
+        $this->view('index', ["page" => "Admin/incident", "incidentContent" => $incidentContent]);
     }
     public function getIncidentList()
     {

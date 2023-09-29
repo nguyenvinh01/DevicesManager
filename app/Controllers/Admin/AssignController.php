@@ -14,7 +14,7 @@ class AssignController extends Controller
     public function Show()
     {
 
-        $this->view('index', ["page" => "admin/assign"]);
+        $this->view('index', ["page" => "Admin/assign"]);
     }
     public function getAssignList()
     {
@@ -118,6 +118,15 @@ class AssignController extends Controller
         $noidung = $_POST['noidung'];
 
         $response = $this->assign->sendRepair($idtb, $noidung);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function revokeDevice()
+    {
+        $id = $_POST['id'];
+        // $tentb = $_POST['thietbi'];
+
+        $response = $this->assign->revokeDevice($id);
         header('Content-Type: application/json');
         echo json_encode($response);
     }

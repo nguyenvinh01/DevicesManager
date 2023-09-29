@@ -14,7 +14,7 @@ class VerifyModel extends Model
     function ResendVerify($email)
     {
 
-        $emailExistsQuery = "SELECT COUNT(*) as count FROM nguoidung WHERE email = '{$email}'";
+        $emailExistsQuery = "SELECT *, COUNT(*) as count FROM nguoidung WHERE email = '{$email}'";
         $emailExistsResult = $this->conn->query($emailExistsQuery);
         $emailExists = $emailExistsResult->fetch_assoc();
         $emailCount = $emailExists['count'];
@@ -22,6 +22,12 @@ class VerifyModel extends Model
             return [
                 'status' => 'error',
                 'message' => 'Email chưa đăng ký trong hệ thống'
+            ];
+        }
+        if ($emailExists['verified'] == 1) {
+            return [
+                'status' => 'error',
+                'message' => 'Tài khoản đã được xác minh'
             ];
         }
         $randomBytes = random_bytes(32); // Tạo 32 byte ngẫu nhiên
@@ -58,13 +64,13 @@ class VerifyModel extends Model
                 ];
             } else {
                 return [
-                    'status' => 'false',
+                    'status' => 'error',
                     'message' => 'Tài khoản đã được xác minh'
                 ];
             }
         } else {
             return [
-                'status' => 'false',
+                'status' => 'error',
                 'message' => 'Xác minh không tồn tại'
             ];
         }
@@ -72,7 +78,26 @@ class VerifyModel extends Model
     public function SendVerify($verify, $email)
     {
 
-        $noidung = "<a href = " . BASE_URL . "/verify/code?token=$verify>Click</a>";
+        // $noidung = "<a href = " . BASE_URL . "/verify/code?token=$verify>Click</a>";
+        $noidung = '
+        <!DOCTYPE html>
+        <html lang="vi">
+        <head>
+            <meta charset="UTF-8">
+            <title>Chào mừng đến với Hệ thống Quản lý Thiết bị và tài sản</title>
+        </head>
+        <body>
+            <div style="text-align: center; background-color: #f2f2f2; padding: 20px;">
+                <h1>Chào mừng đến với Hệ thống Quản lý Tài sản</h1>
+                <p>Xin chào </p>
+                <p>Cảm ơn bạn đã đăng ký sử dụng dịch vụ của chúng tôi. Để hoàn tất quá trình đăng ký, vui lòng nhấn vào liên kết sau đây:</p>
+                <p><a href="' . BASE_URL . '/verify/code?token=' . $verify . '" style="background-color: #007BFF; color: #fff; padding: 10px 20px; text-decoration: none;">Xác minh Email</a></p>
+                <p>Nếu bạn không thực hiện yêu cầu này, bạn có thể bỏ qua email này.</p>
+                <p>Trân trọng</p>
+            </div>
+        </body>
+        </html>
+        ';
         $mail = new PHPMailer(true);
         try {
             $mail->CharSet = "UTF-8";

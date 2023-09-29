@@ -6,12 +6,6 @@
                 <div class="input-group mb-3 flex-row d-flex">
                     <input id="datatable-input" type="text" class="form-control col-4" placeholder="Tên nội dung..." aria-label="Search..." aria-describedby="button-addon2">
                     <button class="btn btn-success col-4" type="submit" id="button-search">Tìm kiếm</button>
-                    <!-- <div class="col-4 mx-3">
-                        <select id="device-type" class="form-select col" aria-label="Default select example">
-                            <option value="">Loại thiết bị</option>
-                        </select>
-
-                    </div> -->
                     <div class="col-16 d-flex flex-row me-3">
                         <div class="form-group me-3">
                             <label for="startDate"></label>
@@ -266,8 +260,17 @@
                 dataType: 'json',
                 success: function(response) {
                     console.log(response, 'res');
-                    $('#modal-body-desc-content').html(`<span>${response.data[0].noidung}</span>`)
-                    $('#modal-body-desc-title').html(`<span>${response.data[0].tieude}</span>`)
+                    $('#modal-body-desc-title').html(`Tiêu đề: <span>${response.data[0].noidung}</span>`)
+                    $('#modal-body-desc-content').html(`
+                    <div class="mx-3 my-3">
+                    Nội dung thông báo:
+                    <p>
+                    <span>${response.data[0].tieude}</span>
+                    </p>
+                    
+                    </div>
+                    
+                    `)
                     // $('#id-del').val(response.id);
                 }
             })

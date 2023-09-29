@@ -80,23 +80,19 @@
                                 <div class="col-6">
                                     <label for="category-film" class="col-form-label"><strong>Loại thiết bị:</strong></label>
                                     <p id="type-device-detail"></p>
+                                    <label for="category-film" class="col-form-label"><strong>Mã thiết bị:</strong></label>
+                                    <p id="code-device-detail"></p>
                                     <label for="category-film" class="col-form-label"><strong>Tên thiết bị:</strong></label>
                                     <p id="name-device-detail"></p>
                                     <label for="category-film" class="col-form-label"><strong>Tình trạng:</strong></label>
                                     <p id="status-device-detail"></p>
-                                    <!-- <label for="category-film" class="col-form-label"><strong>Số lượng:</strong></label>
-                                    <p id="quantity-device-detail"></p> -->
-                                    <div class="col-6">
-                                        <label for="category-film" class="col-form-label">Ảnh:</label>
-                                        <br>
-                                        <img id="image-device-detail" style="width: 300px !important;height: 270px !important;" src="">
-                                    </div>
+                                    <label for="category-film" class="col-form-label"><strong>Đặc tính kĩ thuật:</strong></label>
+                                    <p id="desc-device-detail"></p>
                                 </div>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <label for="category-film" class="col-form-label"><strong>Đặc tính kĩ thuật:</strong></label>
-                                        <p id="desc-device-detail"></p>
-                                    </div>
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Ảnh:</label>
+                                    <br>
+                                    <img id="image-device-detail" style="width: 300px !important;height: 270px !important;" src="">
                                 </div>
                             </div>
                         </div>
@@ -245,7 +241,10 @@
             let prevType = '';
             let listBorrow = [];
             getDeviceList()
-
+            let check = '<?php echo $_GET['cate'] ?>';
+            if (!check) {
+                $('#select-type').attr('style', 'display: none')
+            }
             $(document).on('click', '#remove-item-multi', function(e) {
                 e.preventDefault();
                 console.log(123);
@@ -379,7 +378,7 @@
                                     `)
                                     },
                                     e.tenloai,
-                                    e.tinhtrang,
+                                    e.trangthai,
                                     function() {
                                         return (
                                             `
@@ -483,13 +482,16 @@
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/finddevice/getDeviceType",
                 method: "GET",
+                data: {
+                    cate: '<?php echo $_GET['cate']; ?>'
+                },
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == "success") {
                         // Hiển thị thông báo thành công
                         let typeList;
                         response.data.forEach((type) => {
-                            typeList += `<option value="${type.id}">${type.ten}</option>`
+                            typeList += `<option value="${type.maloai}">${type.ten}</option>`
                         })
                         $('#select-type').append(typeList)
                     } else {
@@ -551,10 +553,10 @@
                         console.log(response);
                         if (response.status == "success") {
                             // Hiển thị thông báo thành công
-                            // toastr.success(response.message);
-                            // var modalElement = document.getElementById(`exampleModalEdit${id}`);
-                            // var modal = bootstrap.Modal.getInstance(modalElement);
-                            // modal.hide();
+                            toastr.success(response.message);
+                            var modalElement = document.getElementById(`ModalBorrowMul`);
+                            var modal = bootstrap.Modal.getInstance(modalElement);
+                            modal.hide();
                         } else {
                             // Hiển thị thông báo lỗi
                             toastr.error(response.message);
@@ -582,8 +584,8 @@
                         $('#id-device-detail').text(response.data.id);
                         $('#type-device-detail').text(response.data.loaitb);
                         $('#name-device-detail').text(response.data.ten);
-                        $('#status-device-detail').text(response.data.tinhtrang);
-                        // $('#quantity-device-detail').text(response.data.soluong);
+                        $('#status-device-detail').text(response.data.trangthai);
+                        $('#code-device-detail').text(response.data.mathietbi);
                         $('#image-device-detail').attr('src', `./uploads/image/${response.data.hinhanh}`);
                         $('#desc-device-detail').text(response.data.dactinhkithuat);
                         // $('#id-del').val(response.id);

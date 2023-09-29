@@ -19,6 +19,6 @@ class DashboardController extends Controller
         // var $endDate = '2023-06-30';
         $dataDashboard = $this->data->getInfoDashboard();
         $data = $this->data->getDeviceBorrowCountByDate('2023-06-01', '2023-06-30');
-        $this->view('index', ["page" => "admin/dashboard", "dataDashboard" => $dataDashboard, 'data' => $data]);
+        $this->view('index', ["page" => "Admin/dashboard", "dataDashboard" => $dataDashboard, 'data' => $data]);
     }
 }

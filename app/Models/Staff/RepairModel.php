@@ -127,53 +127,6 @@ class RepairModel extends Model
             ];
         }
     }
-    public function sendEmailAssign($tieude, $noidung, $date, $email)
-    {
-        // $query = "INSERT INTO suco ( tieude, noidung, nguoidung_id) 
-        // VALUES ( '{$tieude}', '{$noidung}', '{$_SESSION["id"]}') ";
-        // $result = $this->conn->query($query);
-        // if ($result) {
-        // $querytb = "SELECT * FROM nguoidung WHERE quyen_id = 1";
-        // $resultb = $this->conn->query($querytb);
-        // $num_rows = mysqli_num_rows($resultb);
-        // if ($num_rows > 0) {
-        $noidung = '<strong>Tiêu đề :</strong> ' . $tieude . '<br> <strong>Ngày tạo :</strong>' . $date . '<br> <strong>Nội dung :</strong><br><p>' . $noidung . '</p>';
-        $mail = new PHPMailer(true);
-        try {
-            $mail->CharSet = "UTF-8";
-            $mail->SMTPDebug = 0;
-            $mail->isSMTP();
-            $mail->Host = SMTP_HOST;
-            $mail->SMTPAuth = true;
-            $mail->Username = SMTP_UNAME;
-            $mail->Password = SMTP_PWORD;
-            $mail->SMTPSecure = 'ssl';
-            $mail->Port = SMTP_PORT;
-            $mail->setFrom(SMTP_UNAME, "WEBSITE NHÀ TRƯỜNG");
-            // while ($arUser = mysqli_fetch_array($resultb, MYSQLI_ASSOC)) {
-            $mail->addAddress($email);
-            // }
-            $mail->addReplyTo(SMTP_UNAME, 'WEBSITE NHÀ TRƯỜNG');
-            $mail->isHTML(true);
-            $mail->Subject = 'Thông báo từ hệ thống quản lý tài sản, thiết bị tại trường đại học.';
-            $mail->Body = $noidung;
-            $mail->AltBody = $noidung;
-            $result = $mail->send();
-            if (!$result) {
-                $error = "Có lỗi xảy ra trong quá trình gửi mail";
-            }
-            return [
-                "status" => "success",
-                "message" => "Gửi thành công"
-            ];
-        } catch (Exception $e) {
-            // echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
-            return [
-                "status" => "error",
-                "message" => "Có lỗi xảy ra khi gửi email: " . $e->getMessage()
-            ];
-        }
-    }
     function updateStatusRepair($id, $status)
     {
         $queryGetId = "SELECT thietbi_id, madonmuon FROM suachua WHERE id = '$id'";
@@ -204,59 +157,6 @@ class RepairModel extends Model
             return [
                 "status" => "error",
                 "message" => "Có lỗi xảy ra khi cập nhật"
-            ];
-        }
-    }
-    function assignRepair($idStaff, $id)
-    {
-        $query = "UPDATE `suachua` 
-        SET `phancong`= $idStaff
-        WHERE `id`='$id'";
-        $result = $this->conn->query($query);
-        $queryStaff = "SELECT email FROM nguoidung WHERE id = $idStaff LIMIT 1";
-        $rsDataStaff = $this->conn->query($queryStaff);
-        $emailStaff = $rsDataStaff->fetch_assoc();
-        // $this->sendEmailAssign("Assign", "Assign", 'ádasdsad', $emailStaff['email']);
-        $noidung = '<strong>Tiêu đề :</strong> <br> <strong>Ngày tạo :</strong><br> <strong>Nội dung :</strong><br><p></p>';
-        $mail = new PHPMailer(true);
-        try {
-            $mail->CharSet = "UTF-8";
-            $mail->SMTPDebug = 0;
-            $mail->isSMTP();
-            $mail->Host = SMTP_HOST;
-            $mail->SMTPAuth = true;
-            $mail->Username = SMTP_UNAME;
-            $mail->Password = SMTP_PWORD;
-            $mail->SMTPSecure = 'ssl';
-            $mail->Port = SMTP_PORT;
-            $mail->setFrom(SMTP_UNAME, "WEBSITE NHÀ TRƯỜNG");
-            // while ($arUser = mysqli_fetch_array($resultb, MYSQLI_ASSOC)) {
-            $mail->addAddress($emailStaff['email']);
-            // }
-            $mail->addReplyTo(SMTP_UNAME, 'WEBSITE NHÀ TRƯỜNG');
-            $mail->isHTML(true);
-            $mail->Subject = 'Thông báo từ hệ thống quản lý tài sản, thiết bị tại trường đại học.';
-            $mail->Body = $noidung;
-            $mail->AltBody = $noidung;
-            $result = $mail->send();
-            if (!$result) {
-                $error = "Có lỗi xảy ra trong quá trình gửi mail";
-            }
-        } catch (Exception $e) {
-            return [
-                "status" => "error",
-                "message" => "Có lỗi xảy ra khi gửi email: " . $e->getMessage()
-            ];
-        }
-        if ($result) {
-            return [
-                "status" => "success",
-                "message" => "Cập nhật thành công $error"
-            ];
-        } else {
-            return [
-                "status" => "error",
-                "message" => "Có lỗi xảy ra khi cập nhật $error"
             ];
         }
     }

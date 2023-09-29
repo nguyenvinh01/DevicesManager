@@ -12,6 +12,7 @@ class AssignModel extends Model
         ql.madoncapphat,
         ql.ngaykiemtra,
         ql.tinhtrang,
+        ql.trangthai,
         ql.soluong,
         ql.tentb,
         ql.nhanvien_id,
@@ -398,5 +399,26 @@ class AssignModel extends Model
                 "message" => "Có lỗi xảy ra trong hệ thống"
             ];
         }
+    }
+    function revokeDevice($idCapPhat)
+    {
+        $query = "SELECT * FROM quanly WHERE madoncapphat = '{$idCapPhat}'";
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row['id_thietbi'];
+        }
+        // $queryRevoke = "UPDATE thietbi SET trangthai = 'Sẵn Sàng' WHERE";
+        $queryRevoke = "UPDATE thietbi SET trangthai = 'Sẵn Sàng' WHERE id IN (" . implode(",", $data) . ")";
+        $queryRevokeAllocate = "UPDATE quanly SET trangthai = 'Đã Thu Hồi' WHERE madoncapphat = '{$idCapPhat}'";
+        $this->conn->query($queryRevokeAllocate);
+        $this->conn->query($queryRevoke);
+        // foreach ($data as $d) {
+        //     $queryRevoke .= "";
+        // }
+        return [
+            "status" => "success",
+            "message" => "Thu hồi thành công",
+        ];
     }
 }

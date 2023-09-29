@@ -3,7 +3,7 @@
 require_once('./app/Models/Admin/UserListModel.php');
 require_once('./app/core/Controller.php');
 require_once('./app/Models/Model.php');
-class UserListController extends Controller
+class UserlistController extends Controller
 {
     var $userList;
     // var $conn = new Model();
@@ -14,7 +14,7 @@ class UserListController extends Controller
 
     public function Show()
     {
-        $this->view('index', ["page" => "admin/userlist"]);
+        $this->view('index', ["page" => "Admin/userlist"]);
     }
 
     public function getModalEdit()
@@ -91,7 +91,10 @@ class UserListController extends Controller
     }
     public function exportExcel()
     {
-        $response = $this->userList->exportExcel();
+        $option = $_POST["option"];
+        $keyword = $_POST["keyword"];
+        $role = $_POST["role"];
+        $response = $this->userList->exportExcel($option, $keyword, $role);
 
         // header('Content-Type: application/json');
         header('Content-Type: application/vnd.ms-excel');

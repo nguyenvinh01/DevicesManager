@@ -2,10 +2,18 @@
 require_once './app/config/constant.php';
 
 require_once "./app/Models/Model.php";
-require_once "public\PHPExcel.php";
-require_once "public\PHPExcel\IOFactory.php";
+// require_once "./public/PHPExcel.php";
+// require_once "./vendor/PHPExcel/IOFactory.php";
+// require_once "./public/PHPExcel/IOFactory.php";
+
+// namespace PhpOffice\PhpSpreadsheet\IOFactory;
+// use Excel\IOFactory;
+// use PHPExcel;
+require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class UserListModel extends Model
 {
@@ -200,49 +208,64 @@ class UserListModel extends Model
         return  $uniqueFileName;
     }
 
-    public function exportExcel()
+    public function exportExcel($option, $keyword, $role)
     {
-        $query = "SELECT *
-        FROM nguoidung 
-        WHERE quyen_id = 2";
+        // $query = "SELECT *
+        // FROM nguoidung 
+        // WHERE quyen_id = 2";
+        $query = "SELECT nd.*, q.ten as ten_quyen, pb.tenpb as tenphongban
+    FROM nguoidung as nd, quyen as q, phongban as pb
+    WHERE nd.quyen_id <> 1 AND q.id = nd.quyen_id AND pb.id = nd.phongban";
+        if ($role != 0) {
+            $query .= " AND nd.quyen_id = $role";
+        }
+
+        if ($option != '' && $keyword != '') {
+            $query .= " AND nd.$option LIKE '%$keyword%'";
+        }
         $rs = $this->conn->query($query);
         $data = $rs->fetch_all(MYSQLI_ASSOC);
 
+        // Tạo một đối tượng Spreadsheet
+        $spreadsheet = new Spreadsheet();
 
-        // Tạo một đối tượng PHPExcel và cấu hình tệp Excel
-        $objPHPExcel = new PHPExcel();
-        $objPHPExcel->getProperties()->setTitle("Exported Users");
+        // Lấy trang tính mặc định của Spreadsheet
+        $sheet = $spreadsheet->getActiveSheet();
 
-        //Thêm dữ liệu từ cơ sở dữ liệu vào tệp Excel
-        $objPHPExcel->setActiveSheetIndex(0);
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'ID');
-        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'Họ tên');
-        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'Email');
-        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Địa chỉ');
-        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Số điện thoại');
+        // Thiết lập dữ liệu cột và hàng
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Họ tên');
+        $sheet->setCellValue('C1', 'Email');
+        $sheet->setCellValue('D1', 'Địa chỉ');
+        $sheet->setCellValue('E1', 'Số điện thoại');
+        $sheet->setCellValue('F1', 'Phòng ban');
+        $sheet->setCellValue('G1', 'Loại tài khoản');
 
         $row = 2;
         foreach ($data as $user) {
-            $objPHPExcel->getActiveSheet()->setCellValue('A' . $row, $user['id']);
-            $objPHPExcel->getActiveSheet()->setCellValue('B' . $row, $user['hoten']);
-            $objPHPExcel->getActiveSheet()->setCellValue('C' . $row, $user['email']);
-            $objPHPExcel->getActiveSheet()->setCellValue('D' . $row, $user['diachi']);
-            $objPHPExcel->getActiveSheet()->setCellValue('E' . $row, $user['sodienthoai']);
+            $sheet->setCellValue('A' . $row, (int)$user['id']);
+            $sheet->setCellValue('B' . $row, $user['hoten']);
+            $sheet->setCellValue('C' . $row, $user['email']);
+            $sheet->setCellValue('D' . $row, $user['diachi']);
+            $sheet->setCellValue('E' . $row, $user['sodienthoai']);
+            $sheet->setCellValue('F' . $row, $user['tenphongban']);
+            $sheet->setCellValue('G' . $row, $user['ten_quyen']);
+            $sheet->getColumnDimension('A')->setWidth(6);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(30);
+            $sheet->getColumnDimension('D')->setWidth(30);
+            $sheet->getColumnDimension('F')->setWidth(30);
+            $sheet->getColumnDimension('G')->setWidth(30);
+            $sheet->getColumnDimension('E')->setWidth(15);
             $row++;
         }
 
-        // // Lưu tệp Excel vào thư mục "uploads"
-        $filename = 'Danh sách người dùng.xlsx';
-        // $filename = 'C:/Downloads/Danh sách người dùng.xlsx';
+        // Lưu tệp Excel
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Danh_sach_nguoi_dung.xlsx';
         $uniqueFileName = $this->getUniqueFileName($filename);
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        $objWriter->save($uniqueFileName);
+        $writer->save($uniqueFileName);
 
-        // Trả về URL của tệp Excel trong phản hồi Ajax
-        // return [
-        //     'status' => 'success',
-        //     'fileUrl' => $uniqueFileName
-        // ];
         return $uniqueFileName;
         // return $objPHPExcel;
     }
@@ -281,7 +304,7 @@ class UserListModel extends Model
         } catch (Exception $e) {
             $response = [
                 'status' => 'error',
-                'message' => 'Import that bai1 ',
+                'message' => 'Import that bai',
             ];
         }
         return $response;

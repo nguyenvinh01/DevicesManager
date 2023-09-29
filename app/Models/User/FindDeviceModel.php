@@ -54,7 +54,7 @@ class FindDeviceModel extends Model
     function getDataModal($id)
     {
         $query = "SELECT tb.*, ltb.ten as loaitb FROM thietbi as tb, loaithietbi as ltb 
-        WHERE tb.id = $id
+        WHERE tb.id = $id AND tb.loaithietbi_code = ltb.maloai
         ORDER BY id DESC";
         $rs = $this->conn->query($query);
         $data = $rs->fetch_assoc();
@@ -87,9 +87,9 @@ class FindDeviceModel extends Model
             'all' => $rsAll->fetch_assoc()
         ];
     }
-    function getDeviceType()
+    function getDeviceType($cate)
     {
-        $query = "SELECT * FROM loaithietbi Order by id desc";
+        $query = "SELECT * FROM loaithietbi WHERE madanhmuc = '{$cate}' Order by id desc";
         $rs = $this->conn->query($query);
         $data = array();
         while ($row = $rs->fetch_assoc()) {

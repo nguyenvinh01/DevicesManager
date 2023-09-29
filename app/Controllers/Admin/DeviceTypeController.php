@@ -3,7 +3,7 @@
 require_once('./app/Models/Admin/DeviceTypeModel.php');
 require_once('./app/core/Controller.php');
 
-class DeviceTypeController extends Controller
+class DevicetypeController extends Controller
 {
     var $deviceType;
     public function __construct()
@@ -15,12 +15,19 @@ class DeviceTypeController extends Controller
     {
 
         $dataDeviceType = $this->deviceType->getDeviceType();
-        $this->view('index', ["page" => "admin/devicetype", "dataDeviceType" => $dataDeviceType]);
+        $this->view('index', ["page" => "Admin/devicetype", "dataDeviceType" => $dataDeviceType]);
     }
     public function getDataModal()
     {
         $id = $_GET["id"];
         $response = $this->deviceType->getDataModal($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDataCateModal()
+    {
+        $id = $_GET["id"];
+        $response = $this->deviceType->getDataCateModal($id);
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -47,6 +54,17 @@ class DeviceTypeController extends Controller
         echo json_encode($response);
         // }
     }
+    public function addDeviceCate()
+    {
+        // if (isset($_POST['adddm'])) {
+        $ten = $_POST['tendanhmuc'];
+        $code = $_POST['madanhmuc'];
+
+        $response = $this->deviceType->addDeviceCate($ten, $code);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        // }
+    }
     public function editDeviceType()
     {
         // if (isset($_POST['editdm'])) {
@@ -63,6 +81,27 @@ class DeviceTypeController extends Controller
         // if (isset($_POST['deletedm'])) {
         $id  = $_POST['id'];
         $response = $this->deviceType->deleteDeviceType($id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        // }
+    }
+    public function editDeviceCate()
+    {
+        // if (isset($_POST['editdm'])) {
+        $ten = $_POST['tendanhmuc'];
+        $ma = $_POST['madanhmuc'];
+        $id  = $_POST['id'];
+
+        $response = $this->deviceType->editDeviceCate($ten, $ma, $id);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        // }
+    }
+    public function deleteDeviceCate()
+    {
+        // if (isset($_POST['deletedm'])) {
+        $id  = $_POST['id'];
+        $response = $this->deviceType->deleteDeviceCate($id);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }

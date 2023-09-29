@@ -13,7 +13,7 @@ class RepairController extends Controller
 
     public function Show()
     {
-        $this->view('index', ["page" => "admin/repair"]);
+        $this->view('index', ["page" => "Admin/repair"]);
     }
     public function getRepairList()
     {

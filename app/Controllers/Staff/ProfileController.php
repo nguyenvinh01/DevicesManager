@@ -15,7 +15,7 @@ class ProfileController extends Controller
     {
         $id = $_SESSION['id'];
         $dataProfile = $this->profile->getProfile($id);
-        $this->view('index', ["page" => "staff/profile", "dataProfile" => $dataProfile]);
+        $this->view('index', ["page" => "Staff/profile", "dataProfile" => $dataProfile]);
         // $this->view('index', ["page" => "password"]);
     }
     public function getProfile()

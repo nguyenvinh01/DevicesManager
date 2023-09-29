@@ -54,7 +54,7 @@
                         <!-- <th>Tên thiết bị</th> -->
                         <!-- <th>Mã thiết bị</th> -->
                         <th>Mã đơn mượn</th>
-                        <th>Số lượng thiết bị</th>
+                        <!-- <th>Số lượng thiết bị</th> -->
                         <th>Địa điểm</th>
                         <th>Ngày mượn</th>
                         <th>Ngày trả</th>
@@ -206,7 +206,7 @@
                             // },
                             // e.mathietbi,
                             e.madonmuon,
-                            e.count_donmuon,
+                            // e.count_donmuon,
                             e.diadiem,
                             e.ngaymuon,
                             e.ngaytra,

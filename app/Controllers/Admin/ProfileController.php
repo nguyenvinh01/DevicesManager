@@ -14,7 +14,7 @@ class ProfileController extends Controller
     public function Show()
     {
 
-        $this->view('index', ["page" => "admin/profile"]);
+        $this->view('index', ["page" => "Admin/profile"]);
     }
     public function getProfile()
     {

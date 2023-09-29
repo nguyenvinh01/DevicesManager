@@ -1,6 +1,15 @@
 <?php
 
 require_once "./app/Models/Model.php";
+// require_once "./public/PHPExcel.php";
+// require_once "./public/PHPExcel/IOFactory.php";
+
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class DeviceListModel extends Model
 {
     function getDeviceList($keyword, $page, $type, $cate)
@@ -113,8 +122,7 @@ class DeviceListModel extends Model
             'cate' => $dataCate
         ];
     }
-
-    function addDevice($ten, $tinhtrang, $ltb, $dtkt, $image, $cate)
+    function addDevice($ten,  $ltb, $dtkt, $image, $cate)
     {
         $queryLastId = "SELECT MAX(mathietbi) AS count
         FROM thietbi
@@ -128,8 +136,8 @@ class DeviceListModel extends Model
         // $maloai = $this->getDeviceTypeCode($ltb);
         $ma_thiet_bi = $ltb . "-" . str_pad($id + 1, 5, "0", STR_PAD_LEFT);
 
-        $query = "INSERT INTO thietbi ( ten, hinhanh, tinhtrang, loaithietbi_code, dactinhkithuat, mathietbi, madanhmuc, trangthai) 
-        VALUES ( '{$ten}', '{$image}', '{$tinhtrang}', '{$ltb}', '{$dtkt}', '{$ma_thiet_bi}', '{$cate}', 'Sẵn Sàng') ";
+        $query = "INSERT INTO thietbi ( ten, hinhanh, loaithietbi_code, dactinhkithuat, mathietbi, madanhmuc, trangthai) 
+        VALUES ( '{$ten}', '{$image}', '{$ltb}', '{$dtkt}', '{$ma_thiet_bi}', '{$cate}', 'Sẵn Sàng') ";
 
 
         $result = $this->conn->query($query);
@@ -152,7 +160,7 @@ class DeviceListModel extends Model
             ];
         }
     }
-    function duplicateDevice($id, $ten, $tinhtrang, $ltb, $dtkt, $image, $cate)
+    function duplicateDevice($id, $ten, $ltb, $dtkt, $image, $cate)
     {
         $imageTb = $image;
         $queryLastId = "SELECT MAX(mathietbi) AS count
@@ -172,8 +180,8 @@ class DeviceListModel extends Model
 
             $imageTb = $rsImage['hinhanh'];
         }
-        $query = "INSERT INTO thietbi ( ten, hinhanh, tinhtrang, loaithietbi_code, dactinhkithuat, mathietbi, madanhmuc, trangthai) 
-        VALUES ( '{$ten}', '{$imageTb}', '{$tinhtrang}', '{$ltb}', '{$dtkt}', '{$ma_thiet_bi}', '{$cate}', 'Sẵn Sàng') ";
+        $query = "INSERT INTO thietbi ( ten, hinhanh, loaithietbi_code, dactinhkithuat, mathietbi, madanhmuc, trangthai) 
+        VALUES ( '{$ten}', '{$imageTb}', '{$ltb}', '{$dtkt}', '{$ma_thiet_bi}', '{$cate}', 'Sẵn Sàng') ";
 
 
         $result = $this->conn->query($query);
@@ -201,14 +209,20 @@ class DeviceListModel extends Model
         // $query = "UPDATE `thietbi` 
         // SET `ten`='{$ten}',`soluong`='{$soluong}',`dactinhkithuat`='{$dtkt}',`giatri`='{$giatri}', `tinhtrang`='{$tinhtrang}', `loaithietbi_id`='{$ltb}' , `hinhanh`='{$image}' 
         // WHERE `id`='{$id}'";
+        if ($tinhtrang == "Sửa chữa") {
 
+            return [
+                "status" => "success",
+                "message" => "Cập nhật thành công"
+            ];
+        }
         if ($image != null) {
             $query = "UPDATE `thietbi` 
-            SET `ten`='{$ten}',`dactinhkithuat`='{$dtkt}', `tinhtrang`='{$tinhtrang}', `loaithietbi_code`='{$ltb}' , `hinhanh`='{$image}', `madanhmuc` = '{$cate}' 
+            SET `ten`='{$ten}',`dactinhkithuat`='{$dtkt}', `trangthai`='{$tinhtrang}', `loaithietbi_code`='{$ltb}' , `hinhanh`='{$image}', `madanhmuc` = '{$cate}' 
             WHERE `id`='{$id}'";
         } else {
             $query = "UPDATE `thietbi` 
-            SET `ten`='{$ten}', `dactinhkithuat`='{$dtkt}', `tinhtrang`='{$tinhtrang}', `loaithietbi_code`='{$ltb}', `madanhmuc` = '{$cate}' 
+            SET `ten`='{$ten}', `dactinhkithuat`='{$dtkt}', `trangthai`='{$tinhtrang}', `loaithietbi_code`='{$ltb}', `madanhmuc` = '{$cate}' 
             WHERE `id`='{$id}'";
         }
 
@@ -218,13 +232,13 @@ class DeviceListModel extends Model
             // header("Location: ../devicelist?msg=1");
             return [
                 "status" => "success",
-                "message" => "Sửa thành công"
+                "message" => "Cập nhật thành công"
             ];
         } else {
             // header("Location: ../devicelist?msg=2");
             return [
                 "status" => "error",
-                "message" => "Sửa thất bại",
+                "message" => "Cập nhật thất bại",
                 "query" => $query
             ];
         }
@@ -261,5 +275,94 @@ class DeviceListModel extends Model
         $result = $this->conn->query($query);
         $maloai = $result->fetch_assoc();
         return $maloai['maloai'];
+    }
+    function getUniqueFileName($fileName)
+    {
+        $baseName = pathinfo($fileName, PATHINFO_FILENAME);
+        $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+
+        $timestamp = date('Ymd_His'); // Thêm timestamp vào tên tệp
+
+        $counter = 1;
+        $uniqueFileName = $baseName . '_' . $timestamp . '.' . $extension;
+
+        return  $uniqueFileName;
+    }
+    public function exportExcel($keyword, $type, $cate)
+    {
+        // $query = "SELECT *
+        // FROM nguoidung 
+        // WHERE quyen_id = 2";
+        $query = "SELECT a.*, b.ten as tenloai, c.tendanhmuc
+        FROM thietbi as a,loaithietbi as b, danhmuc as c
+        WHERE a.loaithietbi_code = b.maloai AND b.madanhmuc = c.madanhmuc";
+
+        if ($keyword != '') {
+            $query .= " AND a.ten LIKE '%$keyword%'";
+        }
+        if ($type != '') {
+            $query .= " AND a.loaithietbi_code = '$type'";
+        }
+        if ($cate != '') {
+            $query .= " AND a.madanhmuc = '$cate' AND c.madanhmuc = '$cate'";
+        }
+
+        // $query .= " ORDER BY a.id DESC";
+        $rs = $this->conn->query($query);
+        $data = $rs->fetch_all(MYSQLI_ASSOC);
+
+
+        // Tạo một đối tượng PHPExcel và cấu hình tệp Excel
+        $objPHPExcel = new Spreadsheet();
+        $objPHPExcel->getProperties()->setTitle("Exported Devices");
+
+        //Thêm dữ liệu từ cơ sở dữ liệu vào tệp Excel
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'ID');
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', 'Mã thiết bị');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'Tên thiết bị');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', 'Loại thiết bị');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', 'Trạng thái');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', 'Danh mục thiết bị');
+        $objPHPExcel->getActiveSheet()->setCellValue('G1', 'Mã danh mục');
+        $objPHPExcel->getActiveSheet()->setCellValue('H1', 'Mã loại');
+
+        $row = 2;
+        foreach ($data as $device) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A' . $row, (int)$device['id']);
+            $objPHPExcel->getActiveSheet()->setCellValue('B' . $row, $device['mathietbi']);
+            $objPHPExcel->getActiveSheet()->setCellValue('C' . $row, $device['ten']);
+            $objPHPExcel->getActiveSheet()->setCellValue('D' . $row, $device['tenloai']);
+            $objPHPExcel->getActiveSheet()->setCellValue('E' . $row, $device['trangthai']);
+
+            $objPHPExcel->getActiveSheet()->setCellValue('F' . $row, $device['tendanhmuc']);
+            $objPHPExcel->getActiveSheet()->setCellValue('G' . $row, $device['loaithietbi_code']);
+            $objPHPExcel->getActiveSheet()->setCellValue('H' . $row, $device['madanhmuc']);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(35);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(30);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(35);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(5);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(5);
+            $row++;
+        }
+
+        // // Lưu tệp Excel vào thư mục "uploads"
+        $writer = new Xlsx($objPHPExcel);
+
+        $filename = 'Danh sách thiết bị.xlsx';
+        // $filename = 'C:/Downloads/Danh sách người dùng.xlsx';
+        $uniqueFileName = $this->getUniqueFileName($filename);
+        $writer->save($uniqueFileName);
+
+        // Trả về URL của tệp Excel trong phản hồi Ajax
+        // return [
+        //     'status' => 'success',
+        //     'fileUrl' => $uniqueFileName
+        // ];
+        return $uniqueFileName;
+        // return $objPHPExcel;
     }
 }

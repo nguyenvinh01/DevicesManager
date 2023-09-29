@@ -55,6 +55,10 @@ require_once './app/config/constant.php';
                         <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                         Quản lý loại thiết bị
                     </a>
+                    <a class="nav-link" href="<?php echo BASE_URL; ?>/department">
+                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                        Quản lý phòng ban
+                    </a>
                     <div class="accordion scroll-menu" id="sidebarAccordion">
                         <a class="nav-link" data-bs-toggle="collapse" data-bs-target="#devicetypeCollapse">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>

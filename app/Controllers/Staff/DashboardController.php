@@ -14,6 +14,6 @@ class DashboardController extends Controller
 
     public function Show()
     {
-        $this->view('index', ["page" => "staff/dashboard"]);
+        $this->view('index', ["page" => "Staff/dashboard"]);
     }
 }

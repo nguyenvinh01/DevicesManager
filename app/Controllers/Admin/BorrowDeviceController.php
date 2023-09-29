@@ -3,7 +3,7 @@
 require_once('./app/Models/Admin/BorrowDeviceModel.php');
 require_once('./app/core/Controller.php');
 
-class BorrowDeviceController extends Controller
+class BorrowdeviceController extends Controller
 {
     var $device;
     public function __construct()
@@ -14,7 +14,7 @@ class BorrowDeviceController extends Controller
     public function Show()
     {
 
-        $this->view('index', ["page" => "admin/borrow"]);
+        $this->view('index', ["page" => "Admin/borrow"]);
     }
     public function getBorrowDeviceList()
     {
@@ -78,5 +78,19 @@ class BorrowDeviceController extends Controller
         $response = $this->device->getBorrowDetail($id);
         header('Content-Type: application/json');
         echo json_encode($response);
+    }
+    public function exportExcel()
+    {
+        $keyword = $_POST['keyword'];
+        $status = $_POST['status'];
+        $eDate = $_POST['eDate'];
+        $sDate = $_POST['sDate'];
+        $filter = $_POST['filter'];
+        $response = $this->device->exportExcel($filter, $keyword, $status, $eDate, $sDate);
+
+        // header('Content-Type: application/json');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment; filename="exported_data.xls"');
+        echo $response;
     }
 }

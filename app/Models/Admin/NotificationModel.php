@@ -64,7 +64,26 @@ class NotificationModel extends Model
             $num_rows = mysqli_num_rows($resultb);
 
             if ($num_rows > 0) {
-                $noidung = '<strong>Tiêu đề :</strong> ' . $tieude . '<br> <strong>Ngày tạo :</strong>' . $date . '<br> <strong>Nội dung :</strong><br><p>' . $noidung . '</p>';
+                // $noidung = '<strong>Tiêu đề :</strong> ' . $tieude . '<br> <strong>Ngày tạo :</strong>' . $date . '<br> <strong>Nội dung :</strong><br><p>' . $noidung . '</p>';
+                $noidung = '
+                <!DOCTYPE html>
+                <html lang="vi">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Thông báo từ Hệ thống</title>
+                </head>
+                <body>
+                    <div style="text-align: center; background-color: #f2f2f2; padding: 20px;">
+                        <h1>' . $tieude . '</h1>
+                        <p>Ngày tạo: ' . $date . '</p>
+                        <p>Nội dung:</p>
+                        <p>' . $noidung . '</p>
+                        <p>Nếu bạn có bất kỳ câu hỏi hoặc cần hỗ trợ, vui lòng liên hệ với chúng tôi tại địa chỉ email sau: nguyenthanhvinh7511@gmail.com.</p>
+                        <p>Trân trọng</p>
+                    </div>
+                </body>
+                </html>
+                ';
                 $mail = new PHPMailer(true);
                 try {
                     $mail->CharSet = "UTF-8";

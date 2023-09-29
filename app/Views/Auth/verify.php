@@ -29,7 +29,7 @@ require_once './app/config/constant.php';
 <body class="bg-primary sb-nav-fixed">
     <main>
 
-        <div id="myModal" class="modal-open">
+        <div id="myModalSuccess" class="modal">
             <div class="modal-dialog modal-confirm">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -47,6 +47,25 @@ require_once './app/config/constant.php';
                 </div>
             </div>
         </div>
+        <div id="myModalError" class="modal">
+            <div class="modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box" style="background-color: red;">
+                            <i class="material-icons">&#xE876;</i>
+                        </div>
+                        <h4 class="modal-title w-100">Thất bại</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center">Tài khoản đã xác minh</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger btn-block w-100" data-dismiss="modal" style="background-color: red;">OK</button> <!-- Nút OK màu đỏ -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
 
@@ -90,7 +109,7 @@ require_once './app/config/constant.php';
                 var tokenPattern = /^[0-9a-f]{64}$/i;
                 if (tokenPattern.test(receivedToken)) {
                     // Gửi yêu cầu kiểm tra token qua AJAX
-                    toastr.success("valid token");
+                    // toastr.success("valid token");
 
                     $.ajax({
                         url: "<?php echo BASE_URL; ?>/verify/VerifyToken", // Đường dẫn đến file PHP kiểm tra token
@@ -102,14 +121,16 @@ require_once './app/config/constant.php';
                         success: function(response) {
                             if (response.status === "success") {
                                 console.log("Token is valid");
-                                toastr.success("valid token");
-
+                                toastr.success(response.message);
+                                $('#myModalSuccess').modal('show');
                                 // Thực hiện các hành động sau khi xác minh token thành công
                             } else {
                                 console.log("Invalid token");
-                                toastr.success("Invalid token");
-
-                                // Thực hiện các hành động sau khi xác minh token thất bại
+                                toastr.error(response.message);
+                                $('#myModalError').modal('show');
+                                setTimeout(function() {
+                                    window.location.href = "<?php echo BASE_URL; ?>/login";
+                                }, 2000); // Thực hiện các hành động sau khi xác minh token thất bại
                             }
                         },
                         error: function(xhr, status, error) {

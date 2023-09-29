@@ -15,7 +15,7 @@ class Route
             // Lấy controller từ đường dẫn URL
             $this->controller = ucfirst($arr[0]) . "Controller";
 
-            $authActions = ['register', 'login', 'logout', 'verify'];
+            $authActions = ['register', 'login', 'logout', 'verify', 'forget'];
             if (in_array($arr[0], $authActions)) {
                 $this->role = "Auth/";
             } else {
@@ -57,7 +57,8 @@ class Route
                 call_user_func_array([$controllerInstance, $this->action], $this->params);
             } else {
                 // Nếu file controller không tồn tại, xử lý lỗi tại đây
-                echo "File controller không tồn tại.";
+                // echo "File controller không tồn tại.";
+                require_once "./public/404.php";
             }
         } else {
             // Nếu không có đường dẫn URL, hiển thị trang chủ

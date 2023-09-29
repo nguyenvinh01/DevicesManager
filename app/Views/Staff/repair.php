@@ -239,7 +239,7 @@
                                         e.tinhtrang == "Hoàn thành" ? '' : `
                                     <td style="width : 130px !important">
                                     <button type="button" class="btn btn-primary modal-edit" data-id="${e.id}" data-bs-toggle="modal" data-bs-target="#ModalEdit">
-                                        Phân công
+                                        Cập nhật
                                     </button>
                                     </td>
                                     `)

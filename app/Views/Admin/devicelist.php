@@ -8,16 +8,32 @@
                     <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
                     <div class="col-4 mx-3">
                         <select id="device-type" class="form-select col" aria-label="Default select example">
-                            <option value="">Loại thiết bị</option>
+                            <!-- <option value="">Loại thiết bị</option> -->
                         </select>
 
                     </div>
                 </div>
             </div>
-            <div>
+            <!-- <div>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                     Thêm mới
                 </button>
+            </div> -->
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Thao tác
+                </button>
+                <div class="dropdown-menu">
+                    <button type="button" class="btn btn-success dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                        Thêm mới
+                    </button>
+                    <button class="btn btn-success dropdown-item" id="btn-export">
+                        Export
+                    </button>
+                    <!-- <button class="btn btn-success dropdown-item" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
+                        Import
+                    </button> -->
+                </div>
             </div>
         </div>
         <div class="card-body">
@@ -80,7 +96,17 @@
                                     </div>
                                     <div class="col-6">
                                         <label for="category-film" class="col-form-label">Tình trạng:</label>
-                                        <input type="text" class="form-control" id="device-status-edit" name="tinhtrang" required>
+                                        <!-- <input type="text" class="form-control" id="device-status-edit" name="trangthai" required> -->
+                                        <select class="form-select type-add" aria-label="Default select example" id="device-status-edit" tabindex="8" name="trangthai" required>
+                                            <option value="" selected>Chọn trạng thái</option>
+                                            <option value="Sẵn Sàng">Sẵn Sàng</option>
+                                            <option value="Thất lạc">Thất lạc</option>
+                                            <option value="Hỏng">Hỏng</option>
+                                            <option value="Chờ sửa chữa">Chờ sửa chữa</option>
+                                            <!-- <option value="Đang cấp phát">Đang cấp phát</option>
+                                            <option value="Đang mượn">Đang mượn</option> -->
+                                            <!-- <option value="Đang mượn">Đang mượn</option> -->
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -140,10 +166,10 @@
                                         <label for="category-film" class="col-form-label">Tên thiết bị:</label>
                                         <input type="text" class="form-control" id="device-name-dup" name="ten" required>
                                     </div>
-                                    <div class="col-6">
+                                    <!-- <div class="col-6">
                                         <label for="category-film" class="col-form-label">Tình trạng:</label>
                                         <input type="text" class="form-control" id="device-status-dup" name="tinhtrang" required>
-                                    </div>
+                                    </div> -->
                                 </div>
 
                                 <div class="row">
@@ -253,13 +279,13 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <label for="category-film" class="col-form-label">Danh mục thiết bị:</label>
-                                        <select class="form-select cate-add" aria-label="Default select example" tabindex="8" name="categories" required>
+                                        <select class="form-select cate-add" aria-label="Default select example" tabindex="8" name="categories" id="danhmuc-add" required>
                                             <option value="" selected>Chọn danh mục thiết bị</option>
                                         </select>
                                     </div>
                                     <div class="col-6">
                                         <label for="category-film" class="col-form-label">Loại thiết bị:</label>
-                                        <select class="form-select type-add" aria-label="Default select example" tabindex="8" name="ltb" required>
+                                        <select class="form-select type-add" aria-label="Default select example" tabindex="8" name="ltb" id="theloai-add" required>
                                             <option value="" selected>Chọn loại thiết bị</option>
                                         </select>
                                     </div>
@@ -269,10 +295,10 @@
                                         <label for="category-film" class="col-form-label">Tên thiết bị:</label>
                                         <input type="text" class="form-control" id="category-film" name="ten" required>
                                     </div>
-                                    <div class="col-6">
+                                    <!-- <div class="col-6">
                                         <label for="category-film" class="col-form-label">Tình trạng:</label>
                                         <input type="text" class="form-control" id="category-film" name="tinhtrang" required>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="row">
                                     <div class="row">
@@ -310,7 +336,10 @@
         let prevKeywordSearch = '';
         let prevPage = 0;
         let prevTypeSearch = '';
-        // console.log(<?php $_GET['type'] ?>, 122);
+        let check = '<?php echo $_GET['cate'] ?>';
+        if (!check) {
+            $('#device-type').attr('style', 'display: none')
+        }
 
         function getDeviceList(keyword = '', page = 0, type = '') {
             let cate = '<?php echo $_GET['cate'] ?>'
@@ -382,16 +411,6 @@
                             ])
                         });
                         table.draw();
-                        // $('#type-add').html('')
-                        // let typeAdd = `<option value="">Chọn loại</option>`;
-                        // response.devicetype.map((type) => {
-                        //     // if (type.id == response.data.loaithietbi_id) {
-                        //     //     typeAdd += `<option value="${type.id}" selected>${type.ten}</option>`
-                        //     // } else {
-                        //     typeAdd += `<option value="${type.maloai}">${type.ten}</option>`
-                        //     // }
-                        // })
-                        // $('#type-add').append(typeAdd)
                         $('.cate-add').each(function() {
                             let cateAdd = `<option value="">Chọn Danh mục</option>`;
                             response.categories.data.map((cate) => {
@@ -457,7 +476,40 @@
                 console.log("Clicked Page: " + prevPage);
             }
         });
-
+        $('#btn-export').click(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/devicelist/exportExcel",
+                data: {
+                    keyword: prevKeywordSearch,
+                    type: prevTypeSearch,
+                    cate: '<?php echo $_GET['cate'] ?>'
+                },
+                method: "POST",
+                success: function(response) {
+                    console.log(response, 'response');
+                    // if (response === 'success') {
+                    $.ajax({
+                        url: response,
+                        method: 'GET',
+                        xhrFields: {
+                            responseType: 'blob'
+                        },
+                        success: function(data) {
+                            console.log(data, 'data');
+                            saveAs(data, response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(error, 'loi');
+                        }
+                    });
+                    // } else {
+                    //     console.log(response.message);
+                    // }
+                },
+                error: function() {}
+            });
+        });
         $('.cate-add').change(function() {
             let cate = $(this).val();
             console.log(cate, '123');
@@ -505,6 +557,7 @@
                 console.log(response);
                 if (response.status == "success") {
                     let typeList;
+                    typeList += `<option value="" hidden>Loại thiết bị</option>`
                     response.data.map((type) => {
                         typeList += `<option value="${type.maloai}">${type.ten}</option>`
 
@@ -706,7 +759,7 @@
                     $('#id-dup').val(response.data.id);
                     $('#device-name-dup').val(response.data.ten)
                     $('#device-desc-dup').val(response.data.dactinhkithuat)
-                    $('#device-status-dup').val(response.data.tinhtrang)
+                    $('#device-status-dup').val(response.data.trangthai)
                     // $('#id-edit').val(response.id);
                 }
             })
@@ -749,7 +802,7 @@
                     $('#id-edit').val(response.data.id);
                     $('#device-name-edit').val(response.data.ten)
                     $('#device-desc-edit').val(response.data.dactinhkithuat)
-                    $('#device-status-edit').val(response.data.tinhtrang)
+                    // $('#device-status-edit').val(response.data.trangthai)
                     // $('#id-edit').val(response.id);
                 }
             })
@@ -789,7 +842,7 @@
                     $('#device-name-desc').val(response.data.ten)
                     $('#device-code-desc').val(response.data.mathietbi)
                     $('#device-desc-desc').val(response.data.dactinhkithuat)
-                    $('#device-status-desc').val(response.data.tinhtrang)
+                    $('#device-status-desc').val(response.data.trangthai)
                     $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
                     // $('#id-del').val(response.id);
                 }

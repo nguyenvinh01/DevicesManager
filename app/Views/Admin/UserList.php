@@ -331,6 +331,11 @@
             e.preventDefault();
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/userlist/exportExcel",
+                data: {
+                    option: prevOptionSearch,
+                    keyword: prevKeywordSearch,
+                    role: prevRoleSearch
+                },
                 method: "POST",
                 success: function(response) {
                     console.log(response, 'response');
@@ -428,6 +433,7 @@
             var role = $(this).val();
             console.log(role, 123);
             prevPage = 0;
+            prevRoleSearch = role;
             getUserList(prevOptionSearch, prevKeywordSearch, prevPage, role)
         });
         $(document).on('click', '.page-link', function(e) {
@@ -518,7 +524,7 @@
             })
         });
 
-        function getUserList(option = '', keyword = '', page = 0, role = '') {
+        function getUserList(option = '', keyword = '', page = 0, role = 0) {
             $.ajax({
                 url: `<?php echo BASE_URL; ?>/userlist/getUserList?option=${option}&keyword=${keyword}&page=${page}&role=${role}`,
                 method: "GET",

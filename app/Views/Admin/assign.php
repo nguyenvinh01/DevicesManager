@@ -1,6 +1,6 @@
 <div class="container-fluid px-4">
 
-    <h1 class="mt-4">Danh sách phân quyền sử dụng thiết bị</h1>
+    <h1 class="mt-4">Danh sách cấp phát sử dụng thiết bị</h1>
     <div class="card mb-4">
 
         <div class="card-header">
@@ -60,7 +60,7 @@
                         <th>Thời gian kiểm tra</th>
                         <th>Phòng ban</th>
                         <th>Địa điểm</th>
-                        <!-- <th>Tình trạng</th> -->
+                        <th>Tình trạng</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -96,12 +96,6 @@
                                         </select>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-                                        <div class="col-12">
-                                            <label for="category-film" class="col-form-label">Thời gian:</label>
-                                            <input type="text" class="form-control" id="category-film" name="thoigian" required>
-                                        </div>
-                                    </div> -->
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -116,19 +110,30 @@
         <!-- Modal Update-->
 
         <!--Des-->
-        <!-- <div class="modal fade" id="ModalDesc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Nội dung</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <?php echo $arUser["noidung"] ?>
-                        </div>
+        <div class="modal fade" id="ModalRevoke" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Xác nhận thu hồi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+
+                    <div class="modal-body">
+                        Mã cấp phát : <span id="idRevoke"></span>
+                        <form method="post" id="revokeDevice">
+                            <input type="hidden" class="form-control" id="idDel" name="id" value="">
+                            <div class="modal-footer" style="margin-top: 20px">
+                                <button style="width:100px" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    Đóng
+                                </button>
+                                <button style="width:100px" type="submit" class="btn btn-danger" name="deletenv"> Thu hồi</button>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
-            </div> -->
+            </div>
+        </div>
         <!-- Modal Add-->
         <div class="modal fade" id="ModalAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -156,16 +161,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-                                    <div class="col-12 row">
-                                        <div class="col">
-                                            <label for="category-film" class="col-form-label">Thiết bị :</label>
-                                            <select class="form-select" aria-label="Default select example" id="device-list" tabindex="8" name="thietbi" required>
-                                            </select>
-
-                                        </div>
-                                    </div>
-                                </div> -->
                                 <div class="row my-3">
                                     <div class="col-12">
                                         <label for="category-film" class="col-form-label">Số lượng :</label>
@@ -185,21 +180,6 @@
                                         </select>
                                     </div>
                                 </div>
-
-                                <!-- <div class="row my-3">
-                                        <div class="col-12">
-                                            <label for="category-film" class="col-form-label">Tình trạng :</label>
-                                            <select class="form-select" aria-label="Default select example" id="department" tabindex="8" name="phongban" required>
-                                                <option value="" selected>Chọn tình trạng</option>
-                                            </select>
-                                        </div>
-                                    </div> -->
-                                <!-- <div class="row">
-                                        <div class="col-12">
-                                            <label for="category-film" class="col-form-label">Nội dung:</label>
-                                            <textarea name="noidung" class="form-control" cols="30" tabindex="8" rows="10"></textarea>
-                                        </div>
-                                    </div> -->
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -350,6 +330,7 @@
         let startDate = '';
         let endDate = '';
         let prevFilter = '';
+        let idRevoke;
         $.ajax({
             url: `<?php echo BASE_URL; ?>/assign/getDepartment`,
             method: 'GET',
@@ -417,7 +398,7 @@
                                 e.ngaykiemtra,
                                 e.ten_phongban,
                                 e.ten_toanha + "-" + e.ten_diadiem,
-                                // e.tinhtrang,
+                                e.trangthai,
                                 function() {
                                     return (
                                         `
@@ -434,6 +415,10 @@
                                                 <button type="button" class="btn btn-primary modal-edit dropdown-item" data-id="${e.madoncapphat}" data-bs-toggle="modal" data-bs-target="#ModalEdit">
                                                 Phân công
                                                 </button>
+                                                ${e.trangthai == "Đã Thu Hồi" ? "" : `<button type="button" class="btn btn-primary modal-revoke dropdown-item" data-id="${e.madoncapphat}" data-bs-toggle="modal" data-bs-target="#ModalRevoke">
+                                                Thu hồi
+                                                </button>`}
+                                                
                                             </ul>
                                         </div>
                                     </td>
@@ -741,6 +726,32 @@
                 console.error(error);
             }
         });
+        $('#revokeDevice').submit(function(e) {
+            e.preventDefault();
+            console.log(idRevoke);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/assign/revokeDevice", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                data: {
+                    id: idRevoke
+                }, // Dữ liệu gửi đi từ form
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == "success") {
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById('ModalRevoke');
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+
+                    } else {}
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        })
         $('#cate-add').change(function() {
             let cate = $(this).val();
             console.log(cate, '123');
@@ -846,6 +857,42 @@
                     console.error(error);
                 }
             });
+        })
+        $(document).on('click', '.modal-revoke', function(e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            let staffList;
+            console.log('modaledit', id);
+            idRevoke = id;
+            $('#idRevoke').text(idRevoke)
+            // $.ajax({
+            //     url: "<?php echo BASE_URL; ?>/assign/revokeDevice", // Đường dẫn đến controller xử lý
+            //     method: 'POST',
+            //     data: {
+            //         id: id
+            //     }, // Dữ liệu gửi đi từ form
+            //     dataType: 'json',
+            //     success: function(response) {
+            //         console.log(response);
+            //         // if (response.status == "success") {
+            //         //     $('#staff-list').html('');
+            //         //     $('#staff-list').append('<option value="" selected>Chọn nhân viên kiểm tra</option>');
+            //         //     response.data.forEach((s) => {
+            //         //         if (s.id == id) {
+            //         //             staffList += `<option value="${s.id}" selected>${s.hoten}</option>`
+            //         //         } else {
+            //         //             staffList += `<option value="${s.id}">${s.hoten}</option>`
+            //         //         }
+            //         //     })
+            //         //     $('#staff-list').append(staffList);
+            //         //     $('#id-manage-device').val(id);
+            //         // } else {}
+            //     },
+            //     error: function(xhr, status, error) {
+            //         // Xử lý lỗi khi gửi yêu cầu Ajax
+            //         console.error(error);
+            //     }
+            // });
         })
         $(document).on('click', '.modal-desc-user', function() {
             var id = $(this).data('id');

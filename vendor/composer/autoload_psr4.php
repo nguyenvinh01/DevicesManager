@@ -15,5 +15,6 @@ return array(
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'MyCLabs\\Enum\\' => array($vendorDir . '/myclabs/php-enum/src'),
     'Matrix\\' => array($vendorDir . '/markbaker/matrix/classes/src'),
+    'Excel\\' => array($baseDir . '/PHPExcel'),
     'Complex\\' => array($vendorDir . '/markbaker/complex/classes/src'),
 );

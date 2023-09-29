@@ -13,7 +13,7 @@ class BorrowHistoryController extends Controller
     }
     function Show()
     {
-        $this->view("index", ["page" => "user/history"]);
+        $this->view("index", ["page" => "User/history"]);
     }
     public function getBorrowHistoryList()
     {

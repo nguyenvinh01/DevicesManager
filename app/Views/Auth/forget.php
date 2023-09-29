@@ -1,10 +1,6 @@
 <?php
 require_once './app/config/constant.php';
 
-if (isset($_SESSION['taikhoanadmin'])) {
-    header("Location: dashboard");
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +11,7 @@ if (isset($_SESSION['taikhoanadmin'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>HỆ THỐNG QUẢN LÝ THIẾT BỊ</title>
+    <title>HỆ THỐNG</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="<?php echo BASE_URL; ?>/public/css/styles.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
@@ -33,31 +29,18 @@ if (isset($_SESSION['taikhoanadmin'])) {
                 <div class="col-lg-5">
                     <div class="card shadow-lg border-0 rounded-lg mt-5">
                         <div class="card-header">
-                            <h3 class="text-center font-weight-light my-4">HỆ THỐNG QUẢN LÝ THIẾT BỊ</h3>
+                            <h3 class="text-center font-weight-light my-4">Quên mật khẩu</h3>
                         </div>
                         <div class="card-body">
 
-                            <form method="POST" id="login">
+                            <form method="POST" id="resend">
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="inputEmail" type="text" placeholder="" name="taikhoan" />
+                                    <input class="form-control" id="inputEmail" type="email" name="taikhoan" required />
                                     <label for="inputEmail">Tài khoản</label>
                                 </div>
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" id="inputPassword" type="password" placeholder="" name="matkhau" />
-                                    <label for="inputPassword">Mật khẩu</label>
-                                </div>
 
-                                <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                    <div class="d-flex align-items-center justify-content-between  flex-column">
-
-                                        <button class="btn btn-primary" type="submit" name="login">Đăng nhập</button>
-                                        <a href="<?php echo BASE_URL; ?>/forget" class="mt-1">Quên mật khẩu</a>
-                                    </div>
-
-                                    <div class="d-flex align-items-center justify-content-between  flex-column">
-                                        <a href="<?php echo BASE_URL; ?>/register">Đăng ký tài khoản</a>
-                                        <a href="<?php echo BASE_URL; ?>/verify">Xác minh tài khoản</a>
-                                    </div>
+                                <div class="d-flex align-items-center justify-content-center mt-4 mb-0">
+                                    <button class="btn btn-primary" type="submit" name="login">Gửi lại mật khẩu</button>
                                 </div>
                             </form>
                         </div>
@@ -94,20 +77,25 @@ if (isset($_SESSION['taikhoanadmin'])) {
                 hideMethod: 'fadeOut',
             };
 
-            $('#login').submit(function(e) {
+            $('#resend').submit(function(e) {
                 e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
                 // Gửi yêu cầu Ajax
                 // console.log($('#login').serialize());
                 $.ajax({
-                    url: "<?php echo BASE_URL; ?>/login/validLogin", // Đường dẫn đến controller xử lý
+                    url: "<?php echo BASE_URL; ?>/forget/ForgetPassword", // Đường dẫn đến controller xử lý
                     method: 'POST',
-                    data: $('#login').serialize(),
+                    data: $('#resend').serialize(),
                     dataType: 'json',
                     success: function(response) {
+                        console.log(response);
                         if (response.status == "success") {
-                            window.location.href = "<?php echo BASE_URL; ?>/dashboard";
-                            sessionStorage.setItem('isLoggedIn', 'true');
-                            toastr.success(response.message);
+                            toastr.success(response.message, {
+                                onHidden: function() {
+                                    setTimeout(function() {
+                                        window.location.href = "<?php echo BASE_URL; ?>/login";
+                                    }, 2000);
+                                }
+                            });
                         } else {
                             toastr.error(response.message);
 
@@ -119,12 +107,6 @@ if (isset($_SESSION['taikhoanadmin'])) {
                     }
                 });
             });
-            var isRegister = sessionStorage.getItem('register');
-
-            if (isRegister) {
-                toastr.success('Đăng ký thành công');
-                sessionStorage.clear();
-            }
         })
     </script>
 </body>

@@ -14,7 +14,7 @@ class NotificationController extends Controller
     public function Show()
     {
 
-        $this->view('index', ["page" => "admin/notification"]);
+        $this->view('index', ["page" => "Admin/notification"]);
     }
     public function getDataModal()
     {

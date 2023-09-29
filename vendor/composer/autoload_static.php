@@ -33,6 +33,10 @@ class ComposerStaticInit53f6ad8d048819be5bdbed3b90084c5b
             'MyCLabs\\Enum\\' => 13,
             'Matrix\\' => 7,
         ),
+        'E' => 
+        array (
+            'Excel\\' => 6,
+        ),
         'C' => 
         array (
             'Complex\\' => 8,
@@ -76,6 +80,10 @@ class ComposerStaticInit53f6ad8d048819be5bdbed3b90084c5b
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
+        ),
+        'Excel\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/PHPExcel',
         ),
         'Complex\\' => 
         array (

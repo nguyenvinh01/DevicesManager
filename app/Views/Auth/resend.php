@@ -40,7 +40,7 @@ require_once './app/config/constant.php';
                                 </div>
 
                                 <div class="d-flex align-items-center justify-content-center mt-4 mb-0">
-                                    <button class="btn btn-primary" type="submit" name="login">Gửi emal kích hoạt</button>
+                                    <button class="btn btn-primary" type="submit" name="login">Gửi email kích hoạt</button>
                                 </div>
                             </form>
                         </div>
@@ -89,10 +89,13 @@ require_once './app/config/constant.php';
                     success: function(response) {
                         console.log(response);
                         if (response.status == "success") {
-                            toastr.success(response.message);
-                            setTimeout(function() {
-                                window.location.href = "<?php echo BASE_URL; ?>/login"
-                            }, 2000)
+                            toastr.success(response.message, {
+                                onHidden: function() {
+                                    setTimeout(function() {
+                                        window.location.href = "<?php echo BASE_URL; ?>/login";
+                                    }, 2000);
+                                }
+                            });
                         } else {
                             toastr.error(response.message);
 

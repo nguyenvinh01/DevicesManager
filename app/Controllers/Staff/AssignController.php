@@ -14,7 +14,7 @@ class AssignController extends Controller
     public function Show()
     {
 
-        $this->view('index', ["page" => "staff/assign"]);
+        $this->view('index', ["page" => "Staff/assign"]);
     }
     public function getAssignList()
     {
