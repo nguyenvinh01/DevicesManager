@@ -16,10 +16,10 @@
                         Thao tác
                     </button>
                     <ul class="dropdown-menu">
-                        <button type="button" class="btn btn-success dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAddBuilding" id="ModalAddBuilding">
+                        <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAddBuilding" id="ModalAddBuilding">
                             Thêm địa điểm
                         </button>
-                        <button type="button" class="btn btn-success dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAddDepartment" id="ModalAddDepartment">
+                        <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAddDepartment" id="ModalAddDepartment">
                             Thêm phòng ban
                         </button>
                     </ul>
@@ -27,7 +27,7 @@
                 <div class="flex-row col-6 mt-3">
                     <div class="input-group mb-3">
                         <input id="datatable-input" type="text" class="form-control col-16" placeholder="Tên phòng ban..." aria-label="Search..." aria-describedby="button-addon2">
-                        <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
+                        <button class="btn btn-primary col-2" type="submit" id="button-search">Search</button>
                         <!-- <div class="col-4 mx-3">
                             <select id="device-type" class="form-select col" aria-label="Default select example">
                                 <option value="">Loại thiết bị</option>
@@ -46,7 +46,7 @@
                     <tr style="background-color : #6D6D6D">
                         <th>STT</th>
                         <th>Tên tòa</th>
-                        <th>Tầng</th>
+                        <th>Tên phòng/tầng</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -121,7 +121,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Cập nhật</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Cập nhật địa điểm</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -130,7 +130,7 @@
                             <div class="col">
                                 <div class="row">
                                     <div class="col-12">
-                                        <label for="building-name-edit" class="col-form-label">Tên loại thiết bị:</label>
+                                        <label for="building-name-edit" class="col-form-label">Tên địa điểm:</label>
                                         <input type="text" class="form-control" id="building-name-edit" name="ten" required>
                                     </div>
                                 </div>
@@ -203,10 +203,10 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="POST" enctype="multipart/form-data" id="addType">
+                        <!-- <form method="POST" enctype="multipart/form-data" id="addType">
                             <div class="col">
                                 <div class="row">
-                                    <!-- <div class="col-12">
+                                    <div class="col-12">
                                             <label for="category-film" class="col-form-label">Danh mục thiết bị:</label>
                                             <select class="form-select" aria-label="Default select example" id="cate-add" tabindex="8" name="categories" required>
                                                 <option value="" selected>Chọn danh mục thiết bị</option>
@@ -215,7 +215,33 @@
                                         <div class="col-12">
                                             <label for="department-name-add" class="col-form-label">Tên loại thiết bị:</label>
                                             <input type="text" class="form-control" id="department-name-add" name="ten" required>
-                                        </div> -->
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                <button type="submit" class="btn btn-primary" name="adddm">Tạo </button>
+                            </div>
+                        </form> -->
+                        <form method="POST" enctype="multipart/form-data" id="addLocation">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Tên địa điểm:</label>
+                                        <input type="text" class="form-control" id="location-name-add" name="tendiadiem" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Danh sách tòa nhà:</label>
+                                        <select class="form-select" aria-label="Default select example" id="building-add-location" tabindex="8" name="toanha" required>
+                                            <option value="" selected>Chọn tòa nhà</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="category-film" class="col-form-label">Danh sách tầng:</label>
+                                        <select class="form-select" aria-label="Default select example" id="building-floor-location" tabindex="8" name="tang" required>
+                                            <option value="" selected>Chọn tầng</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -309,37 +335,6 @@
         $('#building-table').hide()
         getDepartmentList(prevKeywordSearch, 0)
 
-
-        // })
-        // $('#addType').submit(function(e) {
-        //     e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
-        //     // Gửi yêu cầu Ajax
-        //     console.log($('#addType').serialize());
-        //     $.ajax({
-        //         url: "<?php echo BASE_URL; ?>/department/addDeviceType", // Đường dẫn đến controller xử lý
-        //         method: 'POST',
-        //         data: $('#addType').serialize(),
-        //         dataType: 'json',
-        //         success: function(response) {
-        //             if (response.status == "success") {
-        //                 // Hiển thị thông báo thành công
-        //                 toastr.success(response.message);
-        //                 var modalElement = document.getElementById('exampleModalAdd');
-        //                 var modal = bootstrap.Modal.getInstance(modalElement);
-        //                 modal.hide();
-        //             } else {
-        //                 // Hiển thị thông báo lỗi
-        //                 toastr.error(response.message);
-
-        //             }
-        //         },
-        //         error: function(xhr, status, error) {
-        //             // Xử lý lỗi khi gửi yêu cầu Ajax
-        //             console.error(error);
-        //         }
-        //     });
-        // });
-
         $('#addDepartment').submit(function(e) {
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
@@ -368,64 +363,34 @@
                 }
             });
         });
-        // $('#editType').submit(function(e) {
-        //     e.preventDefault();
-        //     var formData = $(this).serialize();
-        //     var id = $(this).serialize().split(/[=,&]/)[1];
+        $('#addLocation').submit(function(e) {
+            e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
+            // Gửi yêu cầu Ajax
+            console.log($('#addLocation').serialize());
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/department/addLocation", // Đường dẫn đến controller xử lý
+                method: 'POST',
+                data: $('#addLocation').serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == "success") {
+                        // Hiển thị thông báo thành công
+                        toastr.success(response.message);
+                        var modalElement = document.getElementById('exampleModalAddLocation');
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+                        modal.hide();
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        toastr.error(response.message);
 
-        //     console.log(formData, 11, id);
-        //     $.ajax({
-        //         url: "<?php echo BASE_URL; ?>/department/editDeviceType", // Đường dẫn đến controller xử lý
-        //         method: 'POST',
-        //         data: formData, // Dữ liệu gửi đi từ form
-        //         dataType: 'json',
-        //         success: function(response) {
-        //             if (response.status == "success") {
-        //                 // Hiển thị thông báo thành công
-        //                 toastr.success(response.message);
-        //                 var modalElement = document.getElementById(`ModalEdit`);
-        //                 var modal = bootstrap.Modal.getInstance(modalElement);
-        //                 modal.hide();
-        //             } else {
-        //                 // Hiển thị thông báo lỗi
-        //                 toastr.error(response.message);
-        //             }
-        //         },
-        //         error: function(xhr, status, error) {
-        //             // Xử lý lỗi khi gửi yêu cầu Ajax
-        //             console.error(error);
-        //         }
-        //     });
-        // });
-
-        // $('#delType').submit(function(e) {
-        //     e.preventDefault();
-        //     console.log($('.delUser').serialize());
-        //     var formData = $(this).serialize();
-        //     var id = formData.split('=')[1];
-
-        //     console.log(1111, formData);
-        //     $.ajax({
-        //         url: "<?php echo BASE_URL; ?>/department/deleteDeviceType",
-        //         method: 'POST',
-        //         data: formData,
-        //         dataType: 'json',
-        //         success: function(response) {
-        //             if (response.status == "success") {
-        //                 toastr.success(response.message);
-        //                 var modalElement = document.getElementById(`ModalDel`);
-        //                 var modal = bootstrap.Modal.getInstance(modalElement);
-        //                 modal.hide();
-        //             } else {
-        //                 toastr.error(response.message);
-
-        //             }
-        //         },
-        //         error: function(xhr, status, error) {
-        //             console.error(error);
-        //         }
-        //     });
-        // });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        });
         $(document).on('click', '.page-link', function(e) {
             e.preventDefault();
             var clickedPage = $(this).data('page');
@@ -643,8 +608,8 @@
 
         // Start add department
         $('#ModalAddDepartment').click(function(e) {
-            let phongban;
             e.preventDefault();
+            let phongban = '';
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/department/getBuilding", // Đường dẫn đến controller xử lý
                 method: 'GET',
@@ -652,6 +617,7 @@
                 success: function(response) {
                     console.log(response);
                     if (response.status == "success") {
+                        $('#building').html('')
                         response.data.forEach((pb) => {
                             console.log(pb);
 
@@ -691,6 +657,39 @@
                             tang += `<option value="${pb.tang}">${pb.tang}</option>`
                         })
                         $('#building-floor').append(tang);
+                    } else {
+                        // toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            });
+        })
+        $('#building-add-location').change(function(e) {
+            e.preventDefault();
+            let tang = '<option value="" selected>Chọn tầng</option>';
+            const id = $('#building-add-location option').filter(":selected").val();
+            console.log(id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/department/getFloor", // Đường dẫn đến controller xử lý
+                method: 'GET',
+                data: {
+                    idToaNha: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    $('#building-floor-location').html('');
+                    if (response.status == "success") {
+
+                        response.data.forEach((pb) => {
+                            console.log(pb.tenpb);
+
+                            tang += `<option value="${pb.tang}">${pb.tang}</option>`
+                        })
+                        $('#building-floor-location').append(tang);
                     } else {
                         // toastr.error(response.message);
                     }
@@ -809,6 +808,34 @@
             });
         })
 
+        $('#ModalAddBuilding').click(function(e) {
+            e.preventDefault();
+            let phongban = '';
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/department/getBuilding", // Đường dẫn đến controller xử lý
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == "success") {
+                        $('#building-add-location').html('')
+                        response.data.forEach((pb) => {
+                            console.log(pb);
+
+                            phongban += `<option value="${pb.toanhaid}">${pb.tentoanha}</option>`
+                        })
+                        $('#building-add-location').append(phongban);
+                    } else {
+                        // toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi khi gửi yêu cầu Ajax
+                    console.error(error);
+                }
+            })
+        })
+
         function getBuilding(keyword = '', page = 0) {
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/department/getBuildingList", // Đường dẫn đến controller xử lý
@@ -822,11 +849,11 @@
                     if (response.status == "success") {
                         console.log(response);
                         table_building.clear();
-                        let index = 5 * prevPage;
+                        let index = 10 * prevPage;
                         response.data.forEach((e) => {
                             index++;
                             table_building.row.add([
-                                index + 1,
+                                index,
                                 e.tentoanha,
                                 e.phong,
                                 function() {
@@ -853,34 +880,8 @@
                             ])
                         })
                         table_building.draw();
-                        // let pagination = ""
-                        // let itemPerPage = 10;
-                        // if (prevPage == 0) {
-                        //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        // } else {
-                        //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        // }
-                        // for (let i = 0; i < (response.count / itemPerPage); i++) {
-                        //     if (i == prevPage) {
-                        //         pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
-
-                        //     } else {
-                        //         pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
-
-                        //     }
-                        // }
-                        // console.log(Math.floor((response.count / itemPerPage)) - 1, 'page');
-                        // if (prevPage == Math.floor((response.count / itemPerPage))) {
-                        //     console.log(response.count / itemPerPage, 'dis');
-                        //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        // } else {
-                        //     console.log(response.count / itemPerPage);
-
-                        //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        // }
-                        // $('#pagination').html(pagination)
-                        const paginationHtml = generatePagination(prevPage, Math.floor((response.count / 10)));
-
+                        const paginationHtml = generatePagination(prevPage, Math.ceil((response.count / 10)), 10);
+                        console.log('page', response.count / 10);
                         // In phân trang vào một phần tử HTML với id="pagination"
                         $('#pagination').html(paginationHtml);
                     } else {
@@ -938,33 +939,7 @@
                             ])
                         })
                         table_department.draw();
-                        // let pagination = ""
-                        // let itemPerPage = 10;
-                        // if (prevPage == 0) {
-                        //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        // } else {
-                        //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        // }
-                        // for (let i = 0; i < (response.count / itemPerPage); i++) {
-                        //     if (i == prevPage) {
-                        //         pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
-
-                        //     } else {
-                        //         pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
-
-                        //     }
-                        // }
-                        // console.log(Math.floor((response.count / itemPerPage)) - 1, 'page');
-                        // if (prevPage == Math.floor((response.count / itemPerPage))) {
-                        //     console.log(response.count / itemPerPage, 'dis');
-                        //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        // } else {
-                        //     console.log(response.count / itemPerPage);
-
-                        //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        // }
-                        // const totalPages = ; // Tổng số trang
-                        const paginationHtml = generatePagination(prevPage, Math.floor((response.count / 10)));
+                        const paginationHtml = generatePagination(prevPage, Math.ceil((response.count / 10)), 10);
 
                         // In phân trang vào một phần tử HTML với id="pagination"
                         $('#pagination').html(paginationHtml);
@@ -980,66 +955,64 @@
             });
         }
 
-        function generatePagination(currentPage, totalPages) {
-            const itemPerPage = 10;
+        function generatePagination(currentPage, totalPages, itemPerPage) {
             let pagination = '';
-            if (currentPage == 0) {
+            const centerPages = 3; // Số trang ở giữa bạn muốn hiển thị
+
+            if (currentPage === 0) {
                 pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
             } else {
                 pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
             }
-            if (totalPages <= 5) {
-                for (let i = 1; i <= totalPages; i++) {
+
+            if (totalPages <= 1) {
+                pagination += '<li class="page-item active"><a class="page-link" href="#" data-page="0">1</a></li>';
+            } else if (totalPages <= 5) {
+                for (let i = 0; i < totalPages; i++) {
                     if (i === currentPage) {
-                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
                     } else {
-                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
                     }
                 }
             } else {
-                if (currentPage <= 2) {
-                    for (let i = 1; i <= 3; i++) {
-                        if (i === currentPage) {
-                            pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
-                        } else {
-                            pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
-                        }
-                    }
-                    pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`;
-                } else if (currentPage >= totalPages - 1) {
-                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`;
-                    pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                    for (let i = totalPages - 2; i <= totalPages; i++) {
-                        if (i === currentPage) {
-                            pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
-                        } else {
-                            pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
-                        }
-                    }
-                } else {
-                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`;
-                    pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                    for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                        if (i === currentPage) {
-                            pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
-                        } else {
-                            pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
-                        }
-                    }
-                    pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`;
-                }
-                if (prevPage == Math.floor((totalPages / 10))) {
-                    pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                } else {
+                const startPage = Math.max(currentPage - Math.floor(centerPages / 2), 0);
+                const endPage = Math.min(startPage + centerPages - 1, totalPages - 1);
 
-                    pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                if (startPage > 0) {
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
+                    if (startPage > 1) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
                 }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+
+                if (endPage < totalPages - 1) {
+                    if (endPage < totalPages - 2) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages - 1}">${totalPages}</a></li>`;
+                }
+            }
+
+            if (currentPage >= totalPages - 1 || totalPages < 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
             }
 
             return pagination;
         }
+
+
+
         $('input[type=radio][name=btnradio]').change(function() {
             const selectedValue = this.id; // Lấy id của radio button được chọn
             console.log(this);

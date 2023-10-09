@@ -4,10 +4,14 @@ require_once "./app/Models/Model.php";
 // require_once "./public/PHPExcel.php";
 // require_once "./public/PHPExcel/IOFactory.php";
 require 'vendor/autoload.php';
+require_once "./app/config/library.php";
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class BorrowDeviceModel extends Model
 {
@@ -15,6 +19,8 @@ class BorrowDeviceModel extends Model
     {
         $offset = $page * 5;
         $curentDate = date("Y-m-d");
+        $oneMonthAgo = date("Y-m-d", strtotime("-1 month", strtotime($curentDate))); // Trừ đi 1 tháng từ ngày hiện tại
+
         // $query = "SELECT a.*,b.ten, b.hinhanh, c.hoten
         // FROM muon as a,thietbi as b, nguoidung as c
         // WHERE a.thietbi_id = b.id 
@@ -45,11 +51,15 @@ class BorrowDeviceModel extends Model
         }
         if ($sDate != '' && $eDate != '') {
             $query .= " AND a.ngaytra <= '$eDate' AND a.ngaymuon >= '$sDate'";
+        } else {
+            $query .= " AND a.ngaytra >= '$oneMonthAgo' AND a.ngaymuon >= '$oneMonthAgo'";
         }
         if ($filter == 'hoten') {
             $query .= " AND c.hoten LIKE '%$keyword%'";
         } elseif ($filter == 'thietbi') {
             $query .= " AND b.ten LIKE '%$keyword%'";
+        } elseif ($filter == 'madonmuon') {
+            $query .= " AND a.madonmuon LIKE '%$keyword%'";
         }
         // $query .= " GROUP BY a.madonmuon";
         $queryCount = $query;
@@ -64,8 +74,8 @@ class BorrowDeviceModel extends Model
         return [
             'status' => 'success',
             'data' => $data,
-            // 'count' => count($rsCount->fetch_all()),
-            'query' => $query
+            'count' => count($rsCount->fetch_all()),
+            'query' => $queryCount
         ];
     }
     function getDataModal($id)
@@ -111,12 +121,43 @@ class BorrowDeviceModel extends Model
         $data = $rs->fetch_assoc();
         return $data;
     }
+    function sendMailOvcerdue($filter, $keyword, $status, $eDate, $sDate)
+    {
+        $curentDate = date("Y-m-d");
+        $oneMonthAgo = date("Y-m-d", strtotime("-1 month", strtotime($curentDate))); // Trừ đi 1 tháng từ ngày hiện tại
+        $query = "SELECT a.*,b.ten, b.hinhanh, c.*
+        FROM muon as a,thietbi as b, nguoidung as c
+        WHERE a.thietbi_id = b.id 
+        AND a.nguoidung_id = c.id AND a.madonmuon != '' AND a.trangthai = 'Quá hạn'";
 
+        if ($sDate != '' && $eDate != '') {
+            $query .= " AND a.ngaytra <= '$eDate' AND a.ngaymuon >= '$sDate'";
+        } else {
+            $query .= " AND a.ngaytra >= '$oneMonthAgo' AND a.ngaymuon >= '$oneMonthAgo'";
+        }
+        $queryCount = $query;
+        $rs = $this->conn->query($query);
+        $rsCount = $this->conn->query($queryCount);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        $this->sendEmail($query);
+        return [
+            'status' => 'success',
+            'data' => $data,
+            'count' => count($rsCount->fetch_all()),
+            'query' => $queryCount
+        ];
+    }
     function getBorrowDetail($idDonmuon)
     {
+        // $query = "SELECT m.*, tb.ten
+        // FROM muon as m, thietbi as tb
+        // WHERE m.madonmuon = '$idDonmuon' AND m.thietbi_id = tb.id";
         $query = "SELECT m.*, tb.ten
         FROM muon as m, thietbi as tb
-        WHERE m.madonmuon = '$idDonmuon' AND m.thietbi_id = tb.id";
+        WHERE m.id = '$idDonmuon' AND m.thietbi_id = tb.id";
         $rs = $this->conn->query($query);
         // $data = $rs->fetch_assoc();
         $data = array();
@@ -128,7 +169,7 @@ class BorrowDeviceModel extends Model
             'data' => $data,
         ];
     }
-    function updateBorrowStatus($tinhtrang, $id)
+    function updateBorrowStatus($tinhtrang, $id, $noidung)
     {
 
         foreach ($tinhtrang as $keyValue) {
@@ -138,8 +179,19 @@ class BorrowDeviceModel extends Model
                 $queryUpdate = "UPDATE thietbi SET trangthai = 'Sẵn Sàng' WHERE mathietbi = '{$keyValue['key']}';";
                 $this->conn->query($queryUpdate);
             } else if ($keyValue['value'] == 'Sửa chữa') {
-                $queryUpdate = "UPDATE thietbi SET trangthai = 'Chờ sửa chữa' WHERE mathietbi = '{$keyValue['key']}';";
+                $queryUpdate = "UPDATE thietbi SET trangthai = 'Sửa chữa' WHERE mathietbi = '{$keyValue['key']}';";
+                $queryGetDetail = "SELECT thietbi_id, nguoidung_id FROM muon WHERE madonmuon = '$id' AND mathietbi = '{$keyValue['key']}'";
+                $thietbiid = $this->conn->query($queryGetDetail)->fetch_assoc();
+                $queryUpdateRepair = "INSERT INTO suachua (thietbi_id, noidung, nguoidung_id, tinhtrang, madonmuon) 
+                VALUES ( '{$thietbiid['thietbi_id']}', '{$noidung}','{$thietbiid['nguoidung_id']}', 'Chờ xử lý', '{$id}') ";
                 $this->conn->query($queryUpdate);
+                $this->conn->query($queryUpdateRepair);
+                // return [
+                //     "status" => "success",
+                //     "message" => "Cập nhật thành công",
+                //     "query" => $queryUpdate,
+                //     "noidung" => $queryUpdateRepair
+                // ];
             } else if ($keyValue['value'] == 'Từ chối yêu cầu') {
                 $queryUpdate = "UPDATE thietbi SET trangthai = 'Sẵn Sàng' WHERE mathietbi = '{$keyValue['key']}';";
                 $this->conn->query($queryUpdate);
@@ -160,6 +212,7 @@ class BorrowDeviceModel extends Model
             "status" => "success",
             "message" => "Cập nhật thành công",
             "query" => $query,
+            "noidung" => $noidung
         ];
     }
 
@@ -253,9 +306,100 @@ class BorrowDeviceModel extends Model
 
         $timestamp = date('Ymd_His'); // Thêm timestamp vào tên tệp
 
-        $counter = 1;
         $uniqueFileName = $baseName . '_' . $timestamp . '.' . $extension;
 
         return  $uniqueFileName;
+    }
+    function sendEmail($query)
+    {
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        $noidung = '<html>
+                    <head>
+                        <title>Thông báo trả muộn thiết bị</title>
+                    </head>
+                    <body>
+                        <p>Xin chào</p>
+                        <p>Chúng tôi thông báo rằng bạn đã trả muộn một số thiết bị. Chi tiết về việc mượn và trả thiết bị như sau:</p>
+                        
+                        <table>
+                            <tr>
+                                <th>Mã Đơn mượn</th>
+                                <th>Mã Thiết bị</th>
+                                <th>Tên Thiết bị</th>
+                                <th>Ngày Mượn</th>
+                                <th>Ngày Trả</th>
+                            </tr>';
+        foreach ($data as $row) {
+            $noidung .= "<tr>
+                <td>{$row['madonmuon']}</td>
+                <td>{$row['mathietbi']}</td>
+                <td>{$row['ten']}</td>
+                <td>{$row['ngaymuon']}</td>
+                <td>{$row['ngaytra']}</td>
+            </tr>";
+        }
+        $noidung .= '</table>
+                        
+                        <p>Xin lưu ý rằng việc trả muộn thiết bị có thể chịu phí hoặc các biện pháp khác tùy theo quy định của chúng tôi.</p>
+                        <p>Trân trọng,</p>
+                        <p>[Tên tổ chức]</p>
+                    </body>
+                    </html>';
+        $mail = new PHPMailer(true);
+        try {
+            $mail->CharSet = "UTF-8";
+            $mail->SMTPDebug = 0;
+            $mail->isSMTP();
+            $mail->Host = SMTP_HOST;
+            $mail->SMTPAuth = true;
+            $mail->Username = SMTP_UNAME;
+            $mail->Password = SMTP_PWORD;
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = SMTP_PORT;
+            $mail->setFrom(SMTP_UNAME, "WEBSITE NHÀ TRƯỜNG");
+            // while ($data) {
+            //     $mail->addAddress($data['email']);
+            // }
+
+            // Duyệt qua mảng dữ liệu và thêm địa chỉ email vào danh sách người nhận
+            foreach ($data as $row) {
+                $email = $row['email']; // Lấy địa chỉ email từ dữ liệu
+                $ten = $row['hoten'];     // Lấy tên người nhận từ dữ liệu
+
+                // Thêm địa chỉ email và tên vào danh sách người nhận
+                $mail->addAddress($email, $ten);
+            }
+            $mail->addReplyTo(SMTP_UNAME, 'WEBSITE NHÀ TRƯỜNG');
+            $mail->isHTML(true);
+            $mail->Subject = 'Thông báo từ hệ thống quản lý tài sản, thiết bị tại trường đại học.';
+            $mail->Body = $noidung;
+            $mail->AltBody = $noidung;
+            $result = $mail->send();
+            if (!$result) {
+                $error = "Có lỗi xảy ra trong quá trình gửi mail";
+            }
+        } catch (Exception $e) {
+            return [
+                "status" => "error",
+                "message" => "Có lỗi xảy ra khi gửi email: " . $e->getMessage()
+            ];
+        }
+        // }
+        // header("Location: ../notification?msg=1");
+        // return [
+        //     "status" => "success",
+        //     "message" => "Gửi thông báo thành công"
+        // ];
+        // } else {
+        //     // header("Location: ../notification?msg=2");
+        //     return [
+        //         "status" => "error",
+        //         "message" => "Có lỗi trong quá trình gửi"
+        //     ];
+        // }
     }
 }

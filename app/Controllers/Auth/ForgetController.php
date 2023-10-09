@@ -17,7 +17,7 @@ class ForgetController extends Controller
     }
     public function ForgetPassword()
     {
-        $taikhoan = $_POST['taikhoan'];
+        $taikhoan = trim($_POST['taikhoan']);
         // $matkhau  = $_POST['matkhau'];
 
         $response = $this->forget->ForgetPassword($taikhoan);

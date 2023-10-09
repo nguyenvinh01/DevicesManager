@@ -7,7 +7,7 @@ class FindDeviceModel extends Model
     {
         $offset = $page * 5;
 
-        $query = "SELECT a.*,b.ten as 'tenloai'
+        $query = "SELECT a.*,b.ten as tenloai
         FROM thietbi as a,loaithietbi as b, danhmuc as c
         WHERE a.loaithietbi_code = b.maloai AND a.trangthai = 'Sẵn Sàng'  AND b.madanhmuc = c.madanhmuc";
         if ($keyword != '') {

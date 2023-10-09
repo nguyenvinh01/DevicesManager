@@ -16,7 +16,7 @@ class RegisterController extends Controller
     public function Verify()
     {
         if (isset($_GET['token'])) {
-            $token = $_GET['token'];
+            $token = trim($_GET['token']);
             $response = $this->register->VerifyToken($token);
 
             $this->view("Views/Auth/verify");
@@ -28,13 +28,13 @@ class RegisterController extends Controller
     }
     public function registerUser()
     {
-        $hoten = $_POST['hoten'];
-        $email  = $_POST['email'];
-        $sodienthoai  = $_POST['sodienthoai'];
-        $diachi = $_POST['diachi'];
-        $phongban = $_POST['phongban'];
-        $taikhoan  = $_POST['taikhoan'];
-        $matkhau  = $_POST['matkhau'];
+        $hoten = isset($_POST['hoten']) ? trim($_POST['hoten']) : '';
+        $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+        $sodienthoai = isset($_POST['sodienthoai']) ? trim($_POST['sodienthoai']) : '';
+        $diachi = isset($_POST['diachi']) ? trim($_POST['diachi']) : '';
+        $phongban = isset($_POST['phongban']) ? trim($_POST['phongban']) : '';
+        $taikhoan = isset($_POST['taikhoan']) ? trim($_POST['taikhoan']) : '';
+        $matkhau = isset($_POST['matkhau']) ? trim($_POST['matkhau']) : '';
 
         $response = $this->register->Register($hoten, $email, $sodienthoai, $diachi, $taikhoan, $matkhau, $phongban);
         header('Content-Type: application/json');

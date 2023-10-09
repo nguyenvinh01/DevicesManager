@@ -41,6 +41,51 @@
 
 <script>
     var ctx = document.getElementById('myChart').getContext('2d');
+    // Cấu hình biểu đồ
+    var options = {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                precision: 0
+            }
+        }
+    };
+    // JavaScript code
+    getDeviceBorrowCount()
+
+    // var cDate = new Date();
+    // var currentDate = cDate.toISOString().slice(0, 10);
+    // // var formattedDate = currentDate.toString().slice(0, 10);
+    // cDate.setMonth(cDate.getMonth() - 1);
+    // var oneMonthAgo = cDate.toISOString().slice(0, 10);
+    // console.log(currentDate, cDate.toISOString().slice(0, 10), oneMonthAgo);
+    // getDeviceBorrowCount()
+
+    function getDeviceBorrowCount() {
+        var cDate = new Date();
+        var currentDate = cDate.toISOString().slice(0, 10);
+        // var formattedDate = currentDate.toString().slice(0, 10);
+        cDate.setMonth(cDate.getMonth() - 1);
+        var oneMonthAgo = cDate.toISOString().slice(0, 10);
+        $.ajax({
+            url: '<?php echo BASE_URL; ?>/dashboard/getDeviceBorrowCountByDate', // Thay thế bằng URL của phương thức trong controller của bạn
+            method: 'GET',
+            data: {
+                startDate: currentDate,
+                endDate: oneMonthAgo
+            },
+            dataType: 'json',
+            success: function(data) {
+                // Xử lý dữ liệu trả về từ controller ở đây
+                console.log(data);
+            },
+            error: function() {
+                // Xử lý lỗi nếu có
+                console.error('Lỗi trong quá trình truy vấn dữ liệu');
+            }
+        });
+    }
 
     // Dữ liệu biểu đồ
     var data = {
@@ -61,16 +106,7 @@
         }]
     };
 
-    // Cấu hình biểu đồ
-    var options = {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true,
-                precision: 0
-            }
-        }
-    };
+
 
     // Khởi tạo và vẽ biểu đồ
     var myChart = new Chart(ctx, {

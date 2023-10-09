@@ -13,7 +13,7 @@
                     </div> -->
 
                     <input id="datatable-input" type="text" class="form-control col-16" placeholder="Tên thiết bị..." aria-label="Search..." aria-describedby="button-addon2">
-                    <button class="btn btn-success col-2" type="submit" id="button-search">Tìm kiếm</button>
+                    <button class="btn btn-primary col-2" type="submit" id="button-search">Tìm kiếm</button>
                     <div class="col-3 mx-3">
                         <select id="select-status" class="form-select col select" aria-label="Default select example">
                             <option value="" selected disabled hidden>Trạng thái</option>
@@ -41,7 +41,7 @@
                     <div class="form-group">
                         <label for="endDate"></label>
 
-                        <input type="button" class="form-control btn-success" id="reset" name="reset" value="Reset">
+                        <input type="button" class="form-control btn-primary" id="reset" name="reset" value="Reset">
                     </div>
                 </div>
             </div>
@@ -185,7 +185,7 @@
                     table.clear();
                     let index = page * 5;
 
-                    response.data.forEach((e, index) => {
+                    response.data.forEach((e) => {
                         index++
                         table.row.add([
                             index,
@@ -235,30 +235,31 @@
                         ])
                     });
                     table.draw();
-                    let pagination = ""
-                    let itemPerPage = 5;
-                    if (prevPage == 0) {
-                        pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                    } else {
-                        pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                    }
-                    for (let i = 0; i < (response.count / itemPerPage); i++) {
-                        if (i == prevPage) {
-                            pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+                    console.log('page', Math.floor((response.count / 5)));
+                    let pagination = generatePagination(prevPage, Math.ceil((response.count / 5)), 5);
+                    // let itemPerPage = 5;
+                    // if (prevPage == 0) {
+                    //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                    // } else {
+                    //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                    // }
+                    // for (let i = 0; i < (response.count / itemPerPage); i++) {
+                    //     if (i == prevPage) {
+                    //         pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
 
-                        } else {
-                            pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+                    //     } else {
+                    //         pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
 
-                        }
-                    }
-                    if (prevPage == Math.floor((response.count / itemPerPage))) {
-                        console.log(response.count / itemPerPage, 'dis');
-                        pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                    } else {
-                        console.log(response.count / itemPerPage);
+                    //     }
+                    // }
+                    // if (prevPage == Math.floor((response.count / itemPerPage))) {
+                    //     console.log(response.count / itemPerPage, 'dis');
+                    //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                    // } else {
+                    //     console.log(response.count / itemPerPage);
 
-                        pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                    }
+                    //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                    // }
                     $('#pagination').html(pagination)
                     // } else {}
                 },
@@ -346,48 +347,103 @@
             // Format the date in "yyyy-mm-dd" format
             return `${year}-${month}-${day}`;
         }
-    })
-    $(document).on('click', '.modal-desc', function() {
-        var id = $(this).data('id');
-        console.log(id);
-        $.ajax({
-            url: "<?php echo BASE_URL; ?>/borrowhistory/getDeviceById",
-            method: "GET",
-            data: {
-                id: id
-            },
-            dataType: 'json',
-            success: function(response) {
-                console.log(response, 123);
+        $(document).on('click', '.modal-desc', function() {
+            var id = $(this).data('id');
+            console.log(id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/borrowhistory/getDeviceById",
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response, 123);
 
-                $('#desc-device-view').text(response.data.ten);
-                $('#desc-device-detail').text(response.data.dactinhkithuat);
-                $('#device-name-desc').val(response.data.ten)
-                // $('#device-quantity-desc').val(response.data.soluong)
-                $('#device-desc-desc').val(response.data.dactinhkithuat)
-                $('#device-status-desc').val(response.data.tinhtrang)
-                $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
-                // $('#id-del').val(response.id);
+                    $('#desc-device-view').text(response.data.ten);
+                    $('#desc-device-detail').text(response.data.dactinhkithuat);
+                    $('#device-name-desc').val(response.data.ten)
+                    // $('#device-quantity-desc').val(response.data.soluong)
+                    $('#device-desc-desc').val(response.data.dactinhkithuat)
+                    $('#device-status-desc').val(response.data.tinhtrang)
+                    $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
+                    // $('#id-del').val(response.id);
+                }
+            })
+        });
+
+        function generatePagination(currentPage, totalPages, itemPerPage) {
+            let pagination = '';
+            const centerPages = 3; // Số trang ở giữa bạn muốn hiển thị
+
+            if (currentPage === 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
             }
-        })
-    });
-    $(document).on('click', '.modal-desc-borrow', function() {
-        var id = $(this).data('id');
-        console.log(id);
-        $.ajax({
-            url: "<?php echo BASE_URL; ?>/borrowhistory/getBorrowDetail",
-            method: "GET",
-            data: {
-                id: id
-            },
-            dataType: 'json',
-            success: function(response) {
-                console.log(response, 123);
-                $('#table-borrow-detail').html('')
-                let list;
-                let index = 1;
-                response.data.forEach((borrow) => {
-                    list += `
+
+            if (totalPages <= 1) {
+                pagination += '<li class="page-item active"><a class="page-link" href="#" data-page="0">1</a></li>';
+            } else if (totalPages <= 5) {
+                for (let i = 0; i < totalPages; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+            } else {
+                const startPage = Math.max(currentPage - Math.floor(centerPages / 2), 0);
+                const endPage = Math.min(startPage + centerPages - 1, totalPages - 1);
+
+                if (startPage > 0) {
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
+                    if (startPage > 1) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+
+                if (endPage < totalPages - 1) {
+                    if (endPage < totalPages - 2) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages - 1}">${totalPages}</a></li>`;
+                }
+            }
+
+            if (currentPage >= totalPages - 1 || totalPages < 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            }
+
+            return pagination;
+        }
+        $(document).on('click', '.modal-desc-borrow', function() {
+            var id = $(this).data('id');
+            console.log(id);
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/borrowhistory/getBorrowDetail",
+                method: "GET",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response, 123);
+                    $('#table-borrow-detail').html('')
+                    let list;
+                    let index = 1;
+                    response.data.forEach((borrow) => {
+                        list += `
                         <tr>
                             <td>${index}</td>
                             <td>${borrow.mathietbi}</td>
@@ -395,13 +451,15 @@
                             <td>${borrow.trangthai}</td>
                         </tr>
                     `
-                    index++;
-                })
-                $('#table-borrow-detail').html(list)
+                        index++;
+                    })
+                    $('#table-borrow-detail').html(list)
 
-            }
-        })
-    });
+                }
+            })
+
+        });
+    })
 </script>
 <script>
     CKEDITOR.replace("editor");

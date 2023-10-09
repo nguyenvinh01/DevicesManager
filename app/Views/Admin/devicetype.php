@@ -15,10 +15,10 @@
                     Thao tác
                 </button>
                 <ul class="dropdown-menu">
-                    <button type="button" class="btn btn-success dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                    <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                         Thêm loại thiết bị
                     </button>
-                    <button type="button" class="btn btn-success dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAddCate">
+                    <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAddCate">
                         Thêm danh mục thiết bị
                     </button>
                 </ul>
@@ -288,7 +288,7 @@
             // Gửi yêu cầu Ajax
             console.log($('#addType').serialize());
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/deviceType/addDeviceType", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/devicetype/addDeviceType", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: $('#addType').serialize(),
                 dataType: 'json',
@@ -317,7 +317,7 @@
             // Gửi yêu cầu Ajax
             console.log($('#addCate').serialize());
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/deviceType/addDeviceCate", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/devicetype/addDeviceCate", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: $('#addCate').serialize(),
                 dataType: 'json',
@@ -347,7 +347,7 @@
 
             console.log(formData, 11, id);
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/deviceType/editDeviceType", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/devicetype/editDeviceType", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: formData, // Dữ liệu gửi đi từ form
                 dataType: 'json',
@@ -378,7 +378,7 @@
 
             console.log(1111, formData);
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/deviceType/deleteDeviceType",
+                url: "<?php echo BASE_URL; ?>/devicetype/deleteDeviceType",
                 method: 'POST',
                 data: formData,
                 dataType: 'json',
@@ -406,7 +406,7 @@
 
             console.log(formData, 11, id);
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/deviceType/editDeviceCate", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/devicetype/editDeviceCate", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: formData, // Dữ liệu gửi đi từ form
                 dataType: 'json',
@@ -437,7 +437,7 @@
 
             console.log(1111, formData);
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/deviceType/deleteDeviceCate",
+                url: "<?php echo BASE_URL; ?>/devicetype/deleteDeviceCate",
                 method: 'POST',
                 data: formData,
                 dataType: 'json',
@@ -527,7 +527,7 @@
 
         function getDeviceType() {
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/deviceType/getDeviceType", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/devicetype/getDeviceType", // Đường dẫn đến controller xử lý
                 method: 'GET',
                 dataType: 'json',
                 success: function(response) {
@@ -552,7 +552,7 @@
                                                 <button type="button" class="btn btn-primary modal-edit dropdown-item" data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#ModalEdit">
                                                     Sửa loại thiết bị
                                                 </button>
-                                                <button type="button" class="btn btn-danger modal-del dropdown-item" data-bs-toggle="modal" data-id="${e.madanhmuc}" data-bs-target="#ModalDel">
+                                                <button type="button" class="btn btn-danger modal-del dropdown-item" data-bs-toggle="modal" data-id="${e.id}" data-bs-target="#ModalDel">
                                                     Xóa loại thiết bị
                                                 </button>
                                             </ul>
@@ -577,7 +577,7 @@
 
         function getDeviceCategories() {
             $.ajax({
-                url: "<?php echo BASE_URL; ?>/deviceType/getDeviceCategories", // Đường dẫn đến controller xử lý
+                url: "<?php echo BASE_URL; ?>/devicetype/getDeviceCategories", // Đường dẫn đến controller xử lý
                 method: 'GET',
                 dataType: 'json',
                 success: function(response) {

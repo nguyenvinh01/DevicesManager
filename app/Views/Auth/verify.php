@@ -28,9 +28,8 @@ require_once './app/config/constant.php';
 
 <body class="bg-primary sb-nav-fixed">
     <main>
-
-        <div id="myModalSuccess" class="modal">
-            <div class="modal-dialog modal-confirm">
+        <div id="myModalSuccess" class="modal bg-primary">
+            <div class="bg-primary modal-dialog modal-confirm">
                 <div class="modal-content">
                     <div class="modal-header">
                         <div class="icon-box">
@@ -47,8 +46,8 @@ require_once './app/config/constant.php';
                 </div>
             </div>
         </div>
-        <div id="myModalError" class="modal">
-            <div class="modal-dialog modal-confirm">
+        <div id="myModalError" class="modal bg-primary ">
+            <div class="bg-primary modal-dialog modal-confirm">
                 <div class="modal-content">
                     <div class="modal-header">
                         <div class="icon-box" style="background-color: red;">
@@ -60,12 +59,29 @@ require_once './app/config/constant.php';
                         <p class="text-center">Tài khoản đã xác minh</p>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-danger btn-block w-100" data-dismiss="modal" style="background-color: red;">OK</button> <!-- Nút OK màu đỏ -->
+                        <button class="btn btn-danger btn-block w-100" data-dismiss="modal" style="background-color: red;">OK</button>
                     </div>
                 </div>
             </div>
         </div>
-
+        <div id="myModalErrorValid" class="modal bg-primary ">
+            <div class="bg-primary modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box" style="background-color: red;">
+                            <i class="material-icons">&#xE876;</i>
+                        </div>
+                        <h4 class="modal-title w-100">Thất bại</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center">Sai định dạng token</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger btn-block w-100" data-dismiss="modal" style="background-color: red;">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
 
@@ -125,12 +141,11 @@ require_once './app/config/constant.php';
                                 $('#myModalSuccess').modal('show');
                                 // Thực hiện các hành động sau khi xác minh token thành công
                             } else {
-                                console.log("Invalid token");
                                 toastr.error(response.message);
                                 $('#myModalError').modal('show');
-                                setTimeout(function() {
-                                    window.location.href = "<?php echo BASE_URL; ?>/login";
-                                }, 2000); // Thực hiện các hành động sau khi xác minh token thất bại
+                                // setTimeout(function() {
+                                //     window.location.href = "<?php echo BASE_URL; ?>/login";
+                                // }, 2000); // Thực hiện các hành động sau khi xác minh token thất bại
                             }
                         },
                         error: function(xhr, status, error) {
@@ -139,14 +154,15 @@ require_once './app/config/constant.php';
                         }
                     });
                 } else {
-                    console.log("Invalid token format");
-                    toastr.error("Invalid token format");
+                    $('#myModalErrorValid').modal('show');
+
+                    toastr.error("Sai định đạng token");
 
                     // Xử lý khi token không đúng định dạng
                 }
             } else {
                 console.log("Token not found in URL");
-                toastr.error("Token not found in URL");
+                toastr.error("Không tìm thấy token");
 
                 // Xử lý khi không tìm thấy token trong URL
             }

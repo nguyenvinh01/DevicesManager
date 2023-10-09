@@ -1,19 +1,17 @@
 <?php
 require_once './app/config/constant.php';
 
-require_once "./app/Models/Model.php";
-// require_once "./public/PHPExcel.php";
-// require_once "./vendor/PHPExcel/IOFactory.php";
-// require_once "./public/PHPExcel/IOFactory.php";
+require_once "./app/config/library.php";
 
-// namespace PhpOffice\PhpSpreadsheet\IOFactory;
-// use Excel\IOFactory;
-// use PHPExcel;
+require_once "./app/Models/Model.php";
+
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class UserListModel extends Model
 {
@@ -99,9 +97,15 @@ class UserListModel extends Model
         }
 
         // Thực hiện câu lệnh INSERT
-        $insertQuery = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi, phongban, quyen_id) 
-                    VALUES ('{$hoten}', '{$email}', '{$matkhau}', '{$sdt}', '{$taikhoan}' ,'{$diachi}', '{$phongban}', 2)";
-        $result = $this->conn->query($insertQuery);
+        // $insertQuery = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi, phongban, quyen_id) 
+        //             VALUES ('{$hoten}', '{$email}', '{$matkhau}', '{$sdt}', '{$taikhoan}' ,'{$diachi}', '{$phongban}', 2)";
+        $randomBytes = random_bytes(32); // Tạo 32 byte ngẫu nhiên
+        $hashPassword = $this->hashPassword($matkhau);
+
+        $token = hash('sha256', $randomBytes);
+        $this->SendVerify($token, $email);
+        $sql = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi,phongban, verify_code, verified, quyen_id) VALUE ('$hoten', '$email', '$hashPassword', '$sdt', '$taikhoan', '$diachi','$phongban' , '$token', 0 , '2')";
+        $result = $this->conn->query($sql);
 
         if ($result) {
             return [
@@ -115,7 +119,7 @@ class UserListModel extends Model
             ];
         }
     }
-    public function editUser($hoten, $email, $sdt, $taikhoan, $diachi, $id, $phongban)
+    public function editUser($hoten, $email, $sdt, $taikhoan, $diachi, $id, $phongban, $role)
     {
         // Kiểm tra trùng email
         $emailExistsQuery = "SELECT COUNT(*) as count FROM nguoidung WHERE email = '{$email}' AND id != '{$id}'";
@@ -143,7 +147,7 @@ class UserListModel extends Model
 
         // Thực hiện câu lệnh UPDATE
         $query = "UPDATE `nguoidung` 
-                SET `hoten`='{$hoten}',`email`='{$email}',`sodienthoai`='{$sdt}',`taikhoan`='{$taikhoan}',`diachi`='{$diachi}', `phongban` = '{$phongban}'
+                SET `hoten`='{$hoten}',`email`='{$email}',`sodienthoai`='{$sdt}',`taikhoan`='{$taikhoan}',`diachi`='{$diachi}', `phongban` = '{$phongban}', `quyen_id` = '$role'
                 WHERE `id`='{$id}'";
         $result = $this->conn->query($query);
         if ($result) {
@@ -236,20 +240,22 @@ class UserListModel extends Model
         $sheet->setCellValue('A1', 'ID');
         $sheet->setCellValue('B1', 'Họ tên');
         $sheet->setCellValue('C1', 'Email');
-        $sheet->setCellValue('D1', 'Địa chỉ');
-        $sheet->setCellValue('E1', 'Số điện thoại');
-        $sheet->setCellValue('F1', 'Phòng ban');
-        $sheet->setCellValue('G1', 'Loại tài khoản');
+        $sheet->setCellValue('D1', 'Tài khoản');
+        $sheet->setCellValue('E1', 'Địa chỉ');
+        $sheet->setCellValue('F1', 'Số điện thoại');
+        $sheet->setCellValue('G1', 'Phòng ban');
+        $sheet->setCellValue('H1', 'Loại tài khoản');
 
         $row = 2;
         foreach ($data as $user) {
             $sheet->setCellValue('A' . $row, (int)$user['id']);
             $sheet->setCellValue('B' . $row, $user['hoten']);
             $sheet->setCellValue('C' . $row, $user['email']);
-            $sheet->setCellValue('D' . $row, $user['diachi']);
-            $sheet->setCellValue('E' . $row, $user['sodienthoai']);
-            $sheet->setCellValue('F' . $row, $user['tenphongban']);
-            $sheet->setCellValue('G' . $row, $user['ten_quyen']);
+            $sheet->setCellValue('D' . $row, $user['taikhoan']);
+            $sheet->setCellValue('E' . $row, $user['diachi']);
+            $sheet->setCellValue('F' . $row, $user['sodienthoai']);
+            $sheet->setCellValue('G' . $row, $user['tenphongban']);
+            $sheet->setCellValue('H' . $row, $user['ten_quyen']);
             $sheet->getColumnDimension('A')->setWidth(6);
             $sheet->getColumnDimension('B')->setWidth(20);
             $sheet->getColumnDimension('C')->setWidth(30);
@@ -271,42 +277,112 @@ class UserListModel extends Model
     }
     public function importExcel($excelFile)
     {
-
+        $errors = [];
         try {
-            $objPHPExcel = PHPExcel_IOFactory::load($excelFile);
+            $objPHPExcel = IOFactory::load($excelFile);
             $sheet = $objPHPExcel->getActiveSheet();
             $highestRow = $sheet->getHighestRow();
 
-            $sql = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi, quyen_id) VALUES ";
+            // $sql = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi, quyen_id) VALUE";
             // $sql = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi, quyen_id) VALUES ('hoten', 'email', '123', 'id', 'ádds', 'diachi', '2')";
 
             for ($row = 2; $row <= $highestRow; $row++) {
-                $id = $sheet->getCell('A' . $row)->getValue();
-                $hoten = $sheet->getCell('B' . $row)->getValue();
-                $email = $sheet->getCell('C' . $row)->getValue();
+                $hoten = $sheet->getCell('A' . $row)->getValue();
+                $email = $sheet->getCell('B' . $row)->getValue();
+                $taikhoan = $sheet->getCell('C' . $row)->getValue();
                 $diachi = $sheet->getCell('D' . $row)->getValue();
+                $sdt = $sheet->getCell('E' . $row)->getValue();
+                // Kiểm tra nếu bất kỳ trường nào bị bỏ trống, thêm vào mảng lỗi
+                if (empty($hoten) || empty($email) || empty($taikhoan) || empty($diachi) || empty($sdt)) {
+                    array_push($errors, "Dòng $row: Một hoặc nhiều trường bị bỏ trống");
+                    continue; // Bỏ qua dòng này và xử lý dòng tiếp theo
+                }
+                $hashPassword = $this->hashPassword($email);
 
-                // Thực hiện truy vấn để lưu dữ liệu vào cơ sở dữ liệu
-                $sql .= "('$hoten', '$email', '123', '$id', 'ádds', '$diachi', '2'), ";
+                // Kiểm tra xem tài khoản, email hoặc số điện thoại đã tồn tại trong cơ sở dữ liệu chưa
+                $checkQuery = "SELECT * FROM nguoidung WHERE taikhoan = '$taikhoan' OR email = '$email' OR sodienthoai = '$sdt'";
+                $checkResult = $this->conn->query($checkQuery);
+                if ($checkResult->num_rows > 0) {
+                    array_push($errors, "Dòng $row: Tài khoản, email hoặc số điện thoại đã tồn tại trong cơ sở dữ liệu");
+                    continue; // Bỏ qua dòng này và xử lý dòng tiếp theo
+                }
+                $randomBytes = random_bytes(32); // Tạo 32 byte ngẫu nhiên
+
+                $token = hash('sha256', $randomBytes);
+                $this->SendVerify($token, $email);
+                $sql = "INSERT INTO nguoidung (hoten, email, matkhau, sodienthoai, taikhoan, diachi, verify_code, verified, quyen_id) VALUE ('$hoten', '$email', '$hashPassword', '$sdt', '$taikhoan', '$diachi', '$token', 0 , '2')";
+                $result = $this->conn->query($sql);
+                if (!$result) {
+                    array_push($errors, $token);
+                    // Nếu không thành công, ghi lại lỗi
+                }
             }
-
-            $sql = rtrim($sql, ', ');
-
-            // Thực hiện truy vấn INSERT
-            $result = $this->conn->query($sql);
-
-            if ($result) {
+            $response = [
+                'status' => 'success',
+                'message' => 'Import thành công',
+            ];
+            if (count($errors) > 0) {
                 $response = [
                     'status' => 'success',
                     'message' => 'Import thành công',
+                    "error" => $errors
                 ];
             }
+            // Thực hiện truy vấn INSERT
+            // $result = $this->conn->query($sql);
+
+            // if ($result) {
+
+            // }
         } catch (Exception $e) {
             $response = [
                 'status' => 'error',
                 'message' => 'Import that bai',
+                "" => $errors
+
             ];
         }
         return $response;
+    }
+    public function SendVerify($verify, $email)
+    {
+        $verifyLink = BASE_URL . "/verify/code?token=$verify";
+
+        $noidung = "
+            <p>Xác nhận địa chỉ email của bạn:</p>
+            <p>Nhấp vào nút dưới đây để xác nhận địa chỉ email của bạn:</p>
+            <a href='$verifyLink' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none;'>Xác nhận Email</a>
+            <p>Nếu bạn không thực hiện thao tác này, vui lòng bỏ qua email này.</p>
+        ";
+        // $noidung = "<a href = " . BASE_URL . "/verify/code?token=$verify>Click</a>";
+        $mail = new PHPMailer(true);
+        // try {
+        $mail->CharSet = "UTF-8";
+        $mail->SMTPDebug = 0;
+        $mail->isSMTP();
+        $mail->Host = SMTP_HOST;
+        $mail->SMTPAuth = true;
+        $mail->Username = SMTP_UNAME;
+        $mail->Password = SMTP_PWORD;
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port = SMTP_PORT;
+        $mail->setFrom(SMTP_UNAME, "WEBSITE NHÀ TRƯỜNG");
+        $mail->addAddress($email);
+        $mail->isHTML(true);
+        $mail->Subject = 'Mã xác nhận Email';
+        $mail->Body = $noidung;
+        $mail->AltBody = $noidung;
+        $result = $mail->send();
+        if (!$result) {
+            $error = "Có lỗi xảy ra trong quá trình gửi mail";
+        }
+        // } catch (Exception $e) {
+        //     echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+        //     // }
+        // }
+        // return [
+        //     "status" => "success",
+        //     "message" => "Gửi thông báo thành công"
+        // ];
     }
 }

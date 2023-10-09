@@ -12,8 +12,6 @@ class AssignModel extends Model
         ql.madoncapphat,
         ql.ngaykiemtra,
         ql.tinhtrang,
-        ql.soluong,
-        ql.tentb,
         ql.nhanvien_id,
         T.ten AS ten_thietbi,
         PB.tenpb AS ten_phongban,

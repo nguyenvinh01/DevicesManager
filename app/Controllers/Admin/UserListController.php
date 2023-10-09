@@ -63,14 +63,14 @@ class UserlistController extends Controller
     {
         $hoten = $_POST['hoten'];
         $email  = $_POST['email'];
-        // $matkhau  = $_POST['matkhau'];
+        $role  = $_POST['role'];
         $sdt = $_POST['sdt'];
         $taikhoan = $_POST['taikhoan'];
         $diachi = $_POST['diachi'];
         $id  = $_POST['id'];
         $phongban = $_POST['phongban'];
 
-        $response =  $this->userList->editUser($hoten, $email, $sdt, $taikhoan, $diachi, $id, $phongban);
+        $response =  $this->userList->editUser($hoten, $email, $sdt, $taikhoan, $diachi, $id, $phongban, $role);
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -110,10 +110,10 @@ class UserlistController extends Controller
             // Khởi tạo đối tượng model và gọi phương thức để xử lý tệp Excel
             $response = $this->userList->importExcel($excelFile);
 
-            $response = [
-                'status' => 'success',
-                'message' => 'Import thành công',
-            ];
+            // $response = [
+            //     'status' => 'success',
+            //     'message' => 'Import thành công',
+            // ];
             header('Content-Type: application/json');
             echo json_encode($response);
         } else {

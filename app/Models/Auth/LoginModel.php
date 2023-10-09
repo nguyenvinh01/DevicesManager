@@ -7,7 +7,7 @@ class LoginModel extends Model
 {
     function CheckLogin($taikhoan, $matkhau)
     {
-        $query = "SELECT * FROM nguoidung WHERE taikhoan='$taikhoan'";
+        $query = "SELECT * FROM nguoidung WHERE BINARY taikhoan = '$taikhoan'";
         $result = $this->conn->query($query);
         $num_rows = mysqli_num_rows($result);
         if ($num_rows == 0) {

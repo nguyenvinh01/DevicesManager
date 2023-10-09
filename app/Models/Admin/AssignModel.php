@@ -1,6 +1,13 @@
 <?php
 
 require_once "./app/Models/Model.php";
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
+
+require_once "./app/config/library.php";
 class AssignModel extends Model
 {
     function getAssignList($filter, $keyword, $page, $department, $eDate, $sDate)
@@ -13,8 +20,6 @@ class AssignModel extends Model
         ql.ngaykiemtra,
         ql.tinhtrang,
         ql.trangthai,
-        ql.soluong,
-        ql.tentb,
         ql.nhanvien_id,
         T.ten AS ten_thietbi,
         PB.tenpb AS ten_phongban,
@@ -24,7 +29,7 @@ class AssignModel extends Model
     FROM
         quanly AS ql
     LEFT JOIN
-        thietbi AS T ON ql.tentb = T.id
+        thietbi AS T ON ql.id_thietbi = T.id
     LEFT JOIN
         phongban AS PB ON ql.phongban = PB.id
     LEFT JOIN
@@ -39,6 +44,10 @@ class AssignModel extends Model
             $query .= " AND nv.hoten LIKE '%$keyword%'";
         } elseif ($filter == 'thietbi') {
             $query .= " AND T.ten LIKE '%$keyword%'";
+        } elseif ($filter == 'madoncapphat') {
+            $query .= " AND ql.madoncapphat LIKE '%$keyword%'";
+        } elseif ($filter == 'phongban') {
+            $query .= " AND PB.tenpb LIKE '%$keyword%'";
         }
         if ($department != '') {
             $query .= " AND PB.id = '$department'";
@@ -72,7 +81,6 @@ class AssignModel extends Model
         ql.madoncapphat,
         ql.ngaykiemtra,
         ql.tinhtrang,
-        ql.soluong,
         T.ten AS ten_thietbi,
         T.mathietbi AS mathietbi,
         PB.tenpb AS ten_phongban,
@@ -189,11 +197,11 @@ class AssignModel extends Model
                         $mathietbi = $rowThietBi['mathietbi'];
 
                         // Insert vào bảng quản lý
-                        $queryInsertQuanLy = "INSERT INTO quanly (id_thietbi,madoncapphat, nhanvien_id, phongban, toanha, tinhtrang, diadiem, ngaykiemtra, ngaycapnhat) 
-                                    VALUES ( '{$idThietBi}','{$madoncapphat}', null, '{$tenpb}', '{$toanha}', null,'{$phong}',null, '$time')";
+                        $queryInsertQuanLy = "INSERT INTO quanly (id_thietbi,madoncapphat, nhanvien_id, phongban, toanha, tinhtrang, trangthai, diadiem, ngaykiemtra, ngaycapnhat) 
+                                    VALUES ( '{$idThietBi}','{$madoncapphat}', null, '{$tenpb}', '{$toanha}', null, 'Đang cấp phát','{$phong}',null, '$time')";
                         $this->conn->query($queryInsertQuanLy);
 
-                        // Cập nhật trạng thái của thiết bị thành 'Đang Cấp Phát'
+                        // // Cập nhật trạng thái của thiết bị thành 'Đang Cấp Phát'
                         $queryCapNhatTrangThai = "UPDATE thietbi SET trangthai = 'Đang Cấp Phát' WHERE id = '$idThietBi'";
                         $this->conn->query($queryCapNhatTrangThai);
                     }
@@ -386,11 +394,88 @@ class AssignModel extends Model
         SET `nhanvien_id`={$idStaff}, `ngaykiemtra`='{$ngayktra}', `tinhtrang`='Chờ xử lý'
         WHERE `madoncapphat`='{$id}'";
         $result = $this->conn->query($query);
+        $queryGetAllocate = "SELECT ql.*, tb.ten as tenthietbi, tb.mathietbi, dd.phong, tn.tentoanha, pb.tenpb
+        FROM quanly as ql, thietbi as tb, diadiem as dd, toanha as tn, phongban as pb
+        WHERE ql.madoncapphat = '$id' 
+        AND ql.id_thietbi = tb.id
+        AND dd.id = ql.diadiem
+        AND tn.id = dd.toanha
+        AND pb.id = ql.phongban
+        ";
+        $queryGetStaff = "SELECT * FROM nguoidung WHERE id = $idStaff";
+        $staff = $this->conn->query($queryGetStaff)->fetch_assoc();
+        $rs = $this->conn->query($queryGetAllocate);
+        $data = [];
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        $noidung = "
+        <html>
+        <head>
+            <title>Thông báo phân công kiểm tra định kỳ thiết bị</title>
+        </head>
+        <body>
+            <p>Xin chào </p>
+            <p>Bạn đã được phân công kiểm tra định kỳ cho mã đơn cấp phát $id. Hãy thực hiện công việc sau:</p>
+            <ol>
+                <li>Kiểm tra tình trạng của thiết bị.</li>
+                <li>Thực hiện bảo trì và kiểm tra định kỳ.</li>
+                <li>Báo cáo kết quả và tình trạng của thiết bị.</li>
+            </ol>
+            <p>Thời gian phân công: $ngayktra</p>
+            <p>Thiết bị cần kiểm tra định kỳ:</p>";
+        foreach ($data as $row) {
+
+            $noidung .= "<ul>
+                <li>Mã Thiết Bị: {$row['mathietbi']}</li>
+                <li>Tên Thiết Bị: {$row['tenthietbi']}</li>
+                <li>Phòng ban: {$row['tenpb']}</li>
+                <li>Địa điểm: {$row['tentoanha']}-{$row['phong']}</li>
+            </ul>";
+        }
+        $noidung .= " <p>Xin cảm ơn sự đóng góp của bạn trong việc duy trì và bảo dưỡng thiết bị.</p>
+            <p>Trân trọng,</p>
+        </body>
+        </html>
+    ";
+
+        $mail = new PHPMailer(true);
+        try {
+            $mail->CharSet = "UTF-8";
+            $mail->SMTPDebug = 0;
+            $mail->isSMTP();
+            $mail->Host = SMTP_HOST;
+            $mail->SMTPAuth = true;
+            $mail->Username = SMTP_UNAME;
+            $mail->Password = SMTP_PWORD;
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = SMTP_PORT;
+            $mail->setFrom(SMTP_UNAME, "WEBSITE NHÀ TRƯỜNG");
+            // while ($arUser = mysqli_fetch_array($resultb, MYSQLI_ASSOC)) {
+            $mail->addAddress($staff['email']);
+            // }
+            $mail->addReplyTo(SMTP_UNAME, 'WEBSITE NHÀ TRƯỜNG');
+            $mail->isHTML(true);
+            $mail->Subject = 'Thông báo từ hệ thống quản lý tài sản, thiết bị tại trường đại học.';
+            $mail->Body = $noidung;
+            $mail->AltBody = $noidung;
+            $result = $mail->send();
+            if (!$result) {
+                $error = "Có lỗi xảy ra trong quá trình gửi mail";
+            }
+        } catch (Exception $e) {
+            return [
+                "status" => "error",
+                "message" => "Có lỗi xảy ra khi gửi email: " . $e->getMessage()
+            ];
+        }
         if ($result) {
             // header("Location: ../repair?msg=1");
             return [
                 "status" => "success",
-                "message" => "Phân công kiểm tra thành công"
+                "message" => "Phân công kiểm tra thành công",
+                "" => $noidung,
+                "data" => $queryGetAllocate
             ];
         } else {
             // header("Location: ../repair?msg=2");

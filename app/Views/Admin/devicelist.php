@@ -5,7 +5,7 @@
             <div class="flex-column col-6">
                 <div class="input-group mb-3">
                     <input id="datatable-input" type="text" class="form-control col-16" placeholder="Tên thiết bị..." aria-label="Search..." aria-describedby="button-addon2">
-                    <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
+                    <button class="btn btn-primary col-2" type="submit" id="button-search">Search</button>
                     <div class="col-4 mx-3">
                         <select id="device-type" class="form-select col" aria-label="Default select example">
                             <!-- <option value="">Loại thiết bị</option> -->
@@ -15,7 +15,7 @@
                 </div>
             </div>
             <!-- <div>
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                     Thêm mới
                 </button>
             </div> -->
@@ -24,13 +24,13 @@
                     Thao tác
                 </button>
                 <div class="dropdown-menu">
-                    <button type="button" class="btn btn-success dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                    <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                         Thêm mới
                     </button>
-                    <button class="btn btn-success dropdown-item" id="btn-export">
+                    <button class="btn btn-primary dropdown-item" id="btn-export">
                         Export
                     </button>
-                    <!-- <button class="btn btn-success dropdown-item" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
+                    <!-- <button class="btn btn-primary dropdown-item" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
                         Import
                     </button> -->
                 </div>
@@ -203,6 +203,15 @@
                                 <div class="col-6">
                                     <img alt="Thiet bi" id="device-image-desc" style="width: 200px !important;height: 100px !important;">
                                 </div>
+                                <div class="col-6">
+                                    <label for="category-film" class="col-form-label">Mã code:</label>
+                                    <div>
+
+                                        <input type="image" src="./uploads/barcode/DC01-00004.png" id="device-barcode" alt="Ảnh barcode" width="200" height="48">
+                                    </div>
+                                    <span id="device-barcode-desc"></span>
+                                    <!-- <img src="./uploads/barcode/DC01-00004.png" alt="Thiet bi" id="device-barcode-desc" style="width: 200px !important;height: 70px !important;"> -->
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-6">
@@ -220,6 +229,7 @@
                                     <input type="text" class="form-control" id="device-code-desc" disabled>
                                 </div>
                             </div>
+                            <button id="printButton">In</button>
                             <div class="row">
                                 <div class="col-12">
                                     <label for="category-film" class="col-form-label">Đặc tính kĩ thuật:</label>
@@ -279,7 +289,7 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <label for="category-film" class="col-form-label">Danh mục thiết bị:</label>
-                                        <select class="form-select cate-add" aria-label="Default select example" tabindex="8" name="categories" id="danhmuc-add" required>
+                                        <select class="form-select cate-add" aria-label="Default select example" tabindex="8" name="cate" id="danhmuc-add" required>
                                             <option value="" selected>Chọn danh mục thiết bị</option>
                                         </select>
                                     </div>
@@ -318,10 +328,55 @@
             </div>
         </div>
     </div>
+    <img id="printedImage" src="" alt="">
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/jsbarcode/3.11.0/JsBarcode.all.min.js"></script>
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
 
 <script>
     $(document).ready(() => {
+        // $('#printButton').click(function() {
+        //     // Đường dẫn của hình ảnh bạn muốn in
+        //     var imageUrl = './uploads/barcode/DC01-00004.png';
+
+        //     // Kích thước tùy chỉnh cho cửa sổ in
+        //     var printWindowWidth = 300; // Độ rộng
+        //     var printWindowHeight = 200; // Độ cao
+
+        //     // Tạo một cửa sổ in mới với kích thước tùy chỉnh
+        //     var printWindow = window.open('', '', 'width=' + printWindowWidth + ',height=' + printWindowHeight);
+        //     printWindow.document.open();
+        //     printWindow.document.write('<html><head><title>Print</title></head><body>');
+
+        //     // Tạo hình ảnh với kích thước tùy chỉnh
+        //     printWindow.document.write('<img src="' + imageUrl + '" alt="Barcode" width="' + printWindowWidth + '" height="' + printWindowHeight + '" />');
+
+        //     printWindow.document.write('</body></html>');
+        //     printWindow.document.close();
+        //     printWindow.print();
+        //     printWindow.close();
+        // });
+        // Bắt sự kiện khi nút bấm được nhấn
+        document.getElementById("printButton").addEventListener("click", function() {
+            // Lấy đường dẫn hình ảnh từ cơ sở dữ liệu
+            var imageUrl = "./uploads/barcode/DC01-00004.png"; // Thay YOUR_IMAGE_PATH_FROM_DATABASE bằng đường dẫn thực tế
+
+            // Tạo một đối tượng hình ảnh
+            var img = new Image();
+            img.src = imageUrl;
+
+            // Đặt hình ảnh cho quá trình in
+            var printImage = {
+                printable: img.src,
+                type: 'image',
+                header: 'Mã Vạch', // Tiêu đề trang in
+            };
+
+            // Sử dụng Print.js để in hình ảnh
+            printJS(printImage);
+        });
         toastr.options = {
             closeButton: true,
             progressBar: true,
@@ -419,31 +474,31 @@
                             $(this).html(cateAdd);
                         });
 
-                        let pagination = ""
-                        let itemPerPage = 5;
-                        if (prevPage == 0) {
-                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        } else {
-                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        }
-                        for (let i = 0; i < (response.count / itemPerPage); i++) {
-                            if (i == prevPage) {
-                                pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+                        let pagination = generatePagination(prevPage, Math.ceil((response.count / 5)), 5);
+                        // let itemPerPage = 5;
+                        // if (prevPage == 0) {
+                        //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                        // } else {
+                        //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                        // }
+                        // for (let i = 0; i < (response.count / itemPerPage); i++) {
+                        //     if (i == prevPage) {
+                        //         pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
 
-                            } else {
-                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+                        //     } else {
+                        //         pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
 
-                            }
-                        }
-                        console.log(Math.floor((response.count / itemPerPage)) - 1, 'page');
-                        if (prevPage == Math.floor((response.count / itemPerPage))) {
-                            console.log(response.count / itemPerPage, 'dis');
-                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        } else {
-                            console.log(response.count / itemPerPage);
+                        //     }
+                        // }
+                        // console.log(Math.floor((response.count / itemPerPage)) - 1, 'page');
+                        // if (prevPage == Math.floor((response.count / itemPerPage))) {
+                        //     console.log(response.count / itemPerPage, 'dis');
+                        //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        // } else {
+                        //     console.log(response.count / itemPerPage);
 
-                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        }
+                        //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        // }
                         $('#pagination').html(pagination)
                         prevTypeSearch = type;
                     } else {}
@@ -581,7 +636,7 @@
             e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
             // Gửi yêu cầu Ajax
             var formData = new FormData(this);
-            formData.append('cate', '<?php echo $_GET['cate'] ?>')
+            // formData.append('cate', '<?php echo $_GET['cate'] ?>')
             console.log(formData);
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/devicelist/addDevice", // Đường dẫn đến controller xử lý
@@ -764,6 +819,7 @@
                 }
             })
         });
+
         $(document).on('click', '.modal-edit', function() {
             var id = $(this).data('id');
             console.log('edit', id);
@@ -844,10 +900,69 @@
                     $('#device-desc-desc').val(response.data.dactinhkithuat)
                     $('#device-status-desc').val(response.data.trangthai)
                     $('#device-image-desc').attr("src", "./uploads/image/" + response.data.hinhanh)
+                    $('#device-barcode').attr("src", response.data.barcode)
+                    $('#device-barcode-desc').text(response.data.mathietbi)
                     // $('#id-del').val(response.id);
                 }
             })
         });
+
+        function generatePagination(currentPage, totalPages, itemPerPage) {
+            let pagination = '';
+            const centerPages = 3; // Số trang ở giữa bạn muốn hiển thị
+
+            if (currentPage === 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            }
+
+            if (totalPages <= 1) {
+                pagination += '<li class="page-item active"><a class="page-link" href="#" data-page="0">1</a></li>';
+            } else if (totalPages <= 5) {
+                for (let i = 0; i < totalPages; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+            } else {
+                const startPage = Math.max(currentPage - Math.floor(centerPages / 2), 0);
+                const endPage = Math.min(startPage + centerPages - 1, totalPages - 1);
+
+                if (startPage > 0) {
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
+                    if (startPage > 1) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+
+                if (endPage < totalPages - 1) {
+                    if (endPage < totalPages - 2) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages - 1}">${totalPages}</a></li>`;
+                }
+            }
+
+            if (currentPage >= totalPages - 1 || totalPages < 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            }
+
+            return pagination;
+        }
+
     })
 </script>
 

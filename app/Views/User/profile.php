@@ -7,7 +7,7 @@
             <div class="mb-3 gx-3">
                 <div class="col-md-6">
                     <label class="small mb-1" for="inputUsername">Tài khoản</label>
-                    <input class="form-control" id="inputUsername" type="text" placeholder="Enter your username" value="<?php echo $data['dataProfile']['taikhoan'] ?>" name="taikhoan">
+                    <input class="form-control" id="inputUsername" type="text" placeholder="Enter your username" value="<?php echo $data['dataProfile']['taikhoan'] ?>">
                 </div>
             </div>
             <!-- Full name field -->
@@ -22,6 +22,13 @@
                 <div class="col-md-6">
                     <label class="small mb-1" for="inputLocation">Địa chỉ</label>
                     <input class="form-control" id="inputLocation" type="text" placeholder="Enter your location" value="<?php echo $data['dataProfile']['diachi'] ?>" name="diachi">
+                </div>
+            </div>
+            <div class="row gx-3 mb-3">
+                <div class="col-md-6">
+                    <select class="form-select" aria-label="Default select example" id="department" tabindex="8" name="phongban" required>
+                        <option value="" selected>Chọn phòng ban</option>
+                    </select>
                 </div>
             </div>
             <!-- Email field -->
@@ -85,13 +92,35 @@
                 // data: $('#updateUser').serialize(),
                 dataType: 'json',
                 success: function(response) {
-                    console.log(response);
+                    console.log(response.data, '123');
+                    let idPb = response.data.phongban;
                     if (response.status == "success") {
                         $('#inputUsername').val(response.data.taikhoan)
                         $('#inputFullName').val(response.data.hoten)
                         $('#inputLocation').val(response.data.diachi)
                         $('#inputEmailAddress').val(response.data.email)
                         $('#inputPhone').val(response.data.sodienthoai)
+                        let phongban;
+
+                        $.ajax({
+                            url: "<?php echo BASE_URL; ?>/profile/getDepartment", // Đường dẫn đến controller xử lý
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function(res) {
+                                res.data.forEach((pb) => {
+                                    if (idPb == pb.id)
+                                        phongban += `<option value="${pb.id}" selected>${pb.tenpb}</option>`;
+                                    else
+                                        phongban += `<option value="${pb.id}">${pb.tenpb}</option>`;
+
+                                })
+                                $('#department').append(phongban);
+
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(error);
+                            }
+                        });
                     } else {
                         toastr.error(response.message);
                     }

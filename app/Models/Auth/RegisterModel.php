@@ -39,7 +39,8 @@ class RegisterModel extends Model
         }
 
         $hashPassword = $this->hashPassword($matkhau);
-        $token = md5(rand());
+        $randomBytes = random_bytes(32); // Tạo 32 byte ngẫu nhiên
+        $token = hash('sha256', $randomBytes);
         $this->SendVerify($token, $email);
         $query = "INSERT INTO nguoidung ( hoten, email, sodienthoai, diachi, taikhoan, matkhau, verify_code, verified, quyen_id, phongban) VALUES ( '{$hoten}', '{$email}', '{$sodienthoai}', '{$diachi}', '{$taikhoan}', '{$hashPassword}', '{$token}', 0, 2, '{$phongban}') ";
         $result = $this->conn->query($query);
@@ -96,8 +97,16 @@ class RegisterModel extends Model
     }
     public function SendVerify($verify, $email)
     {
+        $verifyLink = BASE_URL . "/verify/code?token=$verify";
 
-        $noidung = "<a href = " . BASE_URL . "/verify/code?token=$verify>Click</a>";
+        $noidung = "
+            <p>Xác nhận địa chỉ email của bạn:</p>
+            <p>Nhấp vào nút dưới đây để xác nhận địa chỉ email của bạn:</p>
+            <a href='$verifyLink' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none;'>Xác nhận Email</a>
+            <p>Nếu bạn không thực hiện thao tác này, vui lòng bỏ qua email này.</p>
+        ";
+
+        // $noidung = "<a href = " . BASE_URL . "/verify/code?token=$verify>Click</a>";
         $mail = new PHPMailer(true);
         try {
             $mail->CharSet = "UTF-8";

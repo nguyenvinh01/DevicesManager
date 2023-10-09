@@ -50,11 +50,10 @@ class DeviceTypeModel extends Model
     }
     function addDeviceType($ten, $cate)
     {
-        $queryLastId = "SELECT COUNT(tb.madanhmuc) AS count
+        $queryLastId = "SELECT COUNT(ltb.madanhmuc) AS count
         FROM danhmuc AS dm
         JOIN loaithietbi AS ltb ON dm.madanhmuc = ltb.madanhmuc
-        JOIN thietbi AS tb ON ltb.madanhmuc = tb.madanhmuc
-        WHERE dm.madanhmuc = '$cate';";
+        WHERE ltb.madanhmuc = '$cate';";
         $rsLastId = $this->conn->query($queryLastId);
         $lastId = $rsLastId->fetch_assoc();
         $ma_loai_thiet_bi = $cate . str_pad($lastId['count'] + 1, 2, "0", STR_PAD_LEFT);
@@ -65,7 +64,8 @@ class DeviceTypeModel extends Model
             // header("Location: ../devicetype?msg=1");
             return [
                 "status" => "success",
-                "message" => "Tạo thành công"
+                "message" => "Tạo thành công",
+                "" => $queryLastId
             ];
         } else {
             // header("Location: ../devicetype?msg=2");
@@ -139,10 +139,10 @@ class DeviceTypeModel extends Model
     }
     function deleteDeviceType($id)
     {
-        $check = "SELECT * FROM thietbi WHERE loaithietbi_id = '{$id}'";
+        $check = "SELECT * FROM thietbi WHERE loaithietbi_code = '{$id}'";
         $result = $this->conn->query($check);
-        $row = mysqli_num_rows($result);
-        if ($row > 0) {
+        // $row = mysqli_num_rows($result);
+        if (mysqli_num_rows($result) > 0) {
             // header("Location: ../devicetype?msg=2");
             return [
                 "status" => "error",

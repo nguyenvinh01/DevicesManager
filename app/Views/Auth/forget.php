@@ -36,7 +36,7 @@ require_once './app/config/constant.php';
                             <form method="POST" id="resend">
                                 <div class="form-floating mb-3">
                                     <input class="form-control" id="inputEmail" type="email" name="taikhoan" required />
-                                    <label for="inputEmail">Tài khoản</label>
+                                    <label for="inputEmail">Email</label>
                                 </div>
 
                                 <div class="d-flex align-items-center justify-content-center mt-4 mb-0">

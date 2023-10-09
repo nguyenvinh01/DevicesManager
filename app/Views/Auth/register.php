@@ -73,7 +73,7 @@ require_once './app/config/constant.php';
                                                 Mật khẩu của bạn phải có độ dài từ 8-20 ký tự, phải chứa các ký tự đặc biệt như "!@#$%&*_?", số, chữ thường và chữ hoa.
                                             </small>
                                             <div id="feedbackin" class="valid-feedback">
-                                                Strong Password!
+                                                Mật khẩu phù hợp!
                                             </div>
                                             <!-- <div id="feedbackin" class="valid-feedback">
 
@@ -214,19 +214,19 @@ require_once './app/config/constant.php';
             form.validationPassword.addEventListener('keyup', function() {
 
                 var messageCase = new Array();
-                messageCase.push(" Special Charector");
-                messageCase.push(" Upper Case");
-                messageCase.push(" Numbers");
-                messageCase.push(" Lower Case");
+                messageCase.push(" Ký tự đặc biệt");
+                messageCase.push(" Viết hoa");
+                messageCase.push(" Số");
+                messageCase.push(" Viết thường");
 
                 var ctr = 0;
                 var rti = "";
                 for (var i = 0; i < matchedCase.length; i++) {
                     if (new RegExp(matchedCase[i]).test(form.validationPassword.value)) {
-                        if (i == 0) messageCase.splice(messageCase.indexOf(" Special Charector"), 1);
-                        if (i == 1) messageCase.splice(messageCase.indexOf(" Upper Case"), 1);
-                        if (i == 2) messageCase.splice(messageCase.indexOf(" Numbers"), 1);
-                        if (i == 3) messageCase.splice(messageCase.indexOf(" Lower Case"), 1);
+                        if (i == 0) messageCase.splice(messageCase.indexOf(" Ký tự đặc biệt"), 1);
+                        if (i == 1) messageCase.splice(messageCase.indexOf(" Viết hoa"), 1);
+                        if (i == 2) messageCase.splice(messageCase.indexOf(" Số"), 1);
+                        if (i == 3) messageCase.splice(messageCase.indexOf(" Viết thường"), 1);
                         ctr++;
                     }
                 }
@@ -240,29 +240,29 @@ require_once './app/config/constant.php';
                 switch (ctr) {
                     case 0:
                     case 1:
-                        strength = "Way too Weak";
+                        strength = "Mật khẩu yếu";
                         progressbar = 15;
                         bClass = "bg-danger";
                         break;
                     case 2:
-                        strength = "Very Weak";
+                        strength = "Rất yếu";
                         progressbar = 25;
                         bClass = "bg-danger";
                         break;
                     case 3:
-                        strength = "Weak";
+                        strength = "Yếu";
                         progressbar = 34;
                         bClass = "bg-warning";
                         break;
                     case 4:
-                        strength = "Medium";
+                        strength = "Vừa";
                         progressbar = 65;
                         bClass = "bg-warning";
                         break;
                 }
 
-                if (strength == "Medium" && form.validationPassword.value.length >= 8) {
-                    strength = "Strong";
+                if (strength == "Vừa" && form.validationPassword.value.length >= 8) {
+                    strength = "Mạnh";
                     bClass = "bg-success";
                     form.validationPassword.setCustomValidity("");
                 } else {
@@ -273,15 +273,15 @@ require_once './app/config/constant.php';
 
                 if (form.validationPassword.value.length < 8) {
                     var lengthI = 8 - form.validationPassword.value.length;
-                    sometext += ` ${lengthI} more Characters, `;
+                    sometext += ` thêm ${lengthI} ký tự, `;
                     // $('#lengthMessage').text(`Thêm ${lengthI} ký tự`)
                 }
 
                 sometext += messageCase;
                 if (sometext) {
-                    sometext = " You Need" + sometext;
+                    sometext = " cần" + sometext;
                 }
-                console.log(messageCase, 'strength, some text', sometext);
+                // console.log(messageCase, 'strength, some text', sometext);
                 // $("#strengthMessage").text(strength); 
                 $("#feedbackin, #feedbackirn").text(strength + sometext);
                 $("#progressbar").removeClass("bg-danger bg-warning bg-success").addClass(bClass);

@@ -59,9 +59,10 @@ class BorrowdeviceController extends Controller
         // if (isset($_POST['capnhat'])) {
         $tinhtrang = $_POST['status'];
         $id  = $_POST['id'];
+        $noidung = $_POST['noidung'];
         // $idtb  = $_POST['thietbiid'];
 
-        $response = $this->device->updateBorrowStatus($tinhtrang, $id);
+        $response = $this->device->updateBorrowStatus($tinhtrang, $id, $noidung);
         header('Content-Type: application/json');
         echo json_encode($response);
         // }
@@ -92,5 +93,16 @@ class BorrowdeviceController extends Controller
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment; filename="exported_data.xls"');
         echo $response;
+    }
+    public function sendMailOvcerdue()
+    {
+        $keyword = $_POST['keyword'];
+        $status = $_POST['status'];
+        $eDate = $_POST['eDate'];
+        $sDate = $_POST['sDate'];
+        $filter = $_POST['filter'];
+        $response = $this->device->sendMailOvcerdue($filter, $keyword, $status, $eDate, $sDate);
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
 }

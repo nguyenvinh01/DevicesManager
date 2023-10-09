@@ -110,23 +110,6 @@ class RepairModel extends Model
             "data" => $data
         ];
     }
-    function sendRepair($idtb, $noidung)
-    {
-        $query = "INSERT INTO suachua (thietbi_id, noidung, nguoidung_id, tinhtrang) 
-            VALUES ( '{$idtb}', '{$noidung}','{$_SESSION['id']}', 'Chờ xử lý') ";
-        $result = $this->conn->query($query);
-        if ($result) {
-            return [
-                "status" => "success",
-                "message" => "Gửi thành công"
-            ];
-        } else {
-            return [
-                "status" => "error",
-                "message" => "Có lỗi xảy ra khi gửi"
-            ];
-        }
-    }
     function updateStatusRepair($id, $status)
     {
         $queryGetId = "SELECT thietbi_id, madonmuon FROM suachua WHERE id = '$id'";
@@ -137,15 +120,16 @@ class RepairModel extends Model
         WHERE `id`=$id";
         if ($status == 'Hoàn thành') {
             $queryUpdateDevice = "UPDATE thietbi SET trangthai = 'Sẵn Sàng' WHERE id = '{$dataId['thietbi_id']}'";
-            $queryUpdateBorrow = "UPDATE muon SET trangthai = 'Đã trả' WHERE thietbi_id = '{$dataId['thietbi_id']}' AND madonmuon = '{$dataId['madonmuon']}'";
+            $queryUpdateBorrow = "UPDATE muon SET trangthai = 'Hoàn thành sửa' WHERE thietbi_id = '{$dataId['thietbi_id']}' AND madonmuon = '{$dataId['madonmuon']}'";
             $this->conn->query($queryUpdateDevice);
             $this->conn->query($queryUpdateBorrow);
         }
         if ($status == 'Hỏng') {
             $queryUpdateDevice = "UPDATE thietbi SET trangthai = 'Hỏng' WHERE id = '{$dataId['thietbi_id']}'";
-            // $queryUpdateBorrow = "UPDATE muon SET trangthai = 'Đã trả' WHERE thietbi_id = '{$dataId['thietbi_id']}' AND madonmuon = '{$dataId['madonmuon']}'";
+            $queryUpdateBorrow = "UPDATE muon SET trangthai = 'Hoàn thành sửa' WHERE thietbi_id = '{$dataId['thietbi_id']}' AND madonmuon = '{$dataId['madonmuon']}'";
+
             $this->conn->query($queryUpdateDevice);
-            // $this->conn->query($queryUpdateBorrow);
+            $this->conn->query($queryUpdateBorrow);
         }
         $result = $this->conn->query($query);
         if ($result) {

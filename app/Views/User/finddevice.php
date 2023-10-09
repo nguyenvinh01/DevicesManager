@@ -13,7 +13,7 @@
                     </div> -->
 
                     <input id="datatable-input" type="text" class="form-control col-16" placeholder="Tên thiết bị..." aria-label="Search..." aria-describedby="button-addon2">
-                    <button class="btn btn-success col-2" type="submit" id="button-search">Tìm kiếm</button>
+                    <button class="btn btn-primary col-2" type="submit" id="button-search">Tìm kiếm</button>
                     <div class="col-3 mx-3">
                         <select id="select-type" class="form-select col select" aria-label="Default select example">
                             <option value="" selected disabled hidden>Loại thiết bị</option>
@@ -23,7 +23,7 @@
 
                 </div>
                 <div class="">
-                    <button type="button" class="btn btn-success" id="borrow-all">
+                    <button type="button" class="btn btn-primary" id="borrow-all">
                         Mượn nhiều
                     </button>
                 </div>
@@ -41,7 +41,7 @@
                     <div class="form-group">
                         <label for="endDate"></label>
 
-                        <input type="button" class="form-control btn-success" id="reset" name="reset" value="Reset">
+                        <input type="button" class="form-control btn-primary" id="reset" name="reset" value="Reset">
                     </div>
                 </div> -->
             </div>
@@ -84,8 +84,8 @@
                                     <p id="code-device-detail"></p>
                                     <label for="category-film" class="col-form-label"><strong>Tên thiết bị:</strong></label>
                                     <p id="name-device-detail"></p>
-                                    <label for="category-film" class="col-form-label"><strong>Tình trạng:</strong></label>
-                                    <p id="status-device-detail"></p>
+                                    <!-- <label for="category-film" class="col-form-label"><strong>Tình trạng:</strong></label>
+                                    <p id="status-device-detail"></p> -->
                                     <label for="category-film" class="col-form-label"><strong>Đặc tính kĩ thuật:</strong></label>
                                     <p id="desc-device-detail"></p>
                                 </div>
@@ -167,8 +167,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="POST" enctype="multipart/form-data" class="borrowDevice">
-                            <input type="hidden" class="form-control" id="id-device-borrow" name="id" value="<?php echo $arUser["id"] ?>">
+                        <form method="POST" enctype="multipart/form-data" id="borrowDevice">
+                            <input type="hidden" class="form-control" id="id-device-borrow" name="id">
                             <div class="col">
                                 <div class="row">
                                     <div class="col-12">
@@ -331,6 +331,7 @@
                                     `
                             })
                             $('#multi-device-desc').html(list)
+                            getDeviceList()
                         },
                         error: function(xhr, status, error) {
                             console.error(error);
@@ -338,6 +339,7 @@
                     });
                 } else {
                     $('#multi-device-desc').html('Không có thiết bị')
+                    getDeviceList()
 
                 }
             }
@@ -364,7 +366,12 @@
                                 index++
                                 table.row.add([
                                     function() {
-                                        return (`
+                                        return (listBorrow.some((list) => list == e.id) ?
+                                            `
+                                        <td>
+                                        <input class="form-check-input" type="checkbox" name="item" value="${e.id}" checked>
+                                        </td>
+                                        ` : `
                                         <td>
                                         <input class="form-check-input" type="checkbox" name="item" value="${e.id}">
                                         </td>
@@ -396,31 +403,12 @@
                                 ])
                             });
                             table.draw();
+                            if (listBorrow.length == 0) {
 
-                            let pagination = ""
-                            let itemPerPage = 5;
-                            if (prevPage == 0) {
-                                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                            } else {
-                                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                                var column = table.column(0); // Cột thứ tư, lấy theo index (0-based)
+                                column.visible(false);
                             }
-                            for (let i = 0; i < (response.count / itemPerPage); i++) {
-                                if (i == prevPage) {
-                                    pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
-
-                                } else {
-                                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
-
-                                }
-                            }
-                            if (prevPage == Math.floor((response.count / itemPerPage))) {
-                                console.log(response.count / itemPerPage, 'dis');
-                                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                            } else {
-                                console.log(response.count / itemPerPage);
-
-                                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                            }
+                            let pagination = generatePagination(prevPage, Math.ceil((response.count / 5)), 5);
                             $('#pagination').html(pagination)
                             let location;
                             response.location.data.map(l => {
@@ -504,7 +492,7 @@
                     console.error(error);
                 }
             })
-            $('.borrowDevice').submit(function(e) {
+            $('#borrowDevice').submit(function(e) {
                 e.preventDefault(); // Ngăn chặn chuyển hướng mặc định khi gửi biểu mẫu
                 // Gửi yêu cầu Ajax
                 var formData = $(this).serialize();
@@ -521,7 +509,7 @@
                         if (response.status == "success") {
                             // Hiển thị thông báo thành công
                             toastr.success(response.message);
-                            var modalElement = document.getElementById(`exampleModalEdit${id}`);
+                            var modalElement = document.getElementById(`ModalBorrow`);
                             var modal = bootstrap.Modal.getInstance(modalElement);
                             modal.hide();
                         } else {
@@ -661,6 +649,62 @@
                     }
                 })
             })
+
+            function generatePagination(currentPage, totalPages, itemPerPage) {
+                let pagination = '';
+                const centerPages = 3; // Số trang ở giữa bạn muốn hiển thị
+
+                if (currentPage === 0) {
+                    pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                } else {
+                    pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                }
+
+                if (totalPages <= 1) {
+                    pagination += '<li class="page-item active"><a class="page-link" href="#" data-page="0">1</a></li>';
+                } else if (totalPages <= 5) {
+                    for (let i = 0; i < totalPages; i++) {
+                        if (i === currentPage) {
+                            pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                        } else {
+                            pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                        }
+                    }
+                } else {
+                    const startPage = Math.max(currentPage - Math.floor(centerPages / 2), 0);
+                    const endPage = Math.min(startPage + centerPages - 1, totalPages - 1);
+
+                    if (startPage > 0) {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
+                        if (startPage > 1) {
+                            pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                        }
+                    }
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        if (i === currentPage) {
+                            pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                        } else {
+                            pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                        }
+                    }
+
+                    if (endPage < totalPages - 1) {
+                        if (endPage < totalPages - 2) {
+                            pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                        }
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages - 1}">${totalPages}</a></li>`;
+                    }
+                }
+
+                if (currentPage >= totalPages - 1 || totalPages < 0) {
+                    pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                } else {
+                    pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                }
+
+                return pagination;
+            }
         })
     </script>
     <script>

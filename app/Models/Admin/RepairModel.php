@@ -139,7 +139,33 @@ class RepairModel extends Model
         // $resultb = $this->conn->query($querytb);
         // $num_rows = mysqli_num_rows($resultb);
         // if ($num_rows > 0) {
-        $noidung = '<strong>Tiêu đề :</strong> ' . $tieude . '<br> <strong>Ngày tạo :</strong>' . $date . '<br> <strong>Nội dung :</strong><br><p>' . $noidung . '</p>';
+        // $noidung = '<strong>Tiêu đề :</strong> ' . $tieude . '<br> <strong>Ngày tạo :</strong>' . $date . '<br> <strong>Nội dung :</strong><br><p>' . $noidung . '</p>';
+        $noidung = "
+            <html>
+            <head>
+                <title>Thông báo phân công kiểm tra sửa chữa</title>
+            </head>
+            <body>
+                <p>Xin chào [Tên Nhân Viên],</p>
+                <p>Bạn đã được phân công kiểm tra sửa chữa thiết bị [Tên Thiết Bị]. Hãy thực hiện công việc sau:</p>
+                <ol>
+                    <li>Kiểm tra tình trạng của thiết bị.</li>
+                    <li>Thực hiện sửa chữa nếu cần.</li>
+                    <li>Báo cáo kết quả và tình trạng sửa chữa cho quản lý.</li>
+                </ol>
+                <p>Thời gian phân công: [Thời Gian Phân Công]</p>
+                <p>Thiết bị cần kiểm tra sửa chữa:</p>
+                <ul>
+                    <li>Mã Thiết Bị: [Mã Thiết Bị]</li>
+                    <li>Tên Thiết Bị: [Tên Thiết Bị]</li>
+                    <li>Danh Mục: [Danh Mục Thiết Bị]</li>
+                </ul>
+                <p>Xin cảm ơn sự đóng góp của bạn trong việc duy trì và bảo dưỡng thiết bị.</p>
+                <p>Trân trọng,</p>
+                <p>[Tên Người Gửi]</p>
+            </body>
+            </html>
+        ";
         $mail = new PHPMailer(true);
         try {
             $mail->CharSet = "UTF-8";
@@ -175,14 +201,6 @@ class RepairModel extends Model
                 "message" => "Có lỗi xảy ra khi gửi email: " . $e->getMessage()
             ];
         }
-        // }
-
-        // } else {
-        //     return [
-        //         "status" => "error",
-        //         "message" => "Có lỗi xảy ra khi gửi"
-        //     ];
-        // }
     }
     function assignRepair($idStaff, $id)
     {
@@ -190,11 +208,51 @@ class RepairModel extends Model
         SET `phancong`= $idStaff
         WHERE `id`='$id'";
         $result = $this->conn->query($query);
-        $queryStaff = "SELECT email FROM nguoidung WHERE id = $idStaff LIMIT 1";
+        $queryStaff = "SELECT * FROM nguoidung WHERE id = $idStaff LIMIT 1";
         $rsDataStaff = $this->conn->query($queryStaff);
         $emailStaff = $rsDataStaff->fetch_assoc();
         // $this->sendEmailAssign("Assign", "Assign", 'ádasdsad', $emailStaff['email']);
-        $noidung = '<strong>Tiêu đề :</strong> <br> <strong>Ngày tạo :</strong><br> <strong>Nội dung :</strong><br><p></p>';
+        $queryGetDevice = "SELECT m.*, tb.ten as tenthietbi FROM muon as m, suachua as sc, thietbi as tb 
+        WHERE sc.madonmuon = m.madonmuon 
+        AND m.thietbi_id = tb.id 
+        AND sc.thietbi_id = m.thietbi_id
+        AND sc.id = $id";
+        $rs = $this->conn->query($queryGetDevice);
+        $data = [];
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        // $noidung = '<strong>Tiêu đề :</strong> <br> <strong>Ngày tạo :</strong><br> <strong>Nội dung :</strong><br><p></p>';
+        $noidung = "
+            <html>
+            <head>
+                <title>Thông báo phân công kiểm tra sửa chữa</title>
+            </head>
+            <body>
+                <p>Xin chào {$emailStaff['hoten']},</p>
+                <p>Bạn đã được phân công kiểm tra sửa chữa thiết bị. Hãy thực hiện công việc sau:</p>
+                <ol>
+                    <li>Kiểm tra tình trạng của thiết bị.</li>
+                    <li>Thực hiện sửa chữa nếu cần.</li>
+                    <li>Báo cáo kết quả và tình trạng sửa chữa cho quản lý.</li>
+                </ol>
+                <p>Thời gian phân công: {$emailStaff['ngaygui']}</p>
+                <p>Thiết bị cần kiểm tra sửa chữa:</p>
+                ";
+        foreach ($data as $row) {
+            $noidung .= "<ul> 
+                        <li>Mã Thiết Bị: {$row['mathietbi']}</li>
+                        <li>Tên Thiết Bị: {$row['tenthietbi']}</li>
+                        </ul>";
+        }
+
+
+        $noidung .= "
+                <p>Xin cảm ơn sự đóng góp của bạn trong việc duy trì và bảo dưỡng thiết bị.</p>
+                <p>Trân trọng,</p>
+            </body>
+            </html>
+";
         $mail = new PHPMailer(true);
         try {
             $mail->CharSet = "UTF-8";

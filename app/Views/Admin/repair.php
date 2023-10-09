@@ -1,3 +1,80 @@
+<head>
+    <style>
+        .custom-tag-red {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            background-color: #ff0000bd;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        .custom-tag-blue {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            background-color: #0b5ed7;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        .custom-tag-green {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            background-color: #157347;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+
+        .custom-tag-gray {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            background-color: #7f878f;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        .custom-tag-yellow {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #091544;
+            background-color: #eae425fa;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        .custom-tag-white {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #091544;
+            background-color: #f8f9fa;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
 <div class="container-fluid px-4">
     <h1 class="mt-4">Danh sách yêu cầu sửa chữa đã nhận</h1>
     <div class="card mb-4">
@@ -14,7 +91,7 @@
                     </div>
 
                     <input id="datatable-input" type="text" class="form-control col-16" placeholder="Search name, email..." aria-label="Search..." aria-describedby="button-addon2">
-                    <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
+                    <button class="btn btn-primary col-2" type="submit" id="button-search">Search</button>
                     <div class="col-3 mx-3">
                         <select id="select-status" class="form-select col select" aria-label="Default select example">
                             <option value="" selected disabled hidden>Trạng thái</option>
@@ -43,7 +120,7 @@
                     <div class="form-group">
                         <label for="endDate"></label>
 
-                        <input type="button" class="form-control btn-success" id="reset" name="reset" value="Reset">
+                        <input type="button" class="form-control btn-primary" id="reset" name="reset" value="Reset">
                     </div>
                 </div>
             </div>
@@ -243,7 +320,22 @@
                                         return `<a href="" class="modal-desc-user" data-bs-toggle="modal" data-id="${staffName.id}" data-bs-target="#ModalUser">${staffName.hoten}</a> `;
                                     } else return "Chưa phân công"
                                 },
-                                e.tinhtrang,
+                                // e.tinhtrang,
+                                function() {
+                                    if (e.tinhtrang == "Hỏng") {
+                                        return `<span class="custom-tag-red">${e.tinhtrang}</span>`
+                                    } else if (e.tinhtrang == "Hoàn thành") {
+                                        return `<span class="custom-tag-blue">${e.tinhtrang}</span>`
+                                    } else if (e.tinhtrang == "Thất lạc") {
+                                        return `<span class="custom-tag-gray">${e.tinhtrang}</span>`
+                                    } else if (e.tinhtrang == "Cần sửa chữa" || e.tinhtrang == "Đang kiểm tra" || e.tinhtrang == "Cần sửa chữa") {
+                                        return `<span class="custom-tag-yellow">${e.tinhtrang}</span>`
+                                    } else if (e.tinhtrang == "Chờ xử lý") {
+                                        return `<span class="custom-tag-white">${e.tinhtrang}</span>`
+                                    }
+                                    return `<span class="custom-tag-green">${e.tinhtrang}</span>`
+
+                                },
                                 function() {
                                     return (
                                         e.tinhtrang == 'Hoàn thành' ? "" : `
@@ -257,30 +349,8 @@
                             ])
                         });
                         table.draw();
-                        let pagination = ""
-                        let itemPerPage = 5;
-                        if (prevPage == 0) {
-                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        } else {
-                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        }
-                        for (let i = 0; i < (response.count / itemPerPage); i++) {
-                            if (i == prevPage) {
-                                pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+                        let pagination = generatePagination(prevPage, Math.ceil((response.count / 5)), 5);
 
-                            } else {
-                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
-
-                            }
-                        }
-                        if (prevPage == Math.floor((response.count / itemPerPage))) {
-                            console.log(response.count / itemPerPage, 'dis');
-                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        } else {
-                            console.log(response.count / itemPerPage);
-
-                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        }
                         $('#pagination').html(pagination)
                     } else {
                         toastr.error(response.message);
@@ -484,6 +554,62 @@
                 }
             })
         });
+
+        function generatePagination(currentPage, totalPages, itemPerPage) {
+            let pagination = '';
+            const centerPages = 3; // Số trang ở giữa bạn muốn hiển thị
+
+            if (currentPage === 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            }
+
+            if (totalPages <= 1) {
+                pagination += '<li class="page-item active"><a class="page-link" href="#" data-page="0">1</a></li>';
+            } else if (totalPages <= 5) {
+                for (let i = 0; i < totalPages; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+            } else {
+                const startPage = Math.max(currentPage - Math.floor(centerPages / 2), 0);
+                const endPage = Math.min(startPage + centerPages - 1, totalPages - 1);
+
+                if (startPage > 0) {
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
+                    if (startPage > 1) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+
+                if (endPage < totalPages - 1) {
+                    if (endPage < totalPages - 2) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages - 1}">${totalPages}</a></li>`;
+                }
+            }
+
+            if (currentPage >= totalPages - 1 || totalPages < 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            }
+
+            return pagination;
+        }
     })
 </script>
 <script>

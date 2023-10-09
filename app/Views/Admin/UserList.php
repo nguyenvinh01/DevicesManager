@@ -16,7 +16,7 @@
                     </div>
 
                     <input id="datatable-input" type="text" class="form-control col-16" placeholder="Search name, email..." aria-label="Search..." aria-describedby="button-addon2">
-                    <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
+                    <button class="btn btn-primary col-2" type="submit" id="button-search">Search</button>
                     <div class="col-3 mx-3">
                         <select id="select-role" class="form-select col" aria-label="Default select example">
                             <option value="" selected disabled hidden>Loại tài khoản</option>
@@ -29,13 +29,13 @@
                 </div>
             </div>
             <div>
-                <!-- <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                     Thêm mới
                 </button>
-                <button class="btn btn-success" id="btn-export">
+                <button class="btn btn-primary" id="btn-export">
                     Export
                 </button>
-                <button class="btn btn-success" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
+                <button class="btn btn-primary" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
                     Import
                 </button> -->
                 <div class="dropdown">
@@ -43,13 +43,13 @@
                         Thao tác
                     </button>
                     <div class="dropdown-menu">
-                        <button type="button" class="btn btn-success dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                        <button type="button" class="btn btn-primary dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                             Thêm mới
                         </button>
-                        <button class="btn btn-success dropdown-item" id="btn-export">
+                        <button class="btn btn-primary dropdown-item" id="btn-export">
                             Export
                         </button>
-                        <button class="btn btn-success dropdown-item" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
+                        <button class="btn btn-primary dropdown-item" id="btn-export" data-bs-toggle="modal" data-bs-target="#exampleModalImport">
                             Import
                         </button>
                     </div>
@@ -154,6 +154,17 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="category-film" class="col-form-label">Chức vụ:</label>
+
+                                            <select class="form-select" aria-label="Default select example" id="role-edit" tabindex="8" name="role" required>
+                                                <option value="" selected>Chọn chức vụ</option>
+                                                <option value="3">Nhân viên</option>
+                                                <option value="2">Người dùng</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -213,6 +224,7 @@
 
                                             <select class="form-select" aria-label="Default select example" id="department" tabindex="8" name="phongban" required>
                                                 <option value="" selected>Chọn phòng ban</option>
+
                                             </select>
                                         </div>
                                     </div>
@@ -239,7 +251,7 @@
                         <div class="modal-body">
                             <form method="POST" enctype="multipart/form-data" id="importExcel">
                                 <input type="file" name="excelFile" accept=".xlsx">
-                                <button class="btn btn-success" type="submit">Import </button>
+                                <button class="btn btn-primary" type="submit">Import </button>
                             </form>
                         </div>
 
@@ -311,10 +323,41 @@
                 success: function(response) {
                     console.log(response, 112);
                     if (response.status == 'success') {
-                        toastr.success(response.message);
-                        var modalElement = document.getElementById(`exampleModalImport`);
-                        var modal = bootstrap.Modal.getInstance(modalElement);
-                        modal.hide();
+                        if (response.error) {
+
+                            // Lưu cấu hình Toastr hiện tại
+                            var currentToastrConfig = toastr.options;
+
+                            // Đặt cấu hình mới
+                            toastr.options = {
+                                closeButton: true,
+                                progressBar: true,
+                                positionClass: 'toast-top-right',
+                                timeOut: 10000, // Đặt timeOut thành 0 để không tự đóng
+                                showMethod: 'fadeIn',
+                                hideMethod: 'fadeOut',
+                            };
+                            let error = "</br>`";
+                            response.error.forEach((e) => {
+                                error += `${e} </br>`
+                            })
+                            toastr.success(response.message + error);
+                            var modalElement = document.getElementById(`exampleModalImport`);
+                            var modal = bootstrap.Modal.getInstance(modalElement);
+                            modal.hide();
+                            // Hiển thị thông báo
+                            // toastr.success("Thông báo không tự đóng");
+
+                            // Khôi phục lại cấu hình Toastr trước đó
+                            toastr.options = currentToastrConfig;
+
+
+                        } else {
+                            toastr.success(response.message);
+                            var modalElement = document.getElementById(`exampleModalImport`);
+                            var modal = bootstrap.Modal.getInstance(modalElement);
+                            modal.hide();
+                        }
                     } else {
                         toastr.error(response.message);
 
@@ -480,7 +523,9 @@
         });
         $(document).on('click', '.modal-Edit', function() {
             var id = $(this).data('id');
+            const roleOption = [1, 2, 3];
             let phongbanedit = '';
+            let role;
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/userlist/getModalEdit",
                 method: "POST",
@@ -505,6 +550,16 @@
                         }
                     })
                     $('#department-edit').append(phongbanedit);
+                    // roleOption.forEach((r) => {
+                    //     if (response.data.quyen_id == r) {
+                    //         role += `<option value="${r}" selected>${response.data.quyen_id == 1 ? 'Người dùng' : 'Nhân viên'}</option>`
+                    //     } else {
+                    //         role += `<option value="${r}">${response.data.quyen_id == 1 ? 'Người dùng' : 'Nhân viên'}</option>`
+                    //     }
+                    // })
+                    // $('#role-edit').val(response.data.quyen_id);
+                    $('#role-edit option[value="' + response.data.quyen_id + '"]').prop('selected', true);
+
                 }
             })
         });
@@ -557,66 +612,68 @@
                         ])
                     })
                     table.draw();
-                    let pagination = "";
-                    let itemPerPage = 5; // Số lượng trang hiển thị trên một dãy phân trang
-                    let totalPages = Math.ceil(response.count / itemPerPage); // Tính tổng số trang
-
-                    // Tạo nút "Previous"
-                    if (prevPage == 0) {
-                        pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                    } else {
-                        pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                    }
-
-                    // Tạo dãy các trang
-                    if (totalPages <= 5) {
-                        // Nếu có ít hơn hoặc bằng 5 trang, hiển thị tất cả trang
-                        for (let i = 0; i < totalPages; i++) {
-                            if (i == prevPage) {
-                                pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
-                            } else {
-                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
-                            }
-                        }
-                    } else {
-                        // Nếu có nhiều hơn 5 trang, hiển thị ba trang trước và sau trang hiện tại
-                        let startPage = Math.max(prevPage - 2, 0); // Trang đầu tiên
-                        let endPage = Math.min(prevPage + 2, totalPages - 1); // Trang cuối cùng
-
-                        if (startPage > 0) {
-                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>';
-                            if (startPage > 1) {
-                                pagination += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
-                            }
-                        }
-
-                        for (let i = startPage; i <= endPage; i++) {
-                            if (i == prevPage) {
-                                pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
-                            } else {
-                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
-                            }
-                        }
-
-                        if (endPage < totalPages - 1) {
-                            if (endPage < totalPages - 2) {
-                                pagination += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
-                            }
-                            pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${totalPages - 1}>${totalPages}</a></li>`;
-                        }
-                    }
-
-                    // Tạo nút "Next"
-                    if (prevPage == totalPages - 1) {
-                        pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                    } else {
-                        pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                    }
-
+                    let pagination = generatePagination(prevPage, Math.ceil((response.count / 10)), 10);
                     $('#pagination').html(pagination);
                 }
             })
         }
+
+        function generatePagination(currentPage, totalPages, itemPerPage) {
+            let pagination = '';
+            const centerPages = 3; // Số trang ở giữa bạn muốn hiển thị
+
+            if (currentPage === 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            }
+
+            if (totalPages <= 1) {
+                pagination += '<li class="page-item active"><a class="page-link" href="#" data-page="0">1</a></li>';
+            } else if (totalPages <= 5) {
+                for (let i = 0; i < totalPages; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+            } else {
+                const startPage = Math.max(currentPage - Math.floor(centerPages / 2), 0);
+                const endPage = Math.min(startPage + centerPages - 1, totalPages - 1);
+
+                if (startPage > 0) {
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
+                    if (startPage > 1) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+
+                if (endPage < totalPages - 1) {
+                    if (endPage < totalPages - 2) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages - 1}">${totalPages}</a></li>`;
+                }
+            }
+
+            if (currentPage >= totalPages - 1 || totalPages < 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            }
+
+            return pagination;
+        }
+
     })
 </script>
 

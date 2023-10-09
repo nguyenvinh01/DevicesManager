@@ -139,7 +139,7 @@ class ForgetModel extends Model
             $mail->setFrom(SMTP_UNAME, "WEBSITE NHÀ TRƯỜNG");
             $mail->addAddress($email);
             $mail->isHTML(true);
-            $mail->Subject = 'Mã xác nhận Email';
+            $mail->Subject = 'Đặt lại mật khẩu';
             $mail->Body = $noidung;
             $mail->AltBody = $noidung;
             $result = $mail->send();

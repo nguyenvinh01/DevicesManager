@@ -46,13 +46,19 @@ class ProfileController extends Controller
     {
         $hoten = $_POST['hoten'];
         $email  = $_POST['email'];
-        // $matkhau  = $_POST['matkhau'];
+        $phongban  = $_POST['phongban'];
         $sdt = $_POST['sodienthoai'];
-        $taikhoan = $_POST['taikhoan'];
+        // $taikhoan = $_POST['taikhoan'];
         $diachi = $_POST['diachi'];
         $id  = $_SESSION['id'];
 
-        $response = $this->profile->updateUser($hoten, $email, $sdt, $taikhoan, $diachi, $id);
+        $response = $this->profile->updateUser($hoten, $email, $sdt, $diachi, $id, $phongban);
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function getDepartment()
+    {
+        $response = $this->profile->getDepartment();
         header('Content-Type: application/json');
         echo json_encode($response);
     }

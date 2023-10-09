@@ -53,7 +53,7 @@ class ProfileModel extends Model
             ];
         }
     }
-    public function updateUser($hoten, $email,  $sdt, $taikhoan, $diachi, $id)
+    public function updateUser($hoten, $email, $sdt, $diachi, $id, $phongban)
     {
         // Kiểm tra trùng email
         $emailExistsQuery = "SELECT COUNT(*) as count FROM nguoidung WHERE email = '{$email}' AND id != '{$id}'";
@@ -67,27 +67,16 @@ class ProfileModel extends Model
             ];
         }
 
-        // Kiểm tra trùng tài khoản
-        $taikhoanExistsQuery = "SELECT COUNT(*) as count FROM nguoidung WHERE taikhoan = '{$taikhoan}' AND id != '{$id}'";
-        $taikhoanExistsResult = $this->conn->query($taikhoanExistsQuery);
-        $taikhoanExists = $taikhoanExistsResult->fetch_assoc();
-        $taikhoanCount = $taikhoanExists['count'];
-        if ($taikhoanCount > 0) {
-            return [
-                'status' => 'error',
-                'message' => 'Tài khoản đã tồn tại trong hệ thống.'
-            ];
-        }
-
         // Thực hiện câu lệnh UPDATE
         $query = "UPDATE `nguoidung` 
-                SET `hoten`='{$hoten}',`email`='{$email}',`sodienthoai`='{$sdt}',`taikhoan`='{$taikhoan}',`diachi`='{$diachi}'
+                SET `hoten`='{$hoten}',`email`='{$email}',`sodienthoai`='{$sdt}',`diachi`='{$diachi}', `phongban` = '{$phongban}'
                 WHERE `id`='{$id}'";
         $result = $this->conn->query($query);
         if ($result) {
             return [
                 'status' => 'success',
-                'message' => 'Thông tin người dùng đã được cập nhật.'
+                'message' => 'Thông tin người dùng đã được cập nhật.',
+                '' => $query
             ];
         } else {
             return [
@@ -95,5 +84,17 @@ class ProfileModel extends Model
                 'message' => 'Có lỗi xảy ra trong quá trình cập nhật người dùng.'
             ];
         }
+    }
+    public function getDepartment()
+    {
+        $query = "SELECT * FROM phongban";
+        $rs = $this->conn->query($query);
+        $data = array();
+        while ($row = $rs->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return [
+            'data' => $data
+        ];
     }
 }

@@ -34,9 +34,9 @@ class BorrowHistoryModel extends Model
         if ($keyword != '') {
             $query .= " AND b.ten LIKE '%$keyword%'";
         }
+        $query .= " GROUP BY a.madonmuon";
         $queryCount = $query;
-        $query .= " GROUP BY a.madonmuon
-        ORDER BY a.id DESC LIMIT 5 OFFSET $offset;";
+        $query .= " ORDER BY a.id DESC LIMIT 5 OFFSET $offset;";
         $rs = $this->conn->query($query);
         $rsCount = $this->conn->query($queryCount);
 

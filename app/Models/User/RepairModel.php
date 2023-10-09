@@ -48,7 +48,6 @@ class RepairModel extends Model
             'staff' => $dataStaff,
             'count' => count($rsCount->fetch_all()),
             'query' => $query,
-            'count' => $queryCount
         ];
     }
     function getDeviceType()

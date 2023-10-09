@@ -9,6 +9,9 @@ require 'vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use Picqer\Barcode\BarcodeGeneratorHTML;
+use Zend\Barcode\Barcode;
 
 class DeviceListModel extends Model
 {
@@ -16,7 +19,7 @@ class DeviceListModel extends Model
     {
         $offset = $page * 5;
 
-        $query = "SELECT a.*, b.ten as 'tenloai'
+        $query = "SELECT a.*, b.ten as tenloai
         FROM thietbi as a,loaithietbi as b, danhmuc as c
         WHERE a.loaithietbi_code = b.maloai AND b.madanhmuc = c.madanhmuc";
 
@@ -122,6 +125,7 @@ class DeviceListModel extends Model
             'cate' => $dataCate
         ];
     }
+
     function addDevice($ten,  $ltb, $dtkt, $image, $cate)
     {
         $queryLastId = "SELECT MAX(mathietbi) AS count
@@ -136,8 +140,12 @@ class DeviceListModel extends Model
         // $maloai = $this->getDeviceTypeCode($ltb);
         $ma_thiet_bi = $ltb . "-" . str_pad($id + 1, 5, "0", STR_PAD_LEFT);
 
-        $query = "INSERT INTO thietbi ( ten, hinhanh, loaithietbi_code, dactinhkithuat, mathietbi, madanhmuc, trangthai) 
-        VALUES ( '{$ten}', '{$image}', '{$ltb}', '{$dtkt}', '{$ma_thiet_bi}', '{$cate}', 'Sẵn Sàng') ";
+        $barcodeImage = $this->generateBarcode($ma_thiet_bi);
+        $tenbarcode = $this->generateMixedRandomString($ma_thiet_bi);
+        $barcodeImagePath = "./uploads/barcode/{$tenbarcode}.png";
+        file_put_contents($barcodeImagePath, $barcodeImage);
+        $query = "INSERT INTO thietbi ( ten, hinhanh, loaithietbi_code, dactinhkithuat, mathietbi, madanhmuc, trangthai, barcode) 
+        VALUES ( '{$ten}', '{$image}', '{$ltb}', '{$dtkt}', '{$ma_thiet_bi}', '{$cate}', 'Sẵn Sàng', '{$barcodeImagePath}') ";
 
 
         $result = $this->conn->query($query);
@@ -180,9 +188,12 @@ class DeviceListModel extends Model
 
             $imageTb = $rsImage['hinhanh'];
         }
-        $query = "INSERT INTO thietbi ( ten, hinhanh, loaithietbi_code, dactinhkithuat, mathietbi, madanhmuc, trangthai) 
-        VALUES ( '{$ten}', '{$imageTb}', '{$ltb}', '{$dtkt}', '{$ma_thiet_bi}', '{$cate}', 'Sẵn Sàng') ";
-
+        $barcodeImage = $this->generateBarcode($ma_thiet_bi);
+        $tenbarcode = $this->generateMixedRandomString($ma_thiet_bi);
+        $barcodeImagePath = "./uploads/barcode/{$tenbarcode}.png";
+        file_put_contents($barcodeImagePath, $barcodeImage);
+        $query = "INSERT INTO thietbi ( ten, hinhanh, loaithietbi_code, dactinhkithuat, mathietbi, madanhmuc, trangthai, barcode) 
+        VALUES ( '{$ten}', '{$imageTb}', '{$ltb}', '{$dtkt}', '{$ma_thiet_bi}', '{$cate}', 'Sẵn Sàng', '{$barcodeImagePath}') ";
 
         $result = $this->conn->query($query);
         if ($result) {
@@ -204,6 +215,79 @@ class DeviceListModel extends Model
             ];
         }
     }
+    // function generateBarcode($text, $outputFileName = './uploads/barcode/')
+    // {
+    //     $barcodeOptions = [
+    //         'text' => $text,
+    //         'drawText' => true,
+    //     ];
+
+    //     $rendererOptions = ['imageType' => 'png'];
+
+    //     Barcode::factory(
+    //         'code128',
+    //         'image',
+    //         $barcodeOptions,
+    //         $rendererOptions
+    //     )->render();
+    // }
+    function generateMixedRandomString($deviceCode)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $randomString = '';
+        $length = 10;
+        // Loại bỏ các ký tự đặc biệt và khoảng trắng khỏi mã thiết bị
+        $deviceCode = preg_replace("/[^A-Za-z0-9]/", "", $deviceCode);
+
+        // Kết hợp mã thiết bị và chuỗi ngẫu nhiên
+        $combinedString = $deviceCode;
+
+        for ($i = 0; $i < $length; $i++) {
+            $combinedString .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        // Sắp xếp lại chuỗi ngẫu nhiên
+        $combinedArray = str_split($combinedString);
+        shuffle($combinedArray);
+        $randomString = implode('', $combinedArray);
+
+        return $randomString;
+    }
+
+    function generateBarcode($code)
+    {
+        $barcodeGenerator = new BarcodeGeneratorPNG();
+        $barcodeImage = $barcodeGenerator->getBarcode($code, $barcodeGenerator::TYPE_CODE_128, 2, 70);
+
+        return $barcodeImage;
+    }
+    // function generateBarcode($code)
+    // {
+    //     // Create an instance of the BarcodeGeneratorPNG class
+    //     $generator = new BarcodeGeneratorPNG();
+
+    //     // Define the barcode data (e.g., product code, number, etc.)
+    //     $barcodeData = '123456789';
+
+    //     // Generate the barcode image
+    //     $barcodeImage = $generator->getBarcode($code, $generator::TYPE_CODE_128);
+
+    //     // Define the folder where you want to save the barcode images
+    //     $imageFolder = './uploads/barcode/';
+
+    //     // Make sure the folder exists, create it if not
+    //     if (!file_exists($imageFolder)) {
+    //         mkdir($imageFolder, 0777, true);
+    //     }
+
+    //     // Generate a unique filename for the barcode image (e.g., using a timestamp)
+    //     $timestamp = time();
+    //     $barcodeFilename =  "$code.png";
+    //     $barcodeImagePath = $imageFolder . $barcodeFilename;
+    //     file_put_contents($barcodeImagePath, $barcodeImage);
+    //     // Save the barcode image to the folder
+    //     // imagepng($barcodeImage, $barcodeImagePath);
+    // }
     function editDevice($id, $ten, $tinhtrang, $ltb, $dtkt, $image, $cate)
     {
         // $query = "UPDATE `thietbi` 

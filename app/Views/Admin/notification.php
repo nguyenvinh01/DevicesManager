@@ -5,7 +5,7 @@
             <div class="flex-row col-4">
                 <div class="input-group mb-3 flex-row d-flex">
                     <input id="datatable-input" type="text" class="form-control col-4" placeholder="Tên nội dung..." aria-label="Search..." aria-describedby="button-addon2">
-                    <button class="btn btn-success col-4" type="submit" id="button-search">Tìm kiếm</button>
+                    <button class="btn btn-primary col-4" type="submit" id="button-search">Tìm kiếm</button>
                     <div class="col-16 d-flex flex-row me-3">
                         <div class="form-group me-3">
                             <label for="startDate"></label>
@@ -20,13 +20,13 @@
                         <div class="form-group">
                             <label for="endDate"></label>
 
-                            <input type="button" class="form-control btn-success" id="reset" name="reset" value="Reset">
+                            <input type="button" class="form-control btn-primary" id="reset" name="reset" value="Reset">
                         </div>
                     </div>
                 </div>
             </div>
             <div>
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalAdd">
                     Thêm mới
                 </button>
 
@@ -143,30 +143,30 @@
                         });
                         table.draw();
 
-                        let pagination = ""
-                        let itemPerPage = 15;
-                        if (prevPage == 0) {
-                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        } else {
-                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        }
-                        for (let i = 0; i < (response.count / itemPerPage); i++) {
-                            if (i == prevPage) {
-                                pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+                        let pagination = generatePagination(prevPage, Math.ceil((response.count / 15)), 15);
+                        // let itemPerPage = 15;
+                        // if (prevPage == 0) {
+                        //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                        // } else {
+                        //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+                        // }
+                        // for (let i = 0; i < (response.count / itemPerPage); i++) {
+                        //     if (i == prevPage) {
+                        //         pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
 
-                            } else {
-                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
+                        //     } else {
+                        //         pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i+1}</a></li>`
 
-                            }
-                        }
-                        if (prevPage == Math.floor((response.count / itemPerPage))) {
-                            console.log(response.count / itemPerPage, 'dis');
-                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        } else {
-                            console.log(response.count / itemPerPage);
+                        //     }
+                        // }
+                        // if (prevPage == Math.floor((response.count / itemPerPage))) {
+                        //     console.log(response.count / itemPerPage, 'dis');
+                        //     pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        // } else {
+                        //     console.log(response.count / itemPerPage);
 
-                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        }
+                        //     pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+                        // }
                         $('#pagination').html(pagination)
                     } else {
                         toastr.error(response.message);
@@ -260,12 +260,12 @@
                 dataType: 'json',
                 success: function(response) {
                     console.log(response, 'res');
-                    $('#modal-body-desc-title').html(`Tiêu đề: <span>${response.data[0].noidung}</span>`)
+                    $('#modal-body-desc-title').html(`Tiêu đề: <span>${response.data[0].tieude}</span>`)
                     $('#modal-body-desc-content').html(`
                     <div class="mx-3 my-3">
                     Nội dung thông báo:
                     <p>
-                    <span>${response.data[0].tieude}</span>
+                    <span>${response.data[0].noidung}</span>
                     </p>
                     
                     </div>
@@ -302,6 +302,64 @@
                 }
             });
         });
+
+        function generatePagination(currentPage, totalPages, itemPerPage) {
+            let pagination = '';
+            const centerPages = 3; // Số trang ở giữa bạn muốn hiển thị
+
+            if (currentPage === 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            }
+
+            if (totalPages <= 1) {
+                pagination += '<li class="page-item active"><a class="page-link" href="#" data-page="0">1</a></li>';
+            } else if (totalPages <= 5) {
+                for (let i = 0; i < totalPages; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+            } else {
+                const startPage = Math.max(currentPage - Math.floor(centerPages / 2), 0);
+                const endPage = Math.min(startPage + centerPages - 1, totalPages - 1);
+
+                if (startPage > 0) {
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
+                    if (startPage > 1) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+
+                if (endPage < totalPages - 1) {
+                    if (endPage < totalPages - 2) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages - 1}">${totalPages}</a></li>`;
+                }
+            }
+
+            if (currentPage >= totalPages - 1 || totalPages < 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            }
+
+            return pagination;
+        }
+
+
     })
 </script>
 <script>

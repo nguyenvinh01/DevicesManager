@@ -17,8 +17,8 @@ class LoginController extends Controller
     }
     public function validLogin()
     {
-        $taikhoan = $_POST['taikhoan'];
-        $matkhau  = $_POST['matkhau'];
+        $taikhoan = trim($_POST['taikhoan']);
+        $matkhau  = trim($_POST['matkhau']);
 
         $response = $this->login->CheckLogin($taikhoan, $matkhau);
 

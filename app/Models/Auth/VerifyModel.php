@@ -50,10 +50,10 @@ class VerifyModel extends Model
 
     public function VerifyToken($token)
     {
-        $query = "SELECT * FROM nguoidung WHERE `nguoidung`.`verify_code` = '$token'";
+        $query = "SELECT *, COUNT(*) as count FROM nguoidung WHERE verify_code = '$token'";
         $account = $this->conn->query($query);
         $rs = $account->fetch_assoc();
-        if (count($rs) > 0) {
+        if ($rs['count'] > 0) {
             if ($rs['verified'] == 0) {
                 $id = $rs['id'];
                 $updatedVerify = "UPDATE `nguoidung` SET `verified` = '1' WHERE `nguoidung`.`id` = $id";
@@ -68,12 +68,11 @@ class VerifyModel extends Model
                     'message' => 'Tài khoản đã được xác minh'
                 ];
             }
-        } else {
+        } else
             return [
                 'status' => 'error',
                 'message' => 'Xác minh không tồn tại'
             ];
-        }
     }
     public function SendVerify($verify, $email)
     {

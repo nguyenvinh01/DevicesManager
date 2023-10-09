@@ -15,6 +15,10 @@ class ComposerStaticInit53f6ad8d048819be5bdbed3b90084c5b
         'Z' => 
         array (
             'ZipStream\\' => 10,
+            'Zend\\Validator\\' => 15,
+            'Zend\\Stdlib\\' => 12,
+            'Zend\\ServiceManager\\' => 20,
+            'Zend\\Barcode\\' => 13,
         ),
         'S' => 
         array (
@@ -25,6 +29,8 @@ class ComposerStaticInit53f6ad8d048819be5bdbed3b90084c5b
             'Psr\\SimpleCache\\' => 16,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
+            'Psr\\Container\\' => 14,
+            'Picqer\\Barcode\\' => 15,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
@@ -33,9 +39,9 @@ class ComposerStaticInit53f6ad8d048819be5bdbed3b90084c5b
             'MyCLabs\\Enum\\' => 13,
             'Matrix\\' => 7,
         ),
-        'E' => 
+        'I' => 
         array (
-            'Excel\\' => 6,
+            'Interop\\Container\\' => 18,
         ),
         'C' => 
         array (
@@ -47,6 +53,22 @@ class ComposerStaticInit53f6ad8d048819be5bdbed3b90084c5b
         'ZipStream\\' => 
         array (
             0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
+        ),
+        'Zend\\Validator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-validator/src',
+        ),
+        'Zend\\Stdlib\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-stdlib/src',
+        ),
+        'Zend\\ServiceManager\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src',
+        ),
+        'Zend\\Barcode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-barcode/src',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
@@ -65,6 +87,14 @@ class ComposerStaticInit53f6ad8d048819be5bdbed3b90084c5b
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
+        'Picqer\\Barcode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/picqer/php-barcode-generator/src',
+        ),
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
@@ -81,9 +111,9 @@ class ComposerStaticInit53f6ad8d048819be5bdbed3b90084c5b
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
         ),
-        'Excel\\' => 
+        'Interop\\Container\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/PHPExcel',
+            0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
         ),
         'Complex\\' => 
         array (

@@ -4,6 +4,82 @@ if ($_SESSION['quyen'] == 2) {
 }
 ?>
 
+<head>
+    <style>
+        .custom-tag-red {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            background-color: #ff0000bd;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        .custom-tag-blue {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            background-color: #0b5ed7;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        .custom-tag-green {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            background-color: #157347;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+
+        .custom-tag-gray {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            background-color: #7f878f;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        .custom-tag-yellow {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #091544;
+            background-color: #eae425fa;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        .custom-tag-white {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #091544;
+            background-color: #f8f9fa;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+    </style>
+</head>
 <div class="container-fluid px-4">
     <h1 class="mt-4">Lịch sử mượn trả</h1>
     <div class="card mb-4">
@@ -15,11 +91,12 @@ if ($_SESSION['quyen'] == 2) {
                             <option value="">Tất cả</option>
                             <option value="hoten">Người dùng</option>
                             <option value="thietbi">Tên thiết bị</option>
+                            <option value="madonmuon">Mã đơn mượn</option>
                         </select>
                     </div>
 
                     <input id="datatable-input" type="text" class="form-control col-16" placeholder="Search name, email..." aria-label="Search..." aria-describedby="button-addon2">
-                    <button class="btn btn-success col-2" type="submit" id="button-search">Search</button>
+                    <button class="btn btn-primary col-2" type="submit" id="button-search">Search</button>
                     <div class="col-3 mx-3">
                         <select id="select-status" class="form-select col select" aria-label="Default select example">
                             <option value="" selected disabled hidden>Trạng thái</option>
@@ -50,14 +127,22 @@ if ($_SESSION['quyen'] == 2) {
                     <div class="form-group">
                         <label for="endDate"></label>
 
-                        <input type="button" class="form-control btn-success" id="reset" name="reset" value="Reset">
+                        <input type="button" class="form-control btn-primary" id="reset" name="reset" value="Reset">
                     </div>
                     <div class="form-group ms-3">
                         <label for="btn-export"></label>
                         <!-- <button class="btn btn-success" id="btn-export">
                             Export
                         </button> -->
-                        <input type="button" class="form-control btn-success" id="btn-export" name="reset" value="Export">
+                        <input type="button" class="form-control btn-primary" id="btn-export" name="reset" value="Export">
+
+                    </div>
+                    <div class="form-group ms-3">
+                        <label for="btn-overdue"></label>
+                        <!-- <button class="btn btn-success" id="btn-export">
+                            Export
+                        </button> -->
+                        <input type="button" class="form-control btn-primary" id="btn-overdue" name="reset" value="Gửi thông báo">
 
                     </div>
                 </div>
@@ -74,8 +159,9 @@ if ($_SESSION['quyen'] == 2) {
                         <!-- <th>Số lượng</th> -->
                         <th>Ngày mượn</th>
                         <th>Ngày trả</th>
-                        <th>Địa điểm</th>
-                        <!-- <th>Tình trạng</th> -->
+                        <th>Mã thiết bị</th>
+                        <!-- <th>Địa điểm</th> -->
+                        <th>Tình trạng</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -278,8 +364,23 @@ if ($_SESSION['quyen'] == 2) {
                                 convertDateFormat(e.ngaymuon),
                                 convertDateFormat(e.ngaytra),
                                 // e.dactinhkithuat,
-                                e.diadiem,
-                                // e.trangthai,
+                                // e.diadiem,
+                                e.mathietbi,
+                                function() {
+                                    if (e.trangthai == "Quá hạn" || e.trangthai == "Từ chối yêu cầu") {
+                                        return `<span class="custom-tag-red">${e.trangthai}</span>`
+                                    } else if (e.trangthai == "Đang mượn") {
+                                        return `<span class="custom-tag-blue">${e.trangthai}</span>`
+                                    } else if (e.trangthai == "Thất lạc") {
+                                        return `<span class="custom-tag-gray">${e.trangthai}</span>`
+                                    } else if (e.trangthai == "Sửa chữa") {
+                                        return `<span class="custom-tag-yellow">${e.trangthai}</span>`
+                                    } else if (e.trangthai == "Chờ phê duyệt") {
+                                        return `<span class="custom-tag-white">${e.trangthai}</span>`
+                                    }
+                                    return `<span class="custom-tag-green">${e.trangthai}</span>`
+
+                                },
                                 function() {
                                     // return (e.trangthai == "Đã trả" || e.trangthai == "Từ chối yêu cầu" || e.trangthai == "Quá hạn" ? '' :
                                     return (`
@@ -289,7 +390,7 @@ if ($_SESSION['quyen'] == 2) {
                                                 Thao tác
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <button type="button" class="btn btn-primary modal-desc-borrow dropdown-item" data-bs-toggle="modal" data-id=${e.madonmuon} data-bs-target="#ModalDescBorrow">
+                                                <button type="button" class="btn btn-primary modal-desc-borrow dropdown-item" data-bs-toggle="modal" data-id=${e.id} data-bs-target="#ModalDescBorrow">
                                                     Cập nhật trạng thái
                                                 </button>  
                                             </ul>
@@ -300,63 +401,8 @@ if ($_SESSION['quyen'] == 2) {
                             ])
                         });
                         table.draw();
-
-                        let pagination = "";
-                        let itemPerPage = 5; // Số lượng trang hiển thị trên một dãy phân trang
-                        let totalPages = Math.ceil(response.count / itemPerPage); // Tính tổng số trang
-
-                        // Tạo nút "Previous"
-                        if (prevPage == 0) {
-                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        } else {
-                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
-                        }
-
-                        // Tạo dãy các trang
-                        if (totalPages <= 3) {
-                            // Nếu có ít hơn hoặc bằng 3 trang, hiển thị tất cả trang
-                            for (let i = 0; i < totalPages; i++) {
-                                if (i == prevPage) {
-                                    pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
-                                } else {
-                                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
-                                }
-                            }
-                        } else {
-                            // Nếu có nhiều hơn 3 trang, hiển thị ba trang trước và sau trang hiện tại
-                            let startPage = Math.max(prevPage - 1, 0); // Trang đầu tiên
-                            let endPage = Math.min(prevPage + 1, totalPages - 1); // Trang cuối cùng
-
-                            if (startPage > 0) {
-                                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>';
-                                if (startPage > 1) {
-                                    pagination += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
-                                }
-                            }
-
-                            for (let i = startPage; i <= endPage; i++) {
-                                if (i == prevPage) {
-                                    pagination += `<li class="page-item disabled"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
-                                } else {
-                                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${i}>${i + 1}</a></li>`;
-                                }
-                            }
-
-                            if (endPage < totalPages - 1) {
-                                if (endPage < totalPages - 2) {
-                                    pagination += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
-                                }
-                                pagination += `<li class="page-item"><a class="page-link" href="#" data-page=${totalPages - 1}>${totalPages}</a></li>`;
-                            }
-                        }
-
-                        // Tạo nút "Next"
-                        if (prevPage == totalPages - 1) {
-                            pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        } else {
-                            pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
-                        }
-
+                        console.log(Math.floor((response.count / 5)));
+                        let pagination = generatePagination(prevPage, Math.ceil((response.count / 5)), 5);;
                         $('#pagination').html(pagination);
 
                     } else {
@@ -429,6 +475,43 @@ if ($_SESSION['quyen'] == 2) {
                 error: function() {}
             });
         });
+        $('#btn-overdue').click(function(e) {
+            e.preventDefault();
+            console.log('overdue');
+            $.ajax({
+                url: "<?php echo BASE_URL; ?>/borrowdevice/sendMailOvcerdue",
+                data: {
+                    keyword: prevKeywordSearch,
+                    status: prevStatus,
+                    eDate: endDate,
+                    sDate: startDate,
+                    filter: prevFilter
+                },
+                method: "POST",
+                success: function(response) {
+                    console.log(response, 'response');
+                    // if (response === 'success') {
+                    // $.ajax({
+                    //     url: response,
+                    //     method: 'GET',
+                    //     xhrFields: {
+                    //         responseType: 'blob'
+                    //     },
+                    //     success: function(data) {
+                    //         console.log(data, 'data');
+                    //         saveAs(data, response);
+                    //     },
+                    //     error: function(xhr, status, error) {
+                    //         console.log(error, 'loi');
+                    //     }
+                    // });
+                    // } else {
+                    //     console.log(response.message);
+                    // }
+                },
+                error: function() {}
+            });
+        });
         $('#button-search').click((e) => {
             e.preventDefault();
             console.log('search');
@@ -450,11 +533,12 @@ if ($_SESSION['quyen'] == 2) {
             $("#startDate").val('');
             startDate = '';
             endDate = '';
+            prevPage = 0;
             // if (option != prevOptionSearch || keyword != prevKeywordSearch) {
             //     prevKeywordSearch = keyword;
             //     prevOptionSearch = option;
             // }l
-            getBorrowDeviceList(prevKeywordSearch, 0, startDate, endDate, prevStatus, prevFilter)
+            getBorrowDeviceList('', 0, '', '', '', '')
         })
         $('#select-status').change(function(e) {
             e.preventDefault();
@@ -600,7 +684,7 @@ if ($_SESSION['quyen'] == 2) {
 
             var id = $(this).serialize().split(/[=,&]/)[1];
             const params = new URLSearchParams(formData);
-
+            var noidung = $('#exampleFormControlTextarea1').val();
             const paramsArray = [];
 
             params.forEach((value, key) => {
@@ -610,13 +694,14 @@ if ($_SESSION['quyen'] == 2) {
                 });
             });
             paramsArray.shift()
-            console.log(paramsArray, 11, id);
+            console.log(paramsArray, 11, id, noidung);
             $.ajax({
                 url: "<?php echo BASE_URL; ?>/borrowdevice/updateBorrowStatus", // Đường dẫn đến controller xử lý
                 method: 'POST',
                 data: {
                     id: id,
-                    status: paramsArray
+                    status: paramsArray,
+                    noidung: noidung
                 }, // Dữ liệu gửi đi từ form
                 dataType: 'json',
                 success: function(response) {
@@ -681,8 +766,10 @@ if ($_SESSION['quyen'] == 2) {
                     const statusBorrow = ['Đã trả', 'Thất lạc', 'Chờ sửa chữa', 'Từ chối yêu cầu']
                     response.data.forEach((borrow) => {
                         const selectId = `select-status-borrow-${borrow.id}`;
-                        const selectHtml = `
-                        <select class="form-select" aria-label="Default select example" id="${selectId}" tabindex="8" name="${borrow.mathietbi}" required>
+                        const selectHtml = borrow.trangthai == "Sửa chữa" ? `
+                            ${borrow.trangthai}
+                    ` : `
+                        <select class="form-select select-option" aria-label="Default select example" id="${selectId}" tabindex="8" name="${borrow.mathietbi}" required>
                             <option value="${borrow.trangthai}" selected hidden>${borrow.trangthai}</option>
                             ${options[`${borrow.trangthai}`]}
                         </select>
@@ -696,7 +783,10 @@ if ($_SESSION['quyen'] == 2) {
                             <td>${index}</td>
                             <td>${borrow.mathietbi}</td>
                             <td>${borrow.ten}</td>
-                            <td>${statusBorrow.some((e) => borrow.trangthai == e) ? borrow.trangthai : selectHtml}</td>
+                            <td>
+                            ${statusBorrow.some((e) => borrow.trangthai == e) ? borrow.trangthai : selectHtml}
+                            <textarea class="form-control mt-3" id="exampleFormControlTextarea1" rows="3" hidden></textarea>
+                            </td>
                         </tr>
                             `
                         index++;
@@ -707,6 +797,73 @@ if ($_SESSION['quyen'] == 2) {
                 }
             })
         });
+        $("#exampleFormControlTextarea1").hide();
+        $(document).on('change', '.select-option', function(e) {
+            // e.preventDefault();
+            console.log($(this).val());
+            let status = $(this).val();
+            if (status == "Sửa chữa") {
+                $("#exampleFormControlTextarea1").removeAttr("hidden");
+            }
+        })
+
+        function generatePagination(currentPage, totalPages, itemPerPage) {
+            let pagination = '';
+            const centerPages = 3; // Số trang ở giữa bạn muốn hiển thị
+
+            if (currentPage === 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="previous"> Previous</a></li>';
+            }
+
+            if (totalPages <= 1) {
+                pagination += '<li class="page-item active"><a class="page-link" href="#" data-page="0">1</a></li>';
+            } else if (totalPages <= 5) {
+                for (let i = 0; i < totalPages; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+            } else {
+                const startPage = Math.max(currentPage - Math.floor(centerPages / 2), 0);
+                const endPage = Math.min(startPage + centerPages - 1, totalPages - 1);
+
+                if (startPage > 0) {
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
+                    if (startPage > 1) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    if (i === currentPage) {
+                        pagination += `<li class="page-item active"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    } else {
+                        pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+                    }
+                }
+
+                if (endPage < totalPages - 1) {
+                    if (endPage < totalPages - 2) {
+                        pagination += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                    pagination += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages - 1}">${totalPages}</a></li>`;
+                }
+            }
+
+            if (currentPage >= totalPages - 1 || totalPages < 0) {
+                pagination += '<li class="page-item disabled"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            } else {
+                pagination += '<li class="page-item"><a class="page-link" href="#" data-page="next"> Next</a></li>';
+            }
+
+            return pagination;
+        }
+
+
     })
 </script>
 <script>
